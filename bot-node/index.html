@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankersGPS Analytics Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden; /* Prevent page scrolling */
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 85vh;
+            max-height: 85vh; /* Ensure it doesn't exceed viewport */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent container from scrolling */
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .file-upload-section {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .current-file {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .current-file:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .current-file::after {
+            content: "👁️ View Table";
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .current-file:hover::after {
+            opacity: 1;
+        }
+
+        .file-title-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            font-size: 24px;
+            opacity: 0.8;
+        }
+
+        .file-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .file-subtitle {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin: 2px 0 0 0;
+        }
+
+        .change-file-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .change-file-btn {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .change-file-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Main content area - either center button or chat */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden; /* Prevent main content from scrolling */
+            min-height: 0; /* Allow flex child to shrink */
+        }
+
+        /* Center analyze button state */
+        .analyze-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #f8f9fa;
+        }
+
+        .analyze-center.hidden {
+            display: none;
+        }
+
+        .analyze-table-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .analyze-table-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Chat interface state */
+        .chat-interface {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden; /* Prevent chat interface from scrolling */
+            min-height: 0; /* Allow flex child to shrink */
+        }
+
+        .chat-interface.active {
+            display: flex;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto; /* Only this should scroll */
+            overflow-x: hidden;
+            background: #f8f9fa;
+            min-height: 0; /* Allow flex child to shrink */
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 14px; /* Smaller font size */
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Markdown styling */
+        .message-content h1, .message-content h2, .message-content h3 {
+            margin: 8px 0 4px 0;
+            color: #2c3e50;
+        }
+
+        .message-content h1 { font-size: 18px; }
+        .message-content h2 { font-size: 16px; }
+        .message-content h3 { font-size: 14px; }
+
+        .message-content ul, .message-content ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin: 4px 0;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .message-content em {
+            font-style: italic;
+            color: #5a6c7d;
+        }
+
+        .message-content code {
+            background: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .message-content blockquote {
+            border-left: 3px solid #667eea;
+            padding-left: 12px;
+            margin: 8px 0;
+            color: #5a6c7d;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e1e5e9;
+            max-width: 80px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #ff4757;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            background: #2ed573;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        /* Table Styling */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .json-view {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar,
+        .modal-content::-webkit-scrollbar,
+        .json-view::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track,
+        .modal-content::-webkit-scrollbar-track,
+        .json-view::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb,
+        .modal-content::-webkit-scrollbar-thumb,
+        .json-view::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover,
+        .modal-content::-webkit-scrollbar-thumb:hover,
+        .json-view::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        @media (max-width: 768px) {
+            .current-file {
+                padding: 14px 16px;
+            }
+            
+            .file-title {
+                font-size: 14px;
+            }
+            
+            .file-subtitle {
+                font-size: 12px;
+            }
+            
+            .change-file-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .analyze-table-btn {
+                padding: 16px 32px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            📊 BankersGPS Analytics Chatbot
+        </div>
+        
+        <div class="file-upload-section">
+            <div class="current-file" id="currentFile">
+                <div class="file-title-section">
+                    <div class="file-icon">📊</div>
+                    <div>
+                        <h4 class="file-title" id="fileName">sample.csv</h4>
+                        <p class="file-subtitle" id="fileSize">Sample dataset</p>
+                    </div>
+                </div>
+                
+                <div class="change-file-wrapper">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.json">
+                        <label for="fileInput" class="change-file-btn">
+                            <span>📄</span>
+                            Change File
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Center analyze button (initial state) -->
+            <div class="analyze-center" id="analyzeCenter">
+                <button class="analyze-table-btn" id="analyzeTableBtn">
+                    <span>🔍</span>
+                    Analyze Table
+                </button>
+            </div>
+            
+            <!-- Chat interface (hidden initially) -->
+            <div class="chat-interface" id="chatInterface">
+                <div class="chat-messages" id="chatMessages"></div>
+                
+                <div class="chat-input">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            class="message-input" 
+                            id="messageInput" 
+                            placeholder="Ask about your data or BankersGPS documentation..."
+                            maxlength="1000"
+                        >
+                        <button class="send-button" id="sendButton">
+                            ➤
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for viewing data -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Data Preview</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Table or JSON content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const fileInput = document.getElementById('fileInput');
+        const currentFile = document.getElementById('currentFile');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const analyzeCenter = document.getElementById('analyzeCenter');
+        const chatInterface = document.getElementById('chatInterface');
+        const analyzeTableBtn = document.getElementById('analyzeTableBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+
+        let currentData = null;
+        let currentDataType = 'csv';
+
+        // Load sample CSV on startup
+        loadSampleData();
+
+        async function loadSampleData() {
+            try {
+                const response = await fetch('./assets/sample.csv');
+                if (response.ok) {
+                    const csvText = await response.text();
+                    currentData = parseCSV(csvText);
+                    currentDataType = 'csv';
+                    fileName.textContent = 'sample.csv';
+                    fileSize.textContent = `${currentData.length} rows loaded`;
+                } else {
+                    showError('Sample CSV file not found at ./assets/sample.csv');
+                }
+            } catch (error) {
+                console.error('Error loading sample data:', error);
+                showError('Could not load sample data');
+            }
+        }
+
+        // File upload handling
+        fileInput.addEventListener('change', handleFileUpload);
+        
+        // Prevent modal from opening when clicking change file button
+        document.querySelector('.change-file-wrapper').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            
+            if (!['csv', 'xlsx', 'json'].includes(fileExtension)) {
+                showError('Please upload a CSV, Excel (.xlsx), or JSON file');
+                return;
+            }
+
+            try {
+                let data;
+                const fileContent = await readFileAsText(file);
+                
+                switch (fileExtension) {
+                    case 'csv':
+                        data = parseCSV(fileContent);
+                        break;
+                    case 'json':
+                        data = JSON.parse(fileContent);
+                        break;
+                    case 'xlsx':
+                        showError('Excel files require additional processing. Please convert to CSV for now.');
+                        return;
+                }
+
+                currentData = data;
+                currentDataType = fileExtension;
+                fileName.textContent = file.name;
+                fileSize.textContent = `${Array.isArray(data) ? data.length : Object.keys(data).length} ${Array.isArray(data) ? 'rows' : 'keys'} loaded`;
+                
+                showSuccess(`${file.name} loaded successfully!`);
+                
+            } catch (error) {
+                console.error('File processing error:', error);
+                showError('Error processing file. Please check the format.');
+            }
+        }
+
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            
+            return lines.slice(1).map(line => {
+                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                return row;
+            });
+        }
+
+        // View data modal
+        currentFile.addEventListener('click', showDataModal);
+        closeModal.addEventListener('click', hideDataModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) hideDataModal();
+        });
+
+        function showDataModal() {
+            if (!currentData) {
+                showError('No data loaded');
+                return;
+            }
+
+            modalTitle.textContent = `${fileName.textContent} - Data Preview`;
+            
+            if (Array.isArray(currentData) && currentData.length > 0) {
+                modalBody.innerHTML = createTableHTML(currentData);
+            } else {
+                modalBody.innerHTML = `<div class="json-view">${JSON.stringify(currentData, null, 2)}</div>`;
+            }
+            
+            modalOverlay.style.display = 'flex';
+        }
+
+        function hideDataModal() {
+            modalOverlay.style.display = 'none';
+        }
+
+        function createTableHTML(data) {
+            if (!data || data.length === 0) return '<p>No data to display</p>';
+            
+            const headers = Object.keys(data[0]);
+            const maxRows = 100;
+            const displayData = data.slice(0, maxRows);
+            
+            let html = '<table class="data-table"><thead><tr>';
+            headers.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            displayData.forEach(row => {
+                html += '<tr>';
+                headers.forEach(header => {
+                    html += `<td>${row[header] || ''}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            
+            if (data.length > maxRows) {
+                html += `<p style="margin-top: 10px; color: #666;">Showing first ${maxRows} of ${data.length} rows</p>`;
+            }
+            
+            return html;
+        }
+
+        // Analyze table button - switches to chat mode and starts analysis
+        analyzeTableBtn.addEventListener('click', startAnalysis);
+
+        async function startAnalysis() {
+            if (!currentData) {
+                showError('No data loaded to analyze');
+                return;
+            }
+
+            // Switch to chat interface
+            analyzeCenter.classList.add('hidden');
+            chatInterface.classList.add('active');
+            
+            // Start the analysis automatically
+            const analysisPrompt = `Please analyze this dataset and provide a comprehensive summary including:
+
+1. **Dataset Overview**: What type of data this is and its structure
+2. **Key Statistics**: Important numerical summaries and patterns
+3. **Notable Insights**: Interesting findings, trends, or anomalies
+4. **Data Quality**: Any missing values, outliers, or quality issues
+5. **Business Implications**: What this data might mean for decision-making
+
+Dataset to analyze:
+${JSON.stringify(currentData.slice(0, 10), null, 2)}
+${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} total rows)` : ''}`;
+
+            await sendMessage(analysisPrompt, false);
+            messageInput.focus();
+        }
+
+        // Chat functions
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = isUser ? escapeHtml(content) : formatBotResponse(content);
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatBotResponse(text) {
+            return text
+                // Escape HTML first
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                
+                // Headers
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                
+                // Bold and italic
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                
+                // Code
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                
+                // Lists
+                .replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>')
+                .replace(/^[-*]\s(.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+                
+                // Blockquotes
+                .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+                
+                // Line breaks
+                .replace(/\n/g, '<br>');
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            
+            const typingContent = document.createElement('div');
+            typingContent.className = 'typing-indicator';
+            typingContent.style.display = 'block';
+            typingContent.innerHTML = `
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            
+            typingDiv.appendChild(typingContent);
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            if (chatInterface.classList.contains('active')) {
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else {
+                document.querySelector('.file-upload-section').appendChild(errorDiv);
+            }
+            
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            document.querySelector('.file-upload-section').appendChild(successDiv);
+            
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.remove();
+                }
+            }, 3000);
+        }
+
+        async function sendMessage(prompt = null, showUserMessage = true) {
+            const message = prompt || messageInput.value.trim();
+            if (!message) return;
+
+            if (showUserMessage) {
+                addMessage(message, true);
+            }
+            
+            if (!prompt) {
+                messageInput.value = '';
+            }
+            
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+            showTyping();
+
+            try {
+                let fullPrompt = message;
+                if (currentData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze'))) {
+                    fullPrompt += `\n\nCurrent dataset context:\n${JSON.stringify(currentData.slice(0, 5), null, 2)}`;
+                    if (currentData.length > 5) {
+                        fullPrompt += `\n... (showing first 5 of ${currentData.length} rows)`;
+                    }
+                }
+
+                const response = await fetch('/Chatbot/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: fullPrompt }),
+                });
+
+                const data = await response.json();
+                hideTyping();
+
+                if (response.ok) {
+                    addMessage(data.response);
+                } else {
+                    showError(data.error || 'Something went wrong');
+                }
+            } catch (error) {
+                hideTyping();
+                showError('Network error. Please check your connection.');
+                console.error('Error:', error);
+            } finally {
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                if (chatInterface.classList.contains('active')) {
+                    messageInput.focus();
+                }
+            }
+        }
+
+        // Event listeners for chat
+        sendButton.addEventListener('click', () => sendMessage());
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
