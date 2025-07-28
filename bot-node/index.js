@@ -42,14 +42,14 @@ David Brown,38,Finance,70000,Seattle`;
 });
 
 app.post('/Chatbot/api/chat', async (req, res) => {
-  const { prompt } = req.body;
-  const result = await chatbot.handleChatRequest(prompt);
-  
-  if (result.success) {
-    res.json({ response: result.response });
-  } else {
-    res.status(result.statusCode || 500).json({ error: result.error });
-  }
+    const { prompt, analysisType } = req.body; // Add analysisType parameter
+    const result = await chatbot.handleChatRequest(prompt, analysisType);
+    
+    if (result.success) {
+        res.json({ response: result.response });
+    } else {
+        res.status(result.statusCode || 500).json({ error: result.error });
+    }
 });
 
 app.get('/health', (req, res) => {

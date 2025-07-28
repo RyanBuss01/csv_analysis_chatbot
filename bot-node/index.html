@@ -19,34 +19,94 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden; /* Prevent page scrolling */
+            overflow: hidden;
         }
 
         .chat-container {
             width: 90%;
             max-width: 800px;
-            height: 85vh;
-            max-height: 85vh; /* Ensure it doesn't exceed viewport */
+            height: 95vh;
+            max-height: 95vh;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Prevent container from scrolling */
+            overflow: hidden;
         }
 
         .chat-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
             font-size: 1.2em;
             font-weight: bold;
+            position: relative;
+        }
+
+        .tab-controls {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .refresh-button {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-50%) rotate(180deg);
         }
 
         .file-upload-section {
             background: #f8f9fa;
-            padding: 15px 20px;
+            padding: 5px 20px;
             border-bottom: 1px solid #e1e5e9;
         }
 
@@ -54,7 +114,7 @@
             background: white;
             border: 1px solid #e1e5e9;
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 8px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -77,7 +137,7 @@
             transform: translateX(-50%);
             background: #333;
             color: white;
-            padding: 6px 12px;
+            padding: 4px 12px;
             border-radius: 6px;
             font-size: 12px;
             opacity: 0;
@@ -152,17 +212,15 @@
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
         }
 
-        /* Main content area - either center button or chat */
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden; /* Prevent main content from scrolling */
-            min-height: 0; /* Allow flex child to shrink */
+            overflow: hidden;
+            min-height: 0;
         }
 
-        /* Center analyze button state */
         .analyze-center {
             display: flex;
             justify-content: center;
@@ -196,13 +254,12 @@
             box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
         }
 
-        /* Chat interface state */
         .chat-interface {
             display: none;
             flex-direction: column;
             height: 100%;
-            overflow: hidden; /* Prevent chat interface from scrolling */
-            min-height: 0; /* Allow flex child to shrink */
+            overflow: hidden;
+            min-height: 0;
         }
 
         .chat-interface.active {
@@ -212,10 +269,10 @@
         .chat-messages {
             flex: 1;
             padding: 20px;
-            overflow-y: auto; /* Only this should scroll */
+            overflow-y: auto;
             overflow-x: hidden;
             background: #f8f9fa;
-            min-height: 0; /* Allow flex child to shrink */
+            min-height: 0;
         }
 
         .message {
@@ -238,7 +295,7 @@
             border-radius: 18px;
             line-height: 1.5;
             word-wrap: break-word;
-            font-size: 14px; /* Smaller font size */
+            font-size: 14px;
         }
 
         .message.user .message-content {
@@ -255,7 +312,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Markdown styling */
         .message-content h1, .message-content h2, .message-content h3 {
             margin: 8px 0 4px 0;
             color: #2c3e50;
@@ -400,7 +456,6 @@
             margin: 10px 0;
         }
 
-        /* Modal Overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -445,7 +500,6 @@
             color: #333;
         }
 
-        /* Table Styling */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -478,7 +532,6 @@
             overflow: auto;
         }
 
-        /* Scrollbar styling */
         .chat-messages::-webkit-scrollbar,
         .modal-content::-webkit-scrollbar,
         .json-view::-webkit-scrollbar {
@@ -505,8 +558,13 @@
         }
 
         @media (max-width: 768px) {
+            .tab-button {
+                font-size: 10px;
+                padding: 6px 12px;
+            }
+            
             .current-file {
-                padding: 14px 16px;
+                padding: 8px 16px;
             }
             
             .file-title {
@@ -532,7 +590,11 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            📊 BankersGPS Analytics Chatbot
+            <div class="tab-controls">
+                <button class="tab-button active" data-tab="rate-risk">Rate Risk Management</button>
+                <button class="tab-button" data-tab="net-interest">Net Interest Margin</button>
+            </div>
+            <button class="refresh-button" id="refreshButton" title="Reset Page">🔄</button>
         </div>
         
         <div class="file-upload-section">
@@ -540,8 +602,7 @@
                 <div class="file-title-section">
                     <div class="file-icon">📊</div>
                     <div>
-                        <h4 class="file-title" id="fileName">sample.csv</h4>
-                        <p class="file-subtitle" id="fileSize">Sample dataset</p>
+                        <h4 class="file-title" id="fileName">sample_rate_shock.csv</h4>
                     </div>
                 </div>
                 
@@ -558,7 +619,6 @@
         </div>
         
         <div class="main-content">
-            <!-- Center analyze button (initial state) -->
             <div class="analyze-center" id="analyzeCenter">
                 <button class="analyze-table-btn" id="analyzeTableBtn">
                     <span>🔍</span>
@@ -566,7 +626,6 @@
                 </button>
             </div>
             
-            <!-- Chat interface (hidden initially) -->
             <div class="chat-interface" id="chatInterface">
                 <div class="chat-messages" id="chatMessages"></div>
                 
@@ -588,16 +647,13 @@
         </div>
     </div>
 
-    <!-- Modal for viewing data -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Data Preview</h3>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
-            <div id="modalBody">
-                <!-- Table or JSON content will be inserted here -->
-            </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
@@ -616,24 +672,95 @@
         const modalTitle = document.getElementById('modalTitle');
         const modalBody = document.getElementById('modalBody');
         const closeModal = document.getElementById('closeModal');
+        const refreshButton = document.getElementById('refreshButton');
+        const tabButtons = document.querySelectorAll('.tab-button');
 
         let currentData = null;
         let currentDataType = 'csv';
+        let activeTab = 'rate-risk';
 
-        // Load sample CSV on startup
-        loadSampleData();
+        // Tab configuration
+        const tabConfig = {
+            'rate-risk': {
+                name: 'Rate Risk Management Strategy',
+                file: 'sample_rate_shock.csv',
+                context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
-        async function loadSampleData() {
+There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
+            },
+            'net-interest': {
+                name: 'Net Interest Margin Simulations',
+                file: 'sample_net_intrest.csv',
+                context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
+
+Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
+            }
+        };
+
+        // No hardcoded sample data needed - will load from assets folder
+
+        // Initialize on load
+        loadActiveTabData();
+
+        // Tab switching
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const newTab = e.target.dataset.tab;
+                if (newTab !== activeTab) {
+                    switchTab(newTab);
+                }
+            });
+        });
+
+        function switchTab(tabId) {
+            // Update active tab
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            activeTab = tabId;
+            
+            // Reset to initial state and load new data
+            resetToInitialState();
+            loadActiveTabData();
+        }
+
+        // Refresh button
+        refreshButton.addEventListener('click', () => {
+            resetToInitialState();
+            loadActiveTabData();
+        });
+
+        function resetToInitialState() {
+            // Reset UI state
+            analyzeCenter.classList.remove('hidden');
+            chatInterface.classList.remove('active');
+            
+            // Clear chat messages
+            chatMessages.innerHTML = '';
+            
+            // Reset input
+            messageInput.value = '';
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            
+            // Hide any error/success messages
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => {
+                if (msg.parentNode) msg.remove();
+            });
+        }
+
+        async function loadActiveTabData() {
             try {
-                const response = await fetch('./assets/sample.csv');
+                const config = tabConfig[activeTab];
+                const response = await fetch(`./assets/${config.file}`);
+                
                 if (response.ok) {
                     const csvText = await response.text();
                     currentData = parseCSV(csvText);
                     currentDataType = 'csv';
-                    fileName.textContent = 'sample.csv';
-                    fileSize.textContent = `${currentData.length} rows loaded`;
+                    fileName.textContent = config.file;
                 } else {
-                    showError('Sample CSV file not found at ./assets/sample.csv');
+                    showError(`${config.file} not found in assets folder`);
                 }
             } catch (error) {
                 console.error('Error loading sample data:', error);
@@ -644,7 +771,6 @@
         // File upload handling
         fileInput.addEventListener('change', handleFileUpload);
         
-        // Prevent modal from opening when clicking change file button
         document.querySelector('.change-file-wrapper').addEventListener('click', (e) => {
             e.stopPropagation();
         });
@@ -770,7 +896,7 @@
             return html;
         }
 
-        // Analyze table button - switches to chat mode and starts analysis
+        // Analyze table button
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
         async function startAnalysis() {
@@ -779,18 +905,21 @@
                 return;
             }
 
-            // Switch to chat interface
             analyzeCenter.classList.add('hidden');
             chatInterface.classList.add('active');
             
-            // Start the analysis automatically
-            const analysisPrompt = `Please analyze this dataset and provide a comprehensive summary including:
+            const config = tabConfig[activeTab];
+            const analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
 
-1. **Dataset Overview**: What type of data this is and its structure
-2. **Key Statistics**: Important numerical summaries and patterns
-3. **Notable Insights**: Interesting findings, trends, or anomalies
+Context: ${config.context}
+
+Please analyze this dataset and provide a comprehensive summary including:
+
+1. **Dataset Overview**: What type of data this is and its structure based on the context above
+2. **Key Statistics**: Important numerical summaries and patterns relevant to ${config.name.toLowerCase()}
+3. **Notable Insights**: Interesting findings, trends, or anomalies specific to this banking analysis
 4. **Data Quality**: Any missing values, outliers, or quality issues
-5. **Business Implications**: What this data might mean for decision-making
+5. **Business Implications**: What this data means for ${config.name.toLowerCase()} decision-making
 
 Dataset to analyze:
 ${JSON.stringify(currentData.slice(0, 10), null, 2)}
@@ -823,33 +952,24 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
 
         function formatBotResponse(text) {
             return text
-                // Escape HTML first
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
-                
-                // Headers
                 .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                 .replace(/^## (.*$)/gm, '<h2>$1</h2>')
                 .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                
-                // Bold and italic
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                
-                // Code
                 .replace(/`([^`]+)`/g, '<code>$1</code>')
-                
-                // Lists
                 .replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>')
                 .replace(/^[-*]\s(.+)$/gm, '<li>$1</li>')
                 .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-                
-                // Blockquotes
                 .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-                
-                // Line breaks
-                .replace(/\n/g, '<br>');
+                .split(/\n\n+/)
+                .map(paragraph => paragraph.trim())
+                .filter(paragraph => paragraph.length > 0)
+                .map(paragraph => `<p>${paragraph.replace(/\n/g, ' ')}</p>`)
+                .join('');
         }
 
         function showTyping() {
@@ -930,9 +1050,15 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
             showTyping();
 
             try {
+                const config = tabConfig[activeTab];
                 let fullPrompt = message;
-                if (currentData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze'))) {
-                    fullPrompt += `\n\nCurrent dataset context:\n${JSON.stringify(currentData.slice(0, 5), null, 2)}`;
+                
+                if (currentData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
+                    fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.
+${config.context}
+
+Current dataset context:
+${JSON.stringify(currentData.slice(0, 5), null, 2)}`;
                     if (currentData.length > 5) {
                         fullPrompt += `\n... (showing first 5 of ${currentData.length} rows)`;
                     }
@@ -943,7 +1069,10 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ prompt: fullPrompt }),
+                    body: JSON.stringify({ 
+                        prompt: fullPrompt,
+                        analysisType: activeTab 
+                    }),
                 });
 
                 const data = await response.json();
@@ -967,7 +1096,6 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
             }
         }
 
-        // Event listeners for chat
         sendButton.addEventListener('click', () => sendMessage());
         
         messageInput.addEventListener('keypress', (e) => {

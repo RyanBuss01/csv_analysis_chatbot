@@ -16,9 +16,10 @@ class Chatbot {
   /**
    * Main function to handle chat requests
    * @param {string} prompt - User's question/prompt
+   * @param {string} analysisType - Type of analysis ('rate-risk' or 'net-interest')
    * @returns {Object} - Response object with success/error status
    */
-  async handleChatRequest(prompt) {
+  async handleChatRequest(prompt, analysisType = null) {
     try {
       // Validate input
       if (!prompt || prompt.trim() === '') {
@@ -32,11 +33,11 @@ class Chatbot {
       // Get document content (cached for performance)
       const docContent = await this.getDocumentContent();
       
-      // Generate chat response
-      const response = await this.chat(prompt, docContent);
+      // Generate chat response with banking context
+      const response = await this.chat(prompt, docContent, analysisType);
       
       // Log the interaction
-      this.logInteraction(prompt, response);
+      this.logInteraction(prompt, response, analysisType);
       
       return {
         success: true,
@@ -70,25 +71,85 @@ class Chatbot {
   }
 
   /**
+   * Get banking context based on analysis type
+   * @param {string} analysisType - Type of analysis
+   * @returns {string} - Contextual information
+   */
+  getBankingContext(analysisType) {
+    const contexts = {
+      'rate-risk': `
+BANKING CONTEXT - RATE RISK MANAGEMENT STRATEGY:
+You are analyzing Rate Risk Management data for a bank. This involves:
+
+- Asset-Liability Management (ALM): Managing the mismatch between asset and liability repricing
+- Gap Analysis: Measuring repricing mismatches across different time periods
+- Risk Management Bubbles: A visual method showing asset/liability terms, yields/costs, and yield curve relationships
+- Key Components:
+  * Asset Benefit: Distance from asset bubble to yield curve
+  * Deposit Benefit: Distance from liability bubble to yield curve  
+  * Basis Risk Component: Vertical distance between asset/liability bubbles on yield curve
+  * Risk/Reward Trade-off: Basis Risk Component (bp) ÷ Duration Mismatch (months)
+
+Focus on interest rate risk, duration mismatches, repricing gaps, and asset-liability management strategies.`,
+
+      'net-interest': `
+BANKING CONTEXT - NET INTEREST MARGIN SIMULATIONS:
+You are analyzing Net Interest Margin (NIM) simulation data for a bank. This involves:
+
+- Rate Shock Analysis: Stress testing NIM under various interest rate scenarios
+- Gap Analysis Foundation: Using asset-liability gaps as basis for detailed simulations
+- Rate Scenarios: Typically +/- 100bp, 200bp, 300bp from current rates
+- Key Metrics:
+  * Net Interest Margin (NIM): Net interest income as % of earning assets
+  * Interest Income/Expense: How rates affect bank's income statement
+  * Rate Sensitivity: How quickly assets/liabilities reprice with rate changes
+  * Simulation Variables: Repayment speeds, repricing speeds, maturity replacements
+
+Focus on income impact, margin compression/expansion, rate sensitivity, and earnings at risk analysis.`
+    };
+
+    return contexts[analysisType] || '';
+  }
+
+  /**
    * Core chat function that calls OpenAI API
    * @param {string} prompt - User's question
    * @param {string} docContent - Combined document content
+   * @param {string} analysisType - Type of banking analysis
    * @returns {string} - AI response
    */
-  async chat(prompt, docContent) {
-    // Combine document content with user question
-    const fullPrompt = docContent ? `${docContent}\n\nQuestion: ${prompt}` : prompt;
-    
+  async chat(prompt, docContent, analysisType = null) {
+    // Build comprehensive prompt with banking context
+    let systemContext = `You are a specialized banking analytics expert assistant for BankersGPS. 
+You provide detailed, accurate analysis of banking data with focus on practical insights and actionable recommendations.
+
+Always structure your responses with clear headings and bullet points for readability.
+Focus on business implications and risk management insights.`;
+
+    // Add specific banking context if analysis type is provided
+    if (analysisType) {
+      systemContext += this.getBankingContext(analysisType);
+    }
+
+    // Add document content if available
+    if (docContent) {
+      systemContext += `\n\nADDITIONAL DOCUMENTATION:\n${docContent}`;
+    }
+
     const completion = await this.openai.chat.completions.create({
-      model: "gpt-4.1-mini", // Using the new model as requested
+      model: "gpt-4o-mini", // Updated to correct model name
       messages: [
         {
+          role: "system",
+          content: systemContext
+        },
+        {
           role: "user",
-          content: fullPrompt // Exactly like .NET: documents + "\nQuestion: " + prompt
+          content: prompt
         }
       ],
-      max_tokens: 500,
-      temperature: 0.7
+      max_tokens: 800, // Increased for more detailed responses
+      temperature: 0.3 // Lower temperature for more consistent, professional responses
     });
 
     return completion.choices[0].message.content;
@@ -122,7 +183,6 @@ class Chatbot {
       for (const file of docxFiles) {
         try {
           const filePath = path.join(this.documentsFolder, file);
-          console.log(`Reading document: ${file}`);
           
           const result = await mammoth.extractRawText({ path: filePath });
           
@@ -141,7 +201,6 @@ class Chatbot {
         }
       }
       
-      console.log(`Successfully loaded ${docxFiles.length} documents, total characters: ${allContent.length}`);
       return allContent;
       
     } catch (error) {
@@ -163,7 +222,6 @@ class Chatbot {
         !this.lastDocumentLoad || 
         (now - this.lastDocumentLoad) > cacheExpiry) {
       
-      console.log('Loading/reloading document content...');
       this.documentContent = await this.readAllDocxFromFolder();
       this.lastDocumentLoad = now;
     }
@@ -175,22 +233,19 @@ class Chatbot {
    * Log chat interactions
    * @param {string} prompt - User's question
    * @param {string} response - AI's response
+   * @param {string} analysisType - Type of analysis
    */
-  logInteraction(prompt, response) {
+  logInteraction(prompt, response, analysisType = null) {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] User Question: ${prompt}`);
-    console.log(`[${timestamp}] AI Response: ${response.substring(0, 100)}${response.length > 100 ? '...' : ''}`);
-    
-    // You can extend this to write to a file or database
-    // Example: append to a log file
-    // fs.appendFileSync('chat.log', `${timestamp} | Q: ${prompt} | A: ${response}\n`);
+    const contextInfo = analysisType ? ` [${analysisType}]` : '';
+    // console.log(`[${timestamp}]${contextInfo} AI Response: `, response);
+  
   }
 
   /**
    * Utility method to refresh document cache manually
    */
   async refreshDocuments() {
-    console.log('Manually refreshing document cache...');
     this.documentContent = await this.readAllDocxFromFolder();
     this.lastDocumentLoad = new Date();
     return this.documentContent;
