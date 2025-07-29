@@ -16,28 +16,40 @@ const chatbot = new Chatbot(
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/assets/sample.csv', (req, res) => {
-  const csvPath = path.join(__dirname, 'assets', 'sample.csv');
-  
-  if (fs.existsSync(csvPath)) {
-    res.sendFile(csvPath);
+app.get('/assets/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const ext = path.extname(filename).toLowerCase();
+
+  // Only handle .csv files with header sanitization
+  if (ext === '.csv') {
+    const csvPath = path.join(__dirname, 'assets', filename);
+
+    if (fs.existsSync(csvPath)) {
+      const raw = fs.readFileSync(csvPath, 'utf8');
+      const lines = raw.split('\n');
+
+      if (lines.length > 0) {
+        // Clean commas inside quoted headers (e.g., "FFS, Repos & Bank CD")
+        lines[0] = lines[0].replace(/"([^"]+)"/g, (match, p1) => {
+          return p1.replace(/,/g, ''); // Remove commas only inside the quotes
+        });
+      }
+
+      const sanitizedCSV = lines.join('\n');
+      res.setHeader('Content-Type', 'text/csv');
+      res.send(sanitizedCSV);
+    } else {
+      res.status(404).send(`CSV file not found: ${filename}`);
+    }
   } else {
-    const sampleCSV = `Name,Age,Department,Salary,Location
-John Doe,28,Engineering,75000,New York
-Jane Smith,32,Marketing,65000,San Francisco
-Mike Johnson,45,Sales,80000,Chicago
-Sarah Wilson,29,HR,55000,Boston
-David Brown,38,Finance,70000,Seattle`;
-    
-    res.setHeader('Content-Type', 'text/csv');
-    res.send(sampleCSV);
+    // Serve non-CSV assets normally
+    res.sendFile(path.join(__dirname, 'assets', filename));
   }
 });
 
