@@ -35,6 +35,7 @@
             overflow: hidden;
         }
 
+        /* ... (keeping all existing CSS styles) ... */
         .chat-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -129,27 +130,6 @@
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
         }
 
-        .current-file::after {
-            content: "👁️ View Table";
-            position: absolute;
-            top: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .current-file:hover::after {
-            opacity: 1;
-        }
-
         .file-title-section {
             display: flex;
             align-items: center;
@@ -166,12 +146,6 @@
             font-weight: 600;
             color: #2c3e50;
             margin: 0;
-        }
-
-        .file-subtitle {
-            font-size: 13px;
-            color: #7f8c8d;
-            margin: 2px 0 0 0;
         }
 
         .change-file-wrapper {
@@ -346,13 +320,6 @@
             border-radius: 3px;
             font-family: 'Courier New', monospace;
             font-size: 12px;
-        }
-
-        .message-content blockquote {
-            border-left: 3px solid #667eea;
-            padding-left: 12px;
-            margin: 8px 0;
-            color: #5a6c7d;
         }
 
         .typing-indicator {
@@ -571,10 +538,6 @@
                 font-size: 14px;
             }
             
-            .file-subtitle {
-                font-size: 12px;
-            }
-            
             .change-file-btn {
                 padding: 6px 12px;
                 font-size: 12px;
@@ -664,7 +627,6 @@
         const fileInput = document.getElementById('fileInput');
         const currentFile = document.getElementById('currentFile');
         const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
         const analyzeCenter = document.getElementById('analyzeCenter');
         const chatInterface = document.getElementById('chatInterface');
         const analyzeTableBtn = document.getElementById('analyzeTableBtn');
@@ -679,7 +641,7 @@
         let currentDataType = 'csv';
         let activeTab = 'rate-risk';
 
-        // Tab configuration
+        // Updated tab configuration with revised context
         const tabConfig = {
             'rate-risk': {
                 name: 'Rate Risk Management Strategy',
@@ -696,8 +658,6 @@ There are also 3 elements in the Bubbles method: 1) The term and yield of assets
 Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
             }
         };
-
-        // No hardcoded sample data needed - will load from assets folder
 
         // Initialize on load
         loadActiveTabData();
@@ -805,7 +765,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 currentData = data;
                 currentDataType = fileExtension;
                 fileName.textContent = file.name;
-                fileSize.textContent = `${Array.isArray(data) ? data.length : Object.keys(data).length} ${Array.isArray(data) ? 'rows' : 'keys'} loaded`;
                 
                 showSuccess(`${file.name} loaded successfully!`);
                 
@@ -838,7 +797,7 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             });
         }
 
-        // View data modal
+        // View data modal functions (keeping existing code)
         currentFile.addEventListener('click', showDataModal);
         closeModal.addEventListener('click', hideDataModal);
         modalOverlay.addEventListener('click', (e) => {
@@ -896,7 +855,7 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             return html;
         }
 
-        // Analyze table button
+        // UPDATED Analyze table button with revised analysis prompt
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
         async function startAnalysis() {
@@ -909,17 +868,36 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             chatInterface.classList.add('active');
             
             const config = tabConfig[activeTab];
+            
+            // Updated analysis prompt based on client feedback
             const analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
 
 Context: ${config.context}
 
-Please analyze this dataset and provide a comprehensive summary including:
+Please provide a strategic analysis of this dataset with the following structure:
 
-1. **Dataset Overview**: What type of data this is and its structure based on the context above
-2. **Key Statistics**: Important numerical summaries and patterns relevant to ${config.name.toLowerCase()}
-3. **Notable Insights**: Interesting findings, trends, or anomalies specific to this banking analysis
-4. **Data Quality**: Any missing values, outliers, or quality issues
-5. **Business Implications**: What this data means for ${config.name.toLowerCase()} decision-making
+## Dataset Overview
+Briefly describe what type of data this is and what it represents in the context of ${config.name.toLowerCase()}.
+
+## Key Insights
+Focus on explaining WHY the patterns and changes occur in this data. Address the underlying business drivers:
+
+${activeTab === 'net-interest' ? `
+- Explain why NIM responds differently to rate increases vs decreases
+- Identify what structural balance sheet characteristics drive these outcomes  
+- Describe how asset repricing vs liability repricing dynamics create the observed patterns
+- Explain what causes diminishing returns in higher rate scenarios
+- Address why cost of funds pressure is a key driver in different rate environments
+` : `
+- Explain what drives the risk/reward relationships observed
+- Identify structural factors affecting asset-liability mismatches
+- Describe how duration and repricing characteristics impact outcomes
+- Explain the underlying drivers of basis risk components
+- Address how yield curve positioning affects risk management strategy
+`}
+
+## Strategic Recommendations
+Provide actionable insights for ${config.name.toLowerCase()} management based on the analysis.
 
 Dataset to analyze:
 ${JSON.stringify(currentData.slice(0, 10), null, 2)}
@@ -929,7 +907,7 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
             messageInput.focus();
         }
 
-        // Chat functions
+        // Chat functions (keeping existing functions for message handling)
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;

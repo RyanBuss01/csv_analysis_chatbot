@@ -74,43 +74,30 @@ app.get('/assets/:filename', (req, res) => {
   const filename = req.params.filename;
   const ext = path.extname(filename).toLowerCase();
   
-  // Special handling for CSV files with header sanitization
+  // Only handle .csv files with header sanitization
   if (ext === '.csv') {
     const csvPath = path.join(__dirname, 'assets', filename);
     
     if (fs.existsSync(csvPath)) {
-      try {
-        // Read the raw CSV content
-        const raw = fs.readFileSync(csvPath, 'utf8');
-        const lines = raw.split('\n');
-        
-        if (lines.length > 0) {
-          // Clean commas inside quoted headers to prevent CSV parsing issues
-          // This regex finds quoted strings and removes commas within them
-          lines[0] = lines[0].replace(/"([^"]+)"/g, (match, p1) => {
-            return p1.replace(/,/g, ''); // Remove commas only inside the quotes
-          });
-        }
-        
-        const sanitizedCSV = lines.join('\n');
-        res.setHeader('Content-Type', 'text/csv');
-        res.send(sanitizedCSV);
-      } catch (error) {
-        console.error(`Error processing CSV file ${filename}:`, error);
-        res.status(500).send(`Error processing CSV file: ${filename}`);
+      const raw = fs.readFileSync(csvPath, 'utf8');
+      const lines = raw.split('\n');
+      
+      if (lines.length > 0) {
+        // Clean commas inside quoted headers (e.g., "FFS, Repos & Bank CD")
+        lines[0] = lines[0].replace(/"([^"]+)"/g, (match, p1) => {
+          return p1.replace(/,/g, ''); // Remove commas only inside the quotes
+        });
       }
+      
+      const sanitizedCSV = lines.join('\n');
+      res.setHeader('Content-Type', 'text/csv');
+      res.send(sanitizedCSV);
     } else {
       res.status(404).send(`CSV file not found: ${filename}`);
     }
   } else {
-    // Serve non-CSV assets normally (images, JSON, etc.)
-    const filePath = path.join(__dirname, 'assets', filename);
-    
-    if (fs.existsSync(filePath)) {
-      res.sendFile(filePath);
-    } else {
-      res.status(404).send(`Asset not found: ${filename}`);
-    }
+    // Serve non-CSV assets normally
+    res.sendFile(path.join(__dirname, 'assets', filename));
   }
 });
 
@@ -133,35 +120,15 @@ app.get('/assets/:filename', (req, res) => {
  * {
  *   "error": "Error description"
  * }
- * 
- * Status Codes:
- * - 200: Success
- * - 400: Bad request (missing prompt)
- * - 401: Unauthorized (invalid API key)
- * - 429: Too many requests (quota exceeded)
- * - 500: Internal server error
  */
 app.post('/Chatbot/api/chat', async (req, res) => {
-  try {
-    const { prompt, analysisType } = req.body;
-    
-    // Validate required parameters
-    if (!prompt || typeof prompt !== 'string') {
-      return res.status(400).json({ error: 'Valid prompt is required' });
-    }
-    
-    // Process the chat request through the chatbot
-    const result = await chatbot.handleChatRequest(prompt, analysisType);
-    
-    if (result.success) {
-      res.json({ response: result.response });
-    } else {
-      // Return appropriate status code based on the error type
-      res.status(result.statusCode || 500).json({ error: result.error });
-    }
-  } catch (error) {
-    console.error('Unexpected error in chat endpoint:', error);
-    res.status(500).json({ error: 'An unexpected error occurred' });
+  const { prompt, analysisType } = req.body; // Add analysisType parameter
+  const result = await chatbot.handleChatRequest(prompt, analysisType);
+  
+  if (result.success) {
+    res.json({ response: result.response });
+  } else {
+    res.status(result.statusCode || 500).json({ error: result.error });
   }
 });
 
@@ -169,7 +136,7 @@ app.post('/Chatbot/api/chat', async (req, res) => {
  * Health check endpoint
  * 
  * @route GET /health
- * @description Provides server health status and uptime information
+ * @description Provides server health status and timestamp
  * @returns {Object} JSON object with health status and timestamp
  * 
  * Response:
@@ -181,31 +148,7 @@ app.post('/Chatbot/api/chat', async (req, res) => {
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: '1.0.0'
-  });
-});
-
-/**
- * 404 handler for unmatched routes
- */
-app.use('*', (req, res) => {
-  res.status(404).json({ 
-    error: 'Endpoint not found',
-    path: req.originalUrl,
-    method: req.method 
-  });
-});
-
-/**
- * Global error handler
- */
-app.use((error, req, res, next) => {
-  console.error('Unhandled server error:', error);
-  res.status(500).json({ 
-    error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -215,34 +158,7 @@ app.use((error, req, res, next) => {
  * Start the Express server
  * 
  * The server will listen on the specified port and log startup information.
- * In development mode, it also logs the chatbot configuration.
  */
 app.listen(PORT, () => {
-  console.log(`🚀 BankersGPS Chatbot Server running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📁 Documents folder: ${process.env.DOCUMENTS_FOLDER || './documents'}`);
-  console.log(`🤖 OpenAI API key: ${process.env.OPENAI_API_KEY ? 'Configured' : '❌ Missing'}`);
-  
-  // Verify critical configuration
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn('⚠️  WARNING: OPENAI_API_KEY not set. Chat functionality will not work.');
-  }
-});
-
-// ===== GRACEFUL SHUTDOWN =====
-
-/**
- * Handle graceful shutdown on SIGINT (Ctrl+C)
- */
-process.on('SIGINT', () => {
-  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
-  process.exit(0);
-});
-
-/**
- * Handle graceful shutdown on SIGTERM
- */
-process.on('SIGTERM', () => {
-  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
-  process.exit(0);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
