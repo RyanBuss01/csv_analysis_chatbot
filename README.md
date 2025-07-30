@@ -11,7 +11,7 @@ A specialized banking analytics chatbot that provides intelligent analysis of fi
 ## Project Structure
 
 ```
-cvs_analysis_chatbot/
+csv_analysis_chatbot/
 ├── javascript/          # Node.js/Express development version
 │   ├── index.html       # Frontend interface
 │   ├── Chatbot.js       # Core chatbot logic
