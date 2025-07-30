@@ -1,11 +1,11 @@
-# BankersGPS Analytics Chatbot
+# Data analysis Chatbot
 
 A specialized banking analytics chatbot that provides intelligent analysis of financial data including rate risk management and net interest margin simulations. Built for integration with BankersGPS banking software.
 
 ## Project Structure
 
 ```
-plansmith-chatbot/
+cvs_analysis_chatbot/
 ├── javascript/          # Node.js/Express development version
 │   ├── index.html       # Frontend interface
 │   ├── Chatbot.js       # Core chatbot logic
@@ -19,7 +19,7 @@ plansmith-chatbot/
     └── documents/       # Word documents for context (not in repo)
 ```
 
-**Note**: The `documents/` folders contain proprietary documentation and are not included in the GitHub repository.
+**Note**: The `documents/` folders contain pre-made documents and are not included here in the GitHub repository.
 
 ## Development
 
