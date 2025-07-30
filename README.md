@@ -1,6 +1,6 @@
 # Data analysis Chatbot
 
-A specialized banking analytics chatbot that provides intelligent analysis of financial data including rate risk management and net interest margin simulations. Built for integration with BankersGPS banking software.
+A specialized banking analytics chatbot that provides intelligent analysis of financial data including rate risk management and net interest margin simulations.
 
 ## Project Structure
 
