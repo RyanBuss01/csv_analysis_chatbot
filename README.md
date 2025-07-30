@@ -21,15 +21,15 @@ plansmith-chatbot/
 
 **Note**: The `documents/` folders contain proprietary documentation and are not included in the GitHub repository.
 
-## Development Approach
+## Development
 
-- **JavaScript Version**: Used for rapid development and testing on macOS
-- **.NET Version**: Production-ready version adapted from JavaScript code
+- **JavaScript Version**: Used for rapid development and testing
+- **.NET Version**: Production version adapted from JavaScript code
 - **Same Functionality**: Both versions implement identical chatbot logic and OpenAI integration
 
 ## Disclaimer
 
-⚠️ **This project is currently built with .NET 9.0 for development purposes. It will be downgraded to .NET Framework 4.6 once access to a Windows computer supporting that framework version is available.**
+⚠️ **This project is currently built with .NET 9.0 for development purposes. It will be downgraded to .NET Framework 4.6 once access to a compatible computer supporting that framework version is available.**
 
 ## Quick Start
 
@@ -47,11 +47,3 @@ cd dotnet
 # Add your OpenAI API key to appsettings.json under "OpenAI:ApiKey"
 dotnet run
 ```
-
-## Features
-
-- Banking-specific AI analysis for rate risk and net interest margin data
-- Document integration for contextual responses
-- CSV data processing and visualization
-- RESTful API endpoints
-- Responsive web interface
