@@ -2,6 +2,12 @@
 
 A specialized banking analytics chatbot that provides intelligent analysis of financial data including rate risk management and net interest margin simulations.
 
+## Development
+
+- **JavaScript Version**: Used for rapid development and testing
+- **.NET Version**: Production version adapted from JavaScript code
+- **Same Functionality**: Both versions implement identical chatbot logic and OpenAI integration
+
 ## Project Structure
 
 ```
@@ -21,11 +27,6 @@ cvs_analysis_chatbot/
 
 **Note**: The `documents/` folders contain pre-made documents and are not included here in the GitHub repository.
 
-## Development
-
-- **JavaScript Version**: Used for rapid development and testing
-- **.NET Version**: Production version adapted from JavaScript code
-- **Same Functionality**: Both versions implement identical chatbot logic and OpenAI integration
 
 ## Disclaimer
 
