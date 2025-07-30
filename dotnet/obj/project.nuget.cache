@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "3MRwa64r/K0=",
+  "success": true,
+  "projectFilePath": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/dotnet.csproj",
+  "expectedPackageFiles": [
+    "/Users/ryanbussert/.nuget/packages/documentformat.openxml/3.3.0/documentformat.openxml.3.3.0.nupkg.sha512",
+    "/Users/ryanbussert/.nuget/packages/documentformat.openxml.framework/3.3.0/documentformat.openxml.framework.3.3.0.nupkg.sha512",
+    "/Users/ryanbussert/.nuget/packages/microsoft.aspnetcore.openapi/9.0.1/microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "/Users/ryanbussert/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512",
+    "/Users/ryanbussert/.nuget/packages/system.io.packaging/8.0.1/system.io.packaging.8.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

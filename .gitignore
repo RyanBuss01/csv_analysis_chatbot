@@ -1,1 +1,6 @@
-bot-node/node_modules/
+javascript/node_modules/
+javascript/documents/
+javascript/.env
+
+dotnet/documents/
+dotnet/.env

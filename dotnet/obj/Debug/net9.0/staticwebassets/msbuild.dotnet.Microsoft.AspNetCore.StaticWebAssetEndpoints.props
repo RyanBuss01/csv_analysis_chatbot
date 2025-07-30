@@ -1,0 +1,40 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/dotnet/assets/sample_net_intrest.csv">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\sample_net_intrest.csv'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI\u002BwT\u002B4T41Os7GclQ="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"953"},{"Name":"Content-Type","Value":"text/csv"},{"Name":"ETag","Value":"\u0022Hk1uJsbpS6rStosN/8ahBCsEZwNI\u002BwT\u002B4T41Os7GclQ=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:35:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/dotnet/assets/sample_net_intrest.upgh05lnkm.csv">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\sample_net_intrest.csv'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"upgh05lnkm"},{"Name":"integrity","Value":"sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI\u002BwT\u002B4T41Os7GclQ="},{"Name":"label","Value":"_content/dotnet/assets/sample_net_intrest.csv"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"953"},{"Name":"Content-Type","Value":"text/csv"},{"Name":"ETag","Value":"\u0022Hk1uJsbpS6rStosN/8ahBCsEZwNI\u002BwT\u002B4T41Os7GclQ=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:35:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/dotnet/assets/sample_rate_shock.7u0mtwmg99.csv">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\sample_rate_shock.csv'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"7u0mtwmg99"},{"Name":"integrity","Value":"sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="},{"Name":"label","Value":"_content/dotnet/assets/sample_rate_shock.csv"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1261"},{"Name":"Content-Type","Value":"text/csv"},{"Name":"ETag","Value":"\u0022QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:35:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/dotnet/assets/sample_rate_shock.csv">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\assets\sample_rate_shock.csv'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1261"},{"Name":"Content-Type","Value":"text/csv"},{"Name":"ETag","Value":"\u0022QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:35:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/dotnet/index.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"36936"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:34:31 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/dotnet/index.lp8qalkls0.html">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"lp8qalkls0"},{"Name":"integrity","Value":"sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="},{"Name":"label","Value":"_content/dotnet/index.html"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"36936"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\u0022"},{"Name":"Last-Modified","Value":"Wed, 30 Jul 2025 15:34:31 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>

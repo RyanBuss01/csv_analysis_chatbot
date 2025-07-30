@@ -1,0 +1,1042 @@
+{
+  "Version": 1,
+  "Hash": "d50bDsju3nLDAWV+9LeOmVbr332ioe44CEfZgBq61Sw=",
+  "Source": "dotnet",
+  "BasePath": "_content/dotnet",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "dotnet/wwwroot",
+      "Source": "dotnet",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/",
+      "BasePath": "_content/dotnet",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6ia9f4znm-lp8qalkls0.gz",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "index#[.{fingerprint=lp8qalkls0}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/index.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "ol8iqhgbfa",
+      "Integrity": "DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/index.html"
+    },
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6jj3qxkjl-7u0mtwmg99.gz",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "assets/sample_rate_shock#[.{fingerprint=7u0mtwmg99}]?.csv.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_rate_shock.csv",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "87t02uw4gt",
+      "Integrity": "1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_rate_shock.csv"
+    },
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/zgbwdngzq0-upgh05lnkm.gz",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "assets/sample_net_intrest#[.{fingerprint=upgh05lnkm}]?.csv.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_net_intrest.csv",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "umtdwm69b2",
+      "Integrity": "Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_net_intrest.csv"
+    },
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_net_intrest.csv",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "assets/sample_net_intrest#[.{fingerprint}]?.csv",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "upgh05lnkm",
+      "Integrity": "Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/assets/sample_net_intrest.csv"
+    },
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_rate_shock.csv",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "assets/sample_rate_shock#[.{fingerprint}]?.csv",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7u0mtwmg99",
+      "Integrity": "QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/assets/sample_rate_shock.csv"
+    },
+    {
+      "Identity": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/index.html",
+      "SourceId": "dotnet",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/",
+      "BasePath": "_content/dotnet",
+      "RelativePath": "index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "lp8qalkls0",
+      "Integrity": "meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/index.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "assets/sample_net_intrest.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/zgbwdngzq0-upgh05lnkm.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001745200698"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "572"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_net_intrest.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_net_intrest.csv",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "953"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_net_intrest.csv.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/zgbwdngzq0-upgh05lnkm.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "572"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_net_intrest.upgh05lnkm.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/zgbwdngzq0-upgh05lnkm.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001745200698"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "572"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "upgh05lnkm"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_net_intrest.csv"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_net_intrest.upgh05lnkm.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_net_intrest.csv",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "953"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "upgh05lnkm"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_net_intrest.csv"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Hk1uJsbpS6rStosN/8ahBCsEZwNI+wT+4T41Os7GclQ="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_net_intrest.upgh05lnkm.csv.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/zgbwdngzq0-upgh05lnkm.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "572"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "upgh05lnkm"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_net_intrest.csv.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Rq9lLegDtOoTbhkda1U4LxvjUd9dETZq+ATkVP6VwME="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.7u0mtwmg99.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6jj3qxkjl-7u0mtwmg99.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001440922190"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "693"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7u0mtwmg99"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_rate_shock.csv"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.7u0mtwmg99.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_rate_shock.csv",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1261"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7u0mtwmg99"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_rate_shock.csv"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.7u0mtwmg99.csv.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6jj3qxkjl-7u0mtwmg99.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "693"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7u0mtwmg99"
+        },
+        {
+          "Name": "label",
+          "Value": "assets/sample_rate_shock.csv.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6jj3qxkjl-7u0mtwmg99.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.001440922190"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "693"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.csv",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/assets/sample_rate_shock.csv",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1261"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-QTVYKsW8ddyMrBzVwEqIkM5PUjBMPDntoUAnLRtQbEU="
+        }
+      ]
+    },
+    {
+      "Route": "assets/sample_rate_shock.csv.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6jj3qxkjl-7u0mtwmg99.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "693"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/csv"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:35:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-1A0SsW+1S2BkY5gomlB7TvTVOe3oiIlysd80UR3il24="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6ia9f4znm-lp8qalkls0.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000123198226"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8116"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "36936"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="
+        }
+      ]
+    },
+    {
+      "Route": "index.html.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6ia9f4znm-lp8qalkls0.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8116"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk="
+        }
+      ]
+    },
+    {
+      "Route": "index.lp8qalkls0.html",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6ia9f4znm-lp8qalkls0.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000123198226"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8116"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "lp8qalkls0"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="
+        }
+      ]
+    },
+    {
+      "Route": "index.lp8qalkls0.html",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/wwwroot/index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "36936"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "lp8qalkls0"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-meymAd70QvgsCMlJYR3HZZ0hae894eOfpG/1gFS3Wd0="
+        }
+      ]
+    },
+    {
+      "Route": "index.lp8qalkls0.html.gz",
+      "AssetFile": "/Users/ryanbussert/git/plansmith-chatbot/dotnet/obj/Debug/net9.0/compressed/x6ia9f4znm-lp8qalkls0.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8116"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 30 Jul 2025 15:34:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "lp8qalkls0"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-DPowx0v3tflcb1rtRLH+KUFI+ce4SNqNhRGgAJMjZNk="
+        }
+      ]
+    }
+  ]
+}
