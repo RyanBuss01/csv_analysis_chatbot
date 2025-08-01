@@ -188,56 +188,64 @@ class Chatbot {
   getBankingContext(analysisType) {
     const contexts = {
       'rate-risk': `
-  BANKING CONTEXT - RATE RISK MANAGEMENT STRATEGY:
-  You are analyzing Rate Risk Management data for a bank. This involves:
+BANKING CONTEXT - RATE RISK MANAGEMENT STRATEGY:
+You are analyzing Rate Risk Management data for a bank. This involves:
 
-  - Asset-Liability Management (ALM): Managing the mismatch between asset and liability repricing
-  - Gap Analysis: Measuring repricing mismatches across different time periods
-  - Risk Management Bubbles: A visual method showing asset/liability terms, yields/costs, and yield curve relationships
-  - Key Components:
-    * Asset Benefit: Distance from asset bubble to yield curve
-    * Deposit Benefit: Distance from liability bubble to yield curve  
-    * Basis Risk Component: Vertical distance between asset/liability bubbles on yield curve
-    * Risk/Reward Trade-off: Basis Risk Component (bp) ÷ Duration Mismatch (months)
+- Asset-Liability Management (ALM): Managing the mismatch between asset and liability repricing
+- Gap Analysis: Measuring repricing mismatches across different time periods
+- Risk Management Bubbles: A visual method showing asset/liability terms, yields/costs, and yield curve relationships
+- Key Components:
+  * Asset Benefit: Distance from asset bubble to yield curve
+  * Deposit Benefit: Distance from liability bubble to yield curve  
+  * Basis Risk Component: Vertical distance between asset/liability bubbles on yield curve
+  * Risk/Reward Trade-off: Basis Risk Component (bp) ÷ Duration Mismatch (months)
 
-  Focus on interest rate risk, duration mismatches, repricing gaps, and asset-liability management strategies.
+Focus on interest rate risk, duration mismatches, repricing gaps, and asset-liability management strategies.
 
-  ANALYSIS FORMAT:
-  Provide a high-level overview with these sections only:
-  1. **Dataset Overview** - Brief description of what the data represents
-  2. **Key Insights** - Focus on WHY changes are happening, explain the underlying drivers and business implications
-  3. **Strategic Recommendations** - Actionable insights for risk management
+ANALYSIS FORMAT REQUIREMENTS:
+Structure your response with these sections only:
+1. **Dataset Overview** - Brief description (2-3 sentences max)
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by bullet points with specifics
+3. **Strategic Recommendations** - High-level actionable insights
 
-  Do NOT include: Key Statistics, Trends Observed, Data Quality sections.
-  Keep analysis at executive summary level, not detailed metrics.`,
+FORMATTING STYLE:
+- Use numbered main points with bold descriptive titles
+- Follow each main point with SHORT bullet points (•) - maximum 1 sentence each
+- Keep explanations crisp and direct - avoid verbose descriptions
+- Focus on WHY changes happen, not just statistics
+- Each bullet should be a key fact or driver, not a paragraph`,
 
       'net-interest': `
-  BANKING CONTEXT - NET INTEREST MARGIN SIMULATIONS:
-  You are analyzing Net Interest Margin (NIM) simulation data for a bank. This involves:
+BANKING CONTEXT - NET INTEREST MARGIN SIMULATIONS:
+You are analyzing Net Interest Margin (NIM) simulation data for a bank. This involves:
 
-  - Rate Shock Analysis: Stress testing NIM under various interest rate scenarios
-  - Gap Analysis Foundation: Using asset-liability gaps as basis for detailed simulations
-  - Rate Scenarios: Typically +/- 100bp, 200bp, 300bp from current rates
-  - Key Metrics:
-    * Net Interest Margin (NIM): Net interest income as % of earning assets
-    * Interest Income/Expense: How rates affect bank's income statement
-    * Rate Sensitivity: How quickly assets/liabilities reprice with rate changes
-    * Simulation Variables: Repayment speeds, repricing speeds, maturity replacements
+- Rate Shock Analysis: Stress testing NIM under various interest rate scenarios
+- Gap Analysis Foundation: Using asset-liability gaps as basis for detailed simulations
+- Rate Scenarios: Typically +/- 100bp, 200bp, 300bp from current rates
+- Key Metrics:
+  * Net Interest Margin (NIM): Net interest income as % of earning assets
+  * Interest Income/Expense: How rates affect bank's income statement
+  * Rate Sensitivity: How quickly assets/liabilities reprice with rate changes
+  * Simulation Variables: Repayment speeds, repricing speeds, maturity replacements
 
-  Focus on income impact, margin compression/expansion, rate sensitivity, and earnings at risk analysis.
+Focus on income impact, margin compression/expansion, rate sensitivity, and earnings at risk analysis.
 
-  ANALYSIS FORMAT:
-  Provide a high-level overview with these sections only:
-  1. **Dataset Overview** - Brief description of what the NIM shock data represents
-  2. **Key Insights** - Focus on WHY NIM changes occur in different rate scenarios, explain underlying drivers:
-    - Why NIM is vulnerable to rate declines (asset-sensitive balance sheet characteristics)
-    - Why benefits from rising rates may have diminishing returns
-    - What drives cost of funds pressure vs asset yield changes
-    - How structural balance sheet factors influence outcomes
-  3. **Strategic Recommendations** - Actionable insights for NIM management
+ANALYSIS FORMAT REQUIREMENTS:
+Structure your response with these sections only:
+1. **Dataset Overview** - Brief description (2-3 sentences max)
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by bullet points with specifics
+3. **Strategic Recommendations** - High-level actionable insights
 
-  Do NOT include: Key Statistics, Trends Observed, Data Quality sections.
-  Keep analysis at executive summary level focusing on business drivers and explanations.`
+FORMATTING STYLE:
+- Use numbered main points with bold descriptive titles
+- Follow each main point with SHORT bullet points (•) - maximum 1 sentence each
+- Keep explanations crisp and direct - avoid verbose descriptions
+- Focus on WHY NIM changes occur in different rate scenarios:
+  * Rate vulnerability in declining environments
+  * Diminishing returns in rising rate scenarios
+  * Cost of funds vs asset yield dynamics
+  * Structural balance sheet factors
+- Each bullet should be a key fact or driver, not a paragraph`
     };
 
     return contexts[analysisType] || '';
@@ -269,15 +277,30 @@ class Chatbot {
   async chat(prompt, docContent, analysisType = null) {
     // Build comprehensive system prompt with banking expertise
     let systemContext = `You are a specialized banking analytics expert assistant for BankersGPS. 
-  You provide high-level strategic analysis focusing on business implications and the underlying drivers of changes.
+You provide high-level strategic analysis with clear, concise formatting.
 
-  IMPORTANT FORMATTING REQUIREMENTS:
-  - Structure responses with clear headings using markdown (## for main sections)
-  - Focus on explaining WHY changes happen, not just WHAT the numbers show
-  - Keep analysis at executive summary level
-  - Provide actionable business insights
-  - Use bullet points sparingly, prefer explanatory paragraphs
-  - Avoid detailed statistical breakdowns unless specifically requested`;
+CRITICAL FORMATTING REQUIREMENTS:
+- Use ## for main section headers (Dataset Overview, Key Insights, Strategic Recommendations)
+- For Key Insights section: Use numbered points (1, 2, 3, etc.) with **bold descriptive titles**
+- Follow each numbered point with bullet points (•) for specific details
+- Keep analysis high-level and strategic, focusing on business implications
+- Explain WHY changes happen, not just WHAT the numbers show
+- Use professional banking terminology appropriately
+- BE CONCISE - Each bullet point should be 1 sentence maximum, preferably short phrases
+- Avoid verbose explanations - keep bullet points crisp and direct
+
+EXAMPLE FORMAT FOR KEY INSIGHTS:
+## Key Insights
+
+1. **NIM is Vulnerable to Sharp Rate Declines**
+• NII falls $5.4M (-15.2%) at -400bps
+• Loan yields compress faster than deposit costs decline
+• Asset-sensitive balance sheet confirmed
+
+2. **Rising Rates Show Diminishing Returns**
+• NII gains moderate from +100bps to +300bps
+• Improvement plateaus at +400bps
+• Deposit betas likely capping upside gains`;
 
     // Add analysis-type-specific banking context for targeted expertise
     if (analysisType) {
@@ -307,9 +330,6 @@ class Chatbot {
 
     return completion.choices[0].message.content;
   }
-
-  
-
 
   /**
    * Read and extract text from all Word documents in the specified folder
