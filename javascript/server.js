@@ -72,35 +72,30 @@ app.get('/', (req, res) => {
  */
 app.get('/assets/:filename', (req, res) => {
   const filename = req.params.filename;
-  const ext = path.extname(filename).toLowerCase();
+  const filePath = path.join(__dirname, 'assets', filename);
   
-  // Only handle .csv files with header sanitization
-  if (ext === '.csv') {
-    const csvPath = path.join(__dirname, 'assets', filename);
+  if (fs.existsSync(filePath)) {
+    const ext = path.extname(filename).toLowerCase();
     
-    if (fs.existsSync(csvPath)) {
-      const raw = fs.readFileSync(csvPath, 'utf8');
-      const lines = raw.split('\n');
+    if (ext === '.csv') {
+      // Read with proper encoding detection
+      const buffer = fs.readFileSync(filePath);
+      let content = buffer.toString('utf8');
       
-      if (lines.length > 0) {
-        // Clean commas inside quoted headers (e.g., "FFS, Repos & Bank CD")
-        lines[0] = lines[0].replace(/"([^"]+)"/g, (match, p1) => {
-          return p1.replace(/,/g, ''); // Remove commas only inside the quotes
-        });
+      // Simple encoding fix
+      if (content.includes('�')) {
+        content = buffer.toString('latin1');
       }
       
-      const sanitizedCSV = lines.join('\n');
-      res.setHeader('Content-Type', 'text/csv');
-      res.send(sanitizedCSV);
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.send(content);
     } else {
-      res.status(404).send(`CSV file not found: ${filename}`);
+      res.sendFile(filePath);
     }
   } else {
-    // Serve non-CSV assets normally
-    res.sendFile(path.join(__dirname, 'assets', filename));
+    res.status(404).send(`File not found: ${filename}`);
   }
 });
-
 /**
  * Handle chat requests from the frontend
  * 

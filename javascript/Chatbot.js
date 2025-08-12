@@ -205,15 +205,17 @@ Focus on interest rate risk, duration mismatches, repricing gaps, and asset-liab
 ANALYSIS FORMAT REQUIREMENTS:
 Structure your response with these sections only:
 1. **Dataset Overview** - Brief description (2-3 sentences max)
-2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by bullet points with specifics
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specifics
 3. **Strategic Recommendations** - High-level actionable insights
 
 FORMATTING STYLE:
 - Use numbered main points with bold descriptive titles
-- Follow each main point with SHORT bullet points (•) - maximum 1 sentence each
+- Follow each numbered title with a descriptive sentence or two explaining the key finding
+- Then provide bullet points (•) on SEPARATE LINES with specific supporting details
 - Keep explanations crisp and direct - avoid verbose descriptions
 - Focus on WHY changes happen, not just statistics
-- Each bullet should be a key fact or driver, not a paragraph`,
+- Each bullet should be a key fact or driver, maximum 1 sentence each
+- CRITICAL: Each bullet point must be on a separate line with proper line breaks`,
 
       'net-interest': `
 BANKING CONTEXT - NET INTEREST MARGIN SIMULATIONS:
@@ -233,19 +235,20 @@ Focus on income impact, margin compression/expansion, rate sensitivity, and earn
 ANALYSIS FORMAT REQUIREMENTS:
 Structure your response with these sections only:
 1. **Dataset Overview** - Brief description (2-3 sentences max)
-2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by bullet points with specifics
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specifics
 3. **Strategic Recommendations** - High-level actionable insights
 
 FORMATTING STYLE:
 - Use numbered main points with bold descriptive titles
-- Follow each main point with SHORT bullet points (•) - maximum 1 sentence each
+- Follow each main point with bullet points (•) on SEPARATE LINES - each bullet must be on its own line
 - Keep explanations crisp and direct - avoid verbose descriptions
 - Focus on WHY NIM changes occur in different rate scenarios:
   * Rate vulnerability in declining environments
   * Diminishing returns in rising rate scenarios
   * Cost of funds vs asset yield dynamics
   * Structural balance sheet factors
-- Each bullet should be a key fact or driver, not a paragraph`
+- Each bullet should be a key fact or driver, maximum 1 sentence each
+- CRITICAL: Each bullet point must be on a separate line with proper line breaks`
     };
 
     return contexts[analysisType] || '';
@@ -283,6 +286,7 @@ CRITICAL FORMATTING REQUIREMENTS:
 - Use ## for main section headers (Dataset Overview, Key Insights, Strategic Recommendations)
 - For Key Insights section: Use numbered points (1, 2, 3, etc.) with **bold descriptive titles**
 - Follow each numbered point with bullet points (•) for specific details
+- MANDATORY: Each bullet point MUST be on a separate line with proper line breaks
 - Keep analysis high-level and strategic, focusing on business implications
 - Explain WHY changes happen, not just WHAT the numbers show
 - Use professional banking terminology appropriately
@@ -293,14 +297,29 @@ EXAMPLE FORMAT FOR KEY INSIGHTS:
 ## Key Insights
 
 1. **NIM is Vulnerable to Sharp Rate Declines**
-• NII falls $5.4M (-15.2%) at -400bps
-• Loan yields compress faster than deposit costs decline
-• Asset-sensitive balance sheet confirmed
+
+As rates drop significantly (e.g., -400bps), Net Interest Income (NII) falls by over $5.4 million, or 15.2%, compared to the current rate environment. This steep decline reflects:
+
+• Compression in loan and investment yields
+• Limited downward repricing flexibility on interest-bearing deposits and borrowings
+• The impact of fixed-rate liabilities and asset floor constraints
 
 2. **Rising Rates Show Diminishing Returns**
-• NII gains moderate from +100bps to +300bps
-• Improvement plateaus at +400bps
-• Deposit betas likely capping upside gains`;
+
+As rates increase, NII benefits moderate and show diminishing returns at higher rate scenarios:
+
+• From +100bps to +300bps, NII increases in a moderate and incremental fashion
+• However, the rate of improvement tapers off, suggesting deposit betas may be capping gains
+• At +400bps, the NII improvement plateaus, with only marginal gain over +300bps
+
+FORMATTING RULES:
+- Each numbered insight should have: Title, descriptive sentence(s), then bullet points
+- Each bullet point (•) must start on a new line
+- No combining multiple points on the same line
+- Use line breaks between bullet points
+- Keep bullet points short and focused
+- Maximum one sentence per bullet point
+- Include a brief explanatory sentence after each numbered title before the bullets`;
 
     // Add analysis-type-specific banking context for targeted expertise
     if (analysisType) {

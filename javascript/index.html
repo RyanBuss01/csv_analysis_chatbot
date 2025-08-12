@@ -35,7 +35,6 @@
             overflow: hidden;
         }
 
-        /* ... (keeping all existing CSS styles) ... */
         .chat-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -267,7 +266,7 @@
             max-width: 80%;
             padding: 12px 16px;
             border-radius: 18px;
-            line-height: 1.5;
+            line-height: 1.6;
             word-wrap: break-word;
             font-size: 14px;
         }
@@ -286,27 +285,79 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* IMPROVED MARKDOWN FORMATTING */
         .message-content h1, .message-content h2, .message-content h3 {
-            margin: 8px 0 4px 0;
+            margin: 12px 0 8px 0;
             color: #2c3e50;
+            line-height: 1.4;
         }
 
-        .message-content h1 { font-size: 18px; }
-        .message-content h2 { font-size: 16px; }
-        .message-content h3 { font-size: 14px; }
+        .message-content h1 { 
+            font-size: 18px; 
+            margin-top: 0;
+        }
+        
+        .message-content h2 { 
+            font-size: 16px; 
+            margin-top: 16px;
+        }
+        
+        .message-content h3 { 
+            font-size: 14px; 
+            margin-top: 14px;
+        }
 
+        /* IMPROVED PARAGRAPH SPACING */
+        .message-content p {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        /* First paragraph after headers should have less top margin */
+        .message-content h1 + p,
+        .message-content h2 + p,
+        .message-content h3 + p {
+            margin-top: 8px;
+        }
+
+        /* IMPROVED BULLET POINT FORMATTING */
         .message-content ul, .message-content ol {
-            margin: 8px 0;
-            padding-left: 20px;
+            margin: 16px 0;
+            padding-left: 24px; /* Main bullet point indentation */
         }
 
         .message-content li {
-            margin: 4px 0;
+            margin: 8px 0; /* Increased spacing between list items */
+            line-height: 1.5;
+            padding-left: 4px; /* Small additional padding for bullet points */
         }
 
-        .message-content strong {
+        /* Style for main bullet points (with bold headers) */
+        .message-content li strong {
             font-weight: 600;
             color: #2c3e50;
+        }
+
+        /* Create nested indentation for secondary bullet points */
+        .message-content ul ul {
+            margin: 8px 0 8px 0;
+            padding-left: 32px; /* Extra indentation for nested bullets */
+        }
+
+        .message-content ul ul li {
+            margin: 4px 0;
+            font-weight: normal;
+        }
+
+        /* Special formatting for nested content */
+        .message-content li p {
+            margin: 4px 0; /* Reduced margin for paragraphs inside list items */
+        }
+
+        /* Ensure regular paragraphs are flush left, not indented like bullets */
+        .message-content > p {
+            padding-left: 0;
+            margin-left: 0;
         }
 
         .message-content em {
@@ -320,6 +371,15 @@
             border-radius: 3px;
             font-family: 'Courier New', monospace;
             font-size: 12px;
+        }
+
+        /* IMPROVED BLOCKQUOTE SPACING */
+        .message-content blockquote {
+            margin: 16px 0;
+            padding: 8px 16px;
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+            font-style: italic;
         }
 
         .typing-indicator {
@@ -748,14 +808,16 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
 
             try {
                 let data;
-                const fileContent = await readFileAsText(file);
                 
                 switch (fileExtension) {
                     case 'csv':
-                        data = parseCSV(fileContent);
+                        // Enhanced CSV reading with encoding detection
+                        const fileContent = await readFileWithEncodingDetection(file);
+                        data = parseCSVRobust(fileContent);
                         break;
                     case 'json':
-                        data = JSON.parse(fileContent);
+                        const jsonContent = await readFileAsText(file);
+                        data = JSON.parse(jsonContent);
                         break;
                     case 'xlsx':
                         showError('Excel files require additional processing. Please convert to CSV for now.');
@@ -774,6 +836,172 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             }
         }
 
+        // NEW: Enhanced file reading with encoding detection
+        async function readFileWithEncodingDetection(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    let content = e.target.result;
+                    
+                    // Check for encoding issues (diamond symbols indicate corruption)
+                    if (content.includes('�')) {
+                        console.log('Encoding issue detected, trying alternative method...');
+                        
+                        // Try reading as latin1 instead
+                        const reader2 = new FileReader();
+                        reader2.onload = function(e2) {
+                            resolve(e2.target.result);
+                        };
+                        reader2.onerror = reject;
+                        reader2.readAsText(file, 'ISO-8859-1'); // latin1 equivalent
+                    } else {
+                        resolve(content);
+                    }
+                };
+                
+                reader.onerror = reject;
+                reader.readAsText(file, 'UTF-8'); // Start with UTF-8
+            });
+        }
+
+        // REPLACE the parseCSV function with this more robust version:
+        function parseCSVRobust(csvText) {
+            try {
+                const lines = csvText.trim().split('\n');
+                
+                if (lines.length === 0) {
+                    throw new Error('Empty CSV file');
+                }
+                
+                // Parse the raw CSV first
+                const rawData = parseRawCSV(lines);
+                
+                // Check if we need to transpose the data
+                if (shouldTransposeData(rawData)) {
+                    console.log('Detected rate shock format - transposing data...');
+                    return transposeCSVData(rawData);
+                }
+                
+                return rawData;
+                
+            } catch (error) {
+                console.error('CSV parsing error:', error);
+                throw new Error(`CSV parsing failed: ${error.message}`);
+            }
+        }
+
+        function parseRawCSV(lines) {
+            // More careful header parsing
+            const headerLine = lines[0];
+            let headers;
+            
+            // Check if headers are quoted and contain commas
+            if (headerLine.includes('"')) {
+                // Use regex to properly split CSV with quoted fields
+                headers = headerLine.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                headers = headers.map(h => h.replace(/^"|"$/g, '').trim());
+            } else {
+                // Simple split for non-quoted headers
+                headers = headerLine.split(',').map(h => h.trim());
+            }
+            
+            console.log('Raw parsed headers:', headers);
+            
+            // Parse data rows with more careful handling
+            const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
+            
+            return dataRows.map((line, rowIndex) => {
+                let values;
+                
+                // Handle quoted values properly with more robust regex
+                if (line.includes('"')) {
+                    // Enhanced regex to handle quoted fields with commas, spaces, and special characters
+                    values = line.match(/"([^"]*)"|([^,]+)/g) || [];
+                    values = values.map(v => {
+                        // Remove quotes if present, otherwise trim whitespace
+                        if (v.startsWith('"') && v.endsWith('"')) {
+                            return v.slice(1, -1); // Remove surrounding quotes
+                        }
+                        return v.trim();
+                    });
+                } else {
+                    // For non-quoted values, split by comma and trim
+                    values = line.split(',').map(v => v.trim());
+                }
+                
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                // Log first few rows for debugging
+                if (rowIndex < 3) {
+                    console.log(`Raw row ${rowIndex + 1}:`, row);
+                    console.log(`Raw values for row ${rowIndex + 1}:`, values);
+                }
+                
+                return row;
+            });
+        }
+
+        function shouldTransposeData(data) {
+            if (!data || data.length === 0) return false;
+            
+            const firstRow = data[0];
+            const headers = Object.keys(firstRow);
+            
+            // Check if headers contain rate shock patterns
+            const rateShockPattern = /^[+-]?\d+bp$/i;  // Matches -400bp, +200bp, 100bp, etc.
+            const currentPattern = /^current$/i;       // Matches "Current"
+            
+            const hasRateShockHeaders = headers.some(header => 
+                rateShockPattern.test(header) || currentPattern.test(header)
+            );
+            
+            // Also check if the first column contains generic labels like "Rate Shocks"
+            const firstColumnName = headers[0];
+            const isGenericFirstColumn = !firstColumnName || 
+                firstColumnName.toLowerCase().includes('rate') ||
+                firstColumnName.toLowerCase().includes('shock');
+            
+            return hasRateShockHeaders && isGenericFirstColumn;
+        }
+
+        function transposeCSVData(originalData) {
+            if (!originalData || originalData.length === 0) return originalData;
+            
+            const originalHeaders = Object.keys(originalData[0]);
+            const firstColumnName = originalHeaders[0]; // Keep original name like "Rate Shocks"
+            const rateShockColumns = originalHeaders.slice(1); // Skip first column
+            
+            // Create new structure where rate shock scenarios become rows
+            const transposedData = [];
+            
+            // For each rate shock scenario, create a row
+            rateShockColumns.forEach(rateShock => {
+                const newRow = {
+                    [firstColumnName]: rateShock  // Use original first column name, not "Scenario"
+                };
+                
+                // Add each financial category as a column
+                originalData.forEach(originalRow => {
+                    const categoryName = originalRow[firstColumnName]; // e.g., "Loans *", "FFS & Other"
+                    const value = originalRow[rateShock];
+                    if (categoryName) {
+                        newRow[categoryName] = value;
+                    }
+                });
+                
+                transposedData.push(newRow);
+            });
+            
+            console.log('Transposed data sample:', transposedData[0]);
+            console.log('New headers:', Object.keys(transposedData[0]));
+            
+            return transposedData;
+        }
+
         function readFileAsText(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -785,16 +1013,9 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
 
         function parseCSV(csvText) {
             const lines = csvText.trim().split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
             
-            return lines.slice(1).map(line => {
-                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-                const row = {};
-                headers.forEach((header, index) => {
-                    row[header] = values[index] || '';
-                });
-                return row;
-            });
+            // Use the robust parsing function for consistency
+            return parseCSVRobust(csvText);
         }
 
         // View data modal functions (keeping existing code)
@@ -929,7 +1150,8 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
         }
 
         function formatBotResponse(text) {
-            return text
+            // First, handle the markdown conversions
+            let formatted = text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -938,16 +1160,98 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                 .replace(/^# (.*$)/gm, '<h1>$1</h1>')
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                .replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>')
-                .replace(/^[-*]\s(.+)$/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-                .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-                .split(/\n\n+/)
-                .map(paragraph => paragraph.trim())
-                .filter(paragraph => paragraph.length > 0)
-                .map(paragraph => `<p>${paragraph.replace(/\n/g, ' ')}</p>`)
+                .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Handle blockquotes first
+            formatted = formatted.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+
+            // Split into sections and process each one
+            const sections = formatted.split(/\n\n+/);
+            
+            return sections
+                .map(section => {
+                    section = section.trim();
+                    if (!section) return '';
+                    
+                    // Check if this section contains bullet points
+                    if (section.includes('•') || section.match(/^[-*]\s/m)) {
+                        return processBulletSection(section);
+                    }
+                    
+                    // Handle headers, blockquotes, and other elements
+                    if (section.startsWith('<h') || section.startsWith('<blockquote>')) {
+                        return section;
+                    }
+                    
+                    // Regular paragraph
+                    return `<p>${section.replace(/\n/g, ' ')}</p>`;
+                })
                 .join('');
+        }
+        
+        function processBulletSection(section) {
+            const lines = section.split('\n');
+            let result = '';
+            let inMainList = false;
+            let inSubList = false;
+            let currentMainItem = '';
+            let subItems = [];
+            
+            for (let line of lines) {
+                line = line.trim();
+                
+                // Main bullet point (usually contains bold text or is a header)
+                if (line.match(/^[•*-]\s/)) {
+                    // Close previous sub-list if exists
+                    if (inSubList && subItems.length > 0) {
+                        currentMainItem += '<ul>' + subItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                        subItems = [];
+                        inSubList = false;
+                    }
+                    
+                    // Close previous main item if exists
+                    if (currentMainItem) {
+                        result += `<li>${currentMainItem}</li>`;
+                        currentMainItem = '';
+                    }
+                    
+                    // Start new main item
+                    if (!inMainList) {
+                        result = '<ul>';
+                        inMainList = true;
+                    }
+                    
+                    currentMainItem = line.replace(/^[•*-]\s/, '');
+                    
+                // Check if this looks like a sub-bullet (no bold, follows main bullet)
+                } else if (line.match(/^[•*-]\s/) && currentMainItem && !line.includes('<strong>')) {
+                    if (!inSubList) {
+                        inSubList = true;
+                    }
+                    subItems.push(line.replace(/^[•*-]\s/, ''));
+                    
+                // Regular text that belongs to current main item
+                } else if (line && currentMainItem) {
+                    currentMainItem += ' ' + line;
+                }
+            }
+            
+            // Close final sub-list if exists
+            if (inSubList && subItems.length > 0) {
+                currentMainItem += '<ul>' + subItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
+            }
+            
+            // Close final main item
+            if (currentMainItem) {
+                result += `<li>${currentMainItem}</li>`;
+            }
+            
+            // Close main list
+            if (inMainList) {
+                result += '</ul>';
+            }
+            
+            return result;
         }
 
         function showTyping() {
