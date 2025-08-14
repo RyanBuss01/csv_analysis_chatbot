@@ -3,10 +3,10 @@
  * 
  * Express.js server that provides a web interface and API endpoints for the
  * BankersGPS banking analytics chatbot. Handles file serving, CSV processing,
- * and OpenAI-powered chat functionality.
+ * and OpenAI-powered chat functionality with support for reduced tabs.
  * 
  * @author Ryan Bussert
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 const express = require('express');
@@ -96,6 +96,7 @@ app.get('/assets/:filename', (req, res) => {
     res.status(404).send(`File not found: ${filename}`);
   }
 });
+
 /**
  * Handle chat requests from the frontend
  * 
@@ -103,7 +104,8 @@ app.get('/assets/:filename', (req, res) => {
  * @description Processes chat messages through the OpenAI-powered chatbot
  * @param {Object} req.body - Request body containing chat data
  * @param {string} req.body.prompt - User's question or message
- * @param {string} [req.body.analysisType] - Type of banking analysis ('rate-risk' or 'net-interest')
+ * @param {string} [req.body.analysisType] - Type of banking analysis ('rate-risk', 'net-interest', or reduced variants)
+ * @param {boolean} [req.body.useDocuments=true] - Whether to include document context
  * @returns {Object} JSON response with chatbot's reply or error message
  * 
  * Success Response:
@@ -117,8 +119,8 @@ app.get('/assets/:filename', (req, res) => {
  * }
  */
 app.post('/Chatbot/api/chat', async (req, res) => {
-  const { prompt, analysisType } = req.body; // Add analysisType parameter
-  const result = await chatbot.handleChatRequest(prompt, analysisType);
+  const { prompt, analysisType, useDocuments = true } = req.body; // Add useDocuments parameter
+  const result = await chatbot.handleChatRequest(prompt, analysisType, useDocuments);
   
   if (result.success) {
     res.json({ response: result.response });
@@ -145,6 +147,38 @@ app.get('/health', (req, res) => {
     status: 'OK',
     timestamp: new Date().toISOString()
   });
+});
+
+/**
+ * Get document statistics endpoint (for debugging)
+ * 
+ * @route GET /api/documents/stats
+ * @description Provides information about loaded documents
+ * @returns {Object} JSON object with document statistics
+ */
+app.get('/api/documents/stats', async (req, res) => {
+  try {
+    const stats = await chatbot.getDocumentStats();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not retrieve document stats' });
+  }
+});
+
+/**
+ * Refresh documents endpoint (for manual cache refresh)
+ * 
+ * @route POST /api/documents/refresh
+ * @description Manually refreshes the document cache
+ * @returns {Object} JSON object with refresh status
+ */
+app.post('/api/documents/refresh', async (req, res) => {
+  try {
+    await chatbot.refreshDocuments();
+    res.json({ success: true, message: 'Documents refreshed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Could not refresh documents' });
+  }
 });
 
 // ===== SERVER STARTUP =====

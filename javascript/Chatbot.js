@@ -6,20 +6,23 @@
  * margin simulations with contextual banking knowledge.
  * 
  * Features:
- * - OpenAI GPT-4o-mini integration for intelligent responses
+ * - OpenAI GPT-4.1-mini integration for intelligent responses
  * - Banking-specific context and terminology
- * - Document processing for additional context
+ * - Document processing for additional context (PDF + DOCX from subdirectories)
+ * - Reduced tabs with original simple system instructions
  * - Caching system for performance optimization
  * - Error handling for various API scenarios
+ * - Complete dataset analysis (no data slicing)
  * 
  * @author Ryan Bussert
- * @version 1.0.0
+ * @version 1.2.0
  */
 
 const fs = require('fs');
 const path = require('path');
 const OpenAI = require('openai');
 const mammoth = require('mammoth');
+const pdfParse = require('pdf-parse'); // Required for PDF processing
 
 /**
  * Main Chatbot class that handles banking analytics conversations
@@ -32,7 +35,7 @@ class Chatbot {
    * Initialize the Chatbot with OpenAI configuration and document settings
    * 
    * @param {string} apiKey - OpenAI API key for authentication
-   * @param {string} [documentsFolder='./documents'] - Path to folder containing Word documents for context
+   * @param {string} [documentsFolder='./documents'] - Path to folder containing documents for context
    * 
    * @example
    * const chatbot = new Chatbot('sk-...', './docs');
@@ -80,19 +83,21 @@ class Chatbot {
    * 
    * This is the primary public method that orchestrates the entire chat process:
    * 1. Validates input parameters
-   * 2. Loads and caches document content
+   * 2. Loads and caches document content (if useDocuments is true)
    * 3. Generates AI response with banking context
    * 4. Logs interaction for monitoring
    * 5. Returns structured response with success/error status
    * 
    * @param {string} prompt - User's question/prompt (required, non-empty)
    * @param {string} [analysisType=null] - Type of banking analysis ('rate-risk' or 'net-interest')
+   * @param {boolean} [useDocuments=true] - Whether to include document context
    * @returns {Promise<Object>} Response object with success/error status
    * 
    * @example
    * const result = await chatbot.handleChatRequest(
    *   "What is the current interest rate risk?", 
-   *   "rate-risk"
+   *   "rate-risk",
+   *   true
    * );
    * 
    * Success Response:
@@ -110,7 +115,7 @@ class Chatbot {
    * 
    * @throws {Error} Catches and converts all errors to structured response objects
    */
-  async handleChatRequest(prompt, analysisType = null) {
+  async handleChatRequest(prompt, analysisType = null, useDocuments = true) {
     try {
       // Input validation - ensure prompt is provided and meaningful
       if (!prompt || prompt.trim() === '') {
@@ -121,14 +126,17 @@ class Chatbot {
         };
       }
 
-      // Get document content with caching for performance optimization
-      const docContent = await this.getDocumentContent();
+      // Get document content with caching for performance optimization (only if requested)
+      let docContent = '';
+      if (useDocuments) {
+        docContent = await this.getDocumentContent();
+      }
       
-      // Generate AI response with full banking context
+      // Generate AI response with banking context
       const response = await this.chat(prompt, docContent, analysisType);
       
       // Log interaction for monitoring and debugging
-      this.logInteraction(prompt, response, analysisType);
+      this.logInteraction(prompt, response, analysisType, useDocuments);
       
       return {
         success: true,
@@ -173,207 +181,470 @@ class Chatbot {
     }
   }
 
-  /**
-   * Get specialized banking context based on analysis type
-   * 
-   * Provides detailed banking terminology and analysis framework specific to
-   * the type of financial analysis being performed. This context helps the AI
-   * provide more accurate and relevant responses.
-   * 
-   * @param {string} analysisType - Type of analysis ('rate-risk' or 'net-interest')
-   * @returns {string} Specialized banking context and terminology
-   * 
-   * @private
-   */
-  getBankingContext(analysisType) {
-    const contexts = {
-      'rate-risk': `
-BANKING CONTEXT - RATE RISK MANAGEMENT STRATEGY:
-You are analyzing Rate Risk Management data for a bank. This involves:
+/**
+ * Get specialized banking context based on analysis type
+ * 
+ * @param {string} analysisType - Type of analysis
+ * @returns {string} Specialized banking context and terminology
+ * 
+ * @private
+ */
+getBankingContext(analysisType) {
+  // For reduced tabs, return empty string to use only the basic system prompt
+  if (analysisType === 'rate-risk-reduced' || analysisType === 'net-interest-reduced') {
+    return '';
+  }
 
-- Asset-Liability Management (ALM): Managing the mismatch between asset and liability repricing
-- Gap Analysis: Measuring repricing mismatches across different time periods
-- Risk Management Bubbles: A visual method showing asset/liability terms, yields/costs, and yield curve relationships
-- Key Components:
-  * Asset Benefit: Distance from asset bubble to yield curve
-  * Deposit Benefit: Distance from liability bubble to yield curve  
-  * Basis Risk Component: Vertical distance between asset/liability bubbles on yield curve
-  * Risk/Reward Trade-off: Basis Risk Component (bp) ÷ Duration Mismatch (months)
+  const contexts = {
+    'rate-risk': `
+BANKING CONTEXT - ECONOMIC VALUE OF EQUITY (EVE) RISK ANALYSIS:
+You are analyzing Economic Value of Equity (EVE) risk data, NOT Net Interest Income. This involves:
 
-Focus on interest rate risk, duration mismatches, repricing gaps, and asset-liability management strategies.
+CRITICAL: This is EVE analysis focusing on BALANCE SHEET economic values, not income statement impacts.
+
+KEY EVE CONCEPTS:
+- Economic Value of Equity (EVE): Market value of assets minus market value of liabilities
+- EVE Risk: Percentage change in EVE under different rate scenarios (measured vs. current rates)
+- Duration Risk: How sensitive asset/liability values are to interest rate changes
+- Interest Rate Risk: Economic value exposure to rate movements (balance sheet focus)
+
+DATA STRUCTURE IDENTIFICATION:
+- If dataset contains "EVE Risk %" column → This is EVE analysis (economic value)
+- If dataset contains "Assets (EV)" and "Liabilities (EV)" → Economic value data
+- If dataset shows rate scenarios (-400bp, -300bp, etc.) with economic values → EVE stress testing
+- DO NOT confuse with NIM analysis which focuses on earnings/income
+
+ANALYSIS FOCUS FOR EVE DATA:
+- Economic value changes across rate scenarios (not earnings)
+- Duration mismatch impact on asset/liability values
+- EVE sensitivity to interest rate shocks
+- Balance sheet risk exposure (not income statement)
+
+CRITICAL ANALYSIS REQUIREMENTS:
+- FIRST: Identify if this is EVE data vs NIM data based on column headers
+- Use EXACT numbers from the complete dataset provided
+- Focus on ECONOMIC VALUE changes, not income/earnings changes
+- Reference specific EVE percentages and dollar value changes from the data
+- Compare actual asset/liability values between rate scenarios
+- Calculate economic value changes using the provided data
+- DO NOT assume this is NIM data unless explicitly confirmed by column headers
 
 ANALYSIS FORMAT REQUIREMENTS:
 Structure your response with these sections only:
-1. **Dataset Overview** - Brief description (2-3 sentences max)
-2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specifics
-3. **Strategic Recommendations** - High-level actionable insights
+1. **Dataset Overview** - Identify data type (EVE vs NIM) and describe actual structure (2-3 sentences max)
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specific data-driven details
+3. **Strategic Recommendations** - High-level actionable insights based on the actual data patterns
 
 FORMATTING STYLE:
 - Use numbered main points with bold descriptive titles
-- Follow each numbered title with a descriptive sentence or two explaining the key finding
-- Then provide bullet points (•) on SEPARATE LINES with specific supporting details
+- Follow each numbered title with a descriptive sentence or two explaining the key finding from the data
+- Then provide bullet points (•) on SEPARATE LINES with specific supporting details from the actual dataset
 - Keep explanations crisp and direct - avoid verbose descriptions
-- Focus on WHY changes happen, not just statistics
-- Each bullet should be a key fact or driver, maximum 1 sentence each
-- CRITICAL: Each bullet point must be on a separate line with proper line breaks`,
+- Focus on WHY economic values change based on the actual data, not hypothetical scenarios
+- Each bullet should be a key fact or driver from the dataset, maximum 1 sentence each
+- CRITICAL: Each bullet point must be on a separate line with proper line breaks
+- Always reference specific numbers, percentages, and dollar amounts from the provided data`,
 
-      'net-interest': `
-BANKING CONTEXT - NET INTEREST MARGIN SIMULATIONS:
-You are analyzing Net Interest Margin (NIM) simulation data for a bank. This involves:
+    'net-interest': `
+BANKING CONTEXT - NET INTEREST MARGIN (NIM) SIMULATIONS:
+You are analyzing Net Interest Margin (NIM) simulation data, NOT Economic Value data. This involves:
 
-- Rate Shock Analysis: Stress testing NIM under various interest rate scenarios
-- Gap Analysis Foundation: Using asset-liability gaps as basis for detailed simulations
-- Rate Scenarios: Typically +/- 100bp, 200bp, 300bp from current rates
-- Key Metrics:
-  * Net Interest Margin (NIM): Net interest income as % of earning assets
-  * Interest Income/Expense: How rates affect bank's income statement
-  * Rate Sensitivity: How quickly assets/liabilities reprice with rate changes
-  * Simulation Variables: Repayment speeds, repricing speeds, maturity replacements
+CRITICAL: This is NIM analysis focusing on INCOME STATEMENT impacts, not balance sheet economic values.
 
-Focus on income impact, margin compression/expansion, rate sensitivity, and earnings at risk analysis.
+KEY NIM CONCEPTS:
+- Net Interest Margin (NIM): Net interest income as % of earning assets
+- Net Interest Income (NII): Interest income minus interest expense (earnings focus)
+- Rate Sensitivity: How quickly income reprices with rate changes
+- Earnings at Risk: Income statement exposure to rate movements
+
+DATA STRUCTURE IDENTIFICATION:
+- If dataset contains "NIM" or "NII" or "Net Interest" → This is NIM analysis (income focus)
+- If dataset shows earnings/income projections → NIM simulation data
+- If dataset focuses on interest income/expense changes → NIM analysis
+- DO NOT confuse with EVE analysis which focuses on economic values
+
+ANALYSIS FOCUS FOR NIM DATA:
+- Net interest income changes across rate scenarios
+- Margin compression/expansion patterns
+- Asset yield vs funding cost dynamics
+- Earnings sensitivity to interest rate changes
+
+CRITICAL ANALYSIS REQUIREMENTS:
+- FIRST: Identify if this is NIM data vs EVE data based on column headers
+- Use EXACT numbers from the complete dataset provided
+- Focus on INCOME/EARNINGS changes, not economic value changes
+- Reference specific NIM percentages and NII dollar changes from the data
+- Compare actual income values between rate scenarios using the real numbers
+- Calculate income changes and margin impacts using the provided data
+- DO NOT assume this is EVE data unless explicitly confirmed by column headers
 
 ANALYSIS FORMAT REQUIREMENTS:
 Structure your response with these sections only:
-1. **Dataset Overview** - Brief description (2-3 sentences max)
-2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specifics
-3. **Strategic Recommendations** - High-level actionable insights
+1. **Dataset Overview** - Identify data type (NIM vs EVE) and describe actual structure (2-3 sentences max)
+2. **Key Insights** - Use numbered points (1, 2, 3, etc.) with descriptive titles, followed by a brief explanatory sentence, then bullet points with specific data-driven details
+3. **Strategic Recommendations** - High-level actionable insights based on the actual data patterns
 
 FORMATTING STYLE:
 - Use numbered main points with bold descriptive titles
 - Follow each main point with bullet points (•) on SEPARATE LINES - each bullet must be on its own line
 - Keep explanations crisp and direct - avoid verbose descriptions
-- Focus on WHY NIM changes occur in different rate scenarios:
-  * Rate vulnerability in declining environments
-  * Diminishing returns in rising rate scenarios
-  * Cost of funds vs asset yield dynamics
-  * Structural balance sheet factors
-- Each bullet should be a key fact or driver, maximum 1 sentence each
-- CRITICAL: Each bullet point must be on a separate line with proper line breaks`
-    };
+- Focus on WHY income/margin changes occur in different rate scenarios based on the actual data:
+  * Rate vulnerability in declining environments (cite specific income numbers)
+  * Diminishing returns in rising rate scenarios (show actual NII calculations)
+  * Cost of funds vs asset yield dynamics (reference real income data points)
+  * Structural balance sheet factors affecting earnings (use provided dataset values)
+- Each bullet should be a key fact or driver from the dataset, maximum 1 sentence each
+- CRITICAL: Each bullet point must be on a separate line with proper line breaks
+- Always reference specific numbers, percentages, and dollar amounts from the provided data`
+  };
 
-    return contexts[analysisType] || '';
-  }
-
+  return contexts[analysisType] || '';
+}
   /**
    * Core chat function that orchestrates the OpenAI API call
    * 
-   * Builds a comprehensive system prompt that includes:
-   * 1. Base banking expertise context
-   * 2. Analysis-type-specific terminology and focus areas
-   * 3. Additional documentation content for enhanced context
-   * 4. Specific formatting and response style instructions
+   * Uses EXACT original system prompt from your working code
    * 
    * @param {string} prompt - User's question or request
-   * @param {string} docContent - Combined content from Word documents
+   * @param {string} docContent - Combined content from documents
    * @param {string} [analysisType=null] - Type of banking analysis for specialized context
    * @returns {Promise<string>} AI-generated response text
    * 
    * @private
-   * 
-   * @example
-   * const response = await this.chat(
-   *   "Analyze this rate shock scenario", 
-   *   documentContent, 
-   *   "rate-risk"
-   * );
    */
   async chat(prompt, docContent, analysisType = null) {
-    // Build comprehensive system prompt with banking expertise
-    let systemContext = `You are a specialized banking analytics expert assistant for BankersGPS. 
-You provide high-level strategic analysis with clear, concise formatting.
+  // Build base system prompt (this part will be cached)
+  let baseSystemContext = `You are a specialized banking analytics expert assistant for BankersGPS. 
+You provide high-level strategic analysis with clear, concise formatting based on ACTUAL DATA.
+
+CRITICAL DATA TYPE IDENTIFICATION:
+- FIRST: Examine the column headers to identify the type of analysis:
+  * If you see "EVE Risk %", "Assets (EV)", "Liabilities (EV)" → This is EVE (Economic Value of Equity) analysis
+  * If you see "NIM", "NII", "Net Interest Income", "Margin" → This is NIM (Net Interest Margin) analysis
+- NEVER assume the analysis type - always check the actual column headers provided
+- EVE analysis focuses on BALANCE SHEET economic values and duration risk
+- NIM analysis focuses on INCOME STATEMENT impacts and earnings changes
+
+CRITICAL DATA ANALYSIS REQUIREMENTS:
+- ALWAYS identify the data type first based on column headers
+- Use exact numbers, percentages, and dollar amounts from the provided dataset
+- Reference specific data points to support every conclusion
+- Compare actual values between scenarios using real numbers from the data
+- Calculate percentage changes and show your work using the provided data
+- DO NOT make assumptions beyond what the actual data demonstrates
+- Base ALL insights on observable patterns in the complete dataset provided
+- Use the correct analytical framework for the identified data type
 
 CRITICAL FORMATTING REQUIREMENTS:
 - Use ## for main section headers (Dataset Overview, Key Insights, Strategic Recommendations)
 - For Key Insights section: Use numbered points (1, 2, 3, etc.) with **bold descriptive titles**
-- Follow each numbered point with bullet points (•) for specific details
+- Follow each numbered point with bullet points (•) for specific details from the data
 - MANDATORY: Each bullet point MUST be on a separate line with proper line breaks
 - Keep analysis high-level and strategic, focusing on business implications
-- Explain WHY changes happen, not just WHAT the numbers show
-- Use professional banking terminology appropriately
-- BE CONCISE - Each bullet point should be 1 sentence maximum, preferably short phrases
-- Avoid verbose explanations - keep bullet points crisp and direct
+- Explain WHY changes happen based on the actual data, not hypothetical scenarios
+- Use professional banking terminology appropriately for the identified data type
+- BE CONCISE - Each bullet point should be 1 sentence maximum, preferably short phrases with specific numbers
+- Avoid verbose explanations - keep bullet points crisp and direct with data references
 
-EXAMPLE FORMAT FOR KEY INSIGHTS:
+EXAMPLE FORMAT FOR EVE ANALYSIS:
+## Dataset Overview
+This is an Economic Value of Equity (EVE) risk analysis dataset containing asset and liability economic values across different interest rate scenarios.
+
 ## Key Insights
 
-1. **NIM is Vulnerable to Sharp Rate Declines**
+1. **EVE Shows High Sensitivity to Rate Declines**
 
-As rates drop significantly (e.g., -400bps), Net Interest Income (NII) falls by over $5.4 million, or 15.2%, compared to the current rate environment. This steep decline reflects:
+The data reveals that EVE risk reaches -16.87% at -400bps, indicating significant economic value vulnerability to falling rates:
 
-• Compression in loan and investment yields
-• Limited downward repricing flexibility on interest-bearing deposits and borrowings
-• The impact of fixed-rate liabilities and asset floor constraints
+• Assets (EV) total $8,846,683 at -400bps compared to current scenario baseline
+• Liabilities (EV) total $7,655,570 at -400bps showing duration mismatch impact
+• EVE Risk percentage demonstrates asymmetric risk profile across rate scenarios
 
-2. **Rising Rates Show Diminishing Returns**
+EXAMPLE FORMAT FOR NIM ANALYSIS:
+## Dataset Overview
+This is a Net Interest Margin (NIM) simulation dataset showing earnings impacts across different interest rate scenarios.
 
-As rates increase, NII benefits moderate and show diminishing returns at higher rate scenarios:
+## Key Insights
 
-• From +100bps to +300bps, NII increases in a moderate and incremental fashion
-• However, the rate of improvement tapers off, suggesting deposit betas may be capping gains
-• At +400bps, the NII improvement plateaus, with only marginal gain over +300bps
+1. **NII Vulnerable to Rate Declines**
 
-FORMATTING RULES:
-- Each numbered insight should have: Title, descriptive sentence(s), then bullet points
-- Each bullet point (•) must start on a new line
-- No combining multiple points on the same line
-- Use line breaks between bullet points
-- Keep bullet points short and focused
-- Maximum one sentence per bullet point
-- Include a brief explanatory sentence after each numbered title before the bullets`;
+Net Interest Income drops significantly in falling rate environments based on the simulation data:
 
-    // Add analysis-type-specific banking context for targeted expertise
-    if (analysisType) {
-      systemContext += this.getBankingContext(analysisType);
+• NII decreases by $X million from current to -400bps scenario
+• Asset yields compress faster than funding cost reductions
+• Margin compression reaches X% in the most adverse scenario`;
+
+  // Add analysis-type-specific banking context
+  if (analysisType) {
+    baseSystemContext += this.getBankingContext(analysisType);
+  }
+
+  // Create cached document section (this will be cached separately)
+  let documentContext = '';
+  if (docContent && docContent.trim()) {
+    // Normalize document content for consistent caching
+    const normalizedDocContent = this.normalizeDocumentContent(docContent);
+    documentContext = `\n\nADDITIONAL DOCUMENTATION:\n${normalizedDocContent}`;
+  }
+
+  // Combine for final system context
+  const fullSystemContext = baseSystemContext + documentContext;
+
+  // Use messages array with caching hints for OpenAI
+  const messages = [
+    {
+      role: "system",
+      content: fullSystemContext
+    },
+    {
+      role: "user", 
+      content: prompt
+    }
+  ];
+
+  // Make API call with caching optimization
+  const completion = await this.openai.chat.completions.create({
+    model: "gpt-4.1-mini",
+    messages: messages,
+    temperature: 0.2,
+    max_tokens: 4000,
+    // Enable caching for system messages
+    stream: false
+  });
+
+  // Log usage and cost information
+  const usage = completion.usage || {};
+  const promptTokens = usage.prompt_tokens ?? 0;
+  const cachedTokens = usage.prompt_tokens_details?.cached_tokens ?? 0;
+  const completionTokens = usage.completion_tokens ?? 0;
+
+  const INPUT_RATE = 0.40 / 1_000_000;
+  const CACHED_RATE = 0.10 / 1_000_000;
+  const OUTPUT_RATE = 1.60 / 1_000_000;
+
+  const nonCachedTokens = Math.max(0, promptTokens - cachedTokens);
+  const costUSD = (nonCachedTokens * INPUT_RATE) +
+                  (cachedTokens * CACHED_RATE) +
+                  (completionTokens * OUTPUT_RATE);
+
+  console.log({
+    promptTokens,
+    cachedTokens,
+    completionTokens,
+    costUSD: Number(costUSD.toFixed(6)),
+    cacheHitRate: promptTokens > 0 ? ((cachedTokens / promptTokens) * 100).toFixed(1) + '%' : '0%'
+  });
+
+  return completion.choices[0].message.content;
+}
+
+/**
+ * Normalize document content for consistent caching
+ * 
+ * @param {string} docContent - Raw document content
+ * @returns {string} Normalized content for caching
+ * 
+ * @private
+ */
+normalizeDocumentContent(docContent) {
+  return docContent
+    // Remove timestamps and dates that change
+    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.*?Z/g, '[TIMESTAMP]')
+    .replace(/\d{1,2}\/\d{1,2}\/\d{4}/g, '[DATE]')
+    .replace(/\d{1,2}-\d{1,2}-\d{4}/g, '[DATE]')
+    // Normalize whitespace
+    .replace(/\s+/g, ' ')
+    .trim()
+    // Remove any other variable content that might prevent caching
+    .replace(/Page \d+ of \d+/g, '[PAGE]')
+    .replace(/Generated on .*$/gm, '[GENERATED_DATE]');
+}
+
+/**
+ * Enhanced document reading with consistent ordering for caching
+ * 
+ * @returns {Promise<string>} Deterministically ordered document content
+ * 
+ * @private
+ */
+async readAllDocxFromFolder() {
+  try {
+    if (!fs.existsSync(this.documentsFolder)) {
+      console.warn(`Documents folder not found: ${this.documentsFolder}`);
+      return '';
     }
 
-    // Incorporate additional documentation for enhanced context
-    if (docContent) {
-      systemContext += `\n\nADDITIONAL DOCUMENTATION:\n${docContent}`;
+    // Get all files and sort them deterministically
+    const files = fs.readdirSync(this.documentsFolder);
+    const docxFiles = files
+      .filter(file => 
+        file.toLowerCase().endsWith('.docx') && 
+        !file.startsWith('~$')
+      )
+      .sort(); // Consistent alphabetical order for caching
+
+    if (docxFiles.length === 0) {
+      console.warn(`No .docx files found in: ${this.documentsFolder}`);
+      return '';
     }
 
-    // Make API call to OpenAI with optimized parameters
-    const completion = await this.openai.chat.completions.create({
-      model: "gpt-4o-mini",           // Cost-effective model optimized for analysis tasks
-      messages: [
-        {
-          role: "system",
-          content: systemContext
-        },
-        {
-          role: "user",
-          content: prompt
+    console.log(`Found ${docxFiles.length} document(s) to process: ${docxFiles.join(', ')}`);
+
+    let allContent = '';
+    
+    // Process files in deterministic order
+    for (const file of docxFiles) {
+      try {
+        const filePath = path.join(this.documentsFolder, file);
+        const result = await mammoth.extractRawText({ path: filePath });
+        
+        // Consistent formatting for caching
+        allContent += `\n--- Content from ${file} ---\n`;
+        allContent += result.value.trim();
+        allContent += '\n\n';
+        
+        if (result.messages && result.messages.length > 0) {
+          console.warn(`Warnings for ${file}:`, result.messages);
         }
-      ],
-      temperature: 0.3                // Lower temperature for more consistent, analytical responses
-    });
+        
+        console.log(`Successfully processed ${file} (${result.value.length} characters)`);
+        
+      } catch (fileError) {
+        console.error(`Error reading file ${file}:`, fileError.message);
+      }
+    }
+    
+    // Normalize the final content for caching
+    return this.normalizeDocumentContent(allContent);
+    
+  } catch (error) {
+    console.error('Error reading documents folder:', error);
+    return '';
+  }
+}
 
-    return completion.choices[0].message.content;
+/**
+ * Enhanced document content getter with cache optimization
+ * 
+ * @returns {Promise<string>} Cached document content optimized for OpenAI caching
+ * 
+ * @public
+ */
+async getDocumentContent() {
+  const now = new Date();
+  const cacheExpiry = 60 * 60 * 1000; // 1 hour cache for better stability
+  
+  // Load documents if not cached or cache expired
+  if (!this.documentContent || 
+      !this.lastDocumentLoad || 
+      (now - this.lastDocumentLoad) > cacheExpiry) {
+    
+    console.log('Loading documents for caching optimization...');
+    this.documentContent = await this.readAllDocxFromFolder();
+    this.lastDocumentLoad = now;
+    
+    if (this.documentContent) {
+      console.log(`Loaded ${this.documentContent.length} characters of normalized document content`);
+    }
+  }
+  
+  return this.documentContent;
+}
+
+  /**
+   * Recursively get all supported files from directory and subdirectories
+   * 
+   * @param {string} dirPath - Directory path to search
+   * @param {Array} fileList - Accumulator for file paths
+   * @returns {Array} Array of file paths with metadata
+   * 
+   * @private
+   */
+  getAllSupportedFiles(dirPath, fileList = []) {
+    try {
+      const files = fs.readdirSync(dirPath);
+      
+      for (const file of files) {
+        const filePath = path.join(dirPath, file);
+        const stat = fs.statSync(filePath);
+        
+        if (stat.isDirectory()) {
+          // Recursively search subdirectories
+          this.getAllSupportedFiles(filePath, fileList);
+        } else if (stat.isFile()) {
+          const ext = path.extname(file).toLowerCase();
+          // Support both .docx and .pdf files, exclude temp files
+          if ((ext === '.docx' || ext === '.pdf') && !file.startsWith('~$')) {
+            fileList.push({
+              fullPath: filePath,
+              fileName: file,
+              directory: path.relative(this.documentsFolder, dirPath),
+              extension: ext
+            });
+          }
+        }
+      }
+      
+      return fileList;
+    } catch (error) {
+      console.error(`Error reading directory ${dirPath}:`, error.message);
+      return fileList;
+    }
   }
 
   /**
-   * Read and extract text from all Word documents in the specified folder
+   * Extract text from a PDF file
    * 
-   * This method processes .docx files to provide additional context for the AI.
-   * It handles multiple files, filters out temporary files, and provides
-   * comprehensive error handling for individual file processing failures.
+   * @param {string} filePath - Path to PDF file
+   * @returns {Promise<string>} Extracted text content
+   * 
+   * @private
+   */
+  async extractPdfText(filePath) {
+    try {
+      const dataBuffer = fs.readFileSync(filePath);
+      const data = await pdfParse(dataBuffer);
+      return data.text;
+    } catch (error) {
+      console.error(`Error extracting PDF text from ${filePath}:`, error.message);
+      return '';
+    }
+  }
+
+  /**
+   * Extract text from a DOCX file
+   * 
+   * @param {string} filePath - Path to DOCX file
+   * @returns {Promise<string>} Extracted text content
+   * 
+   * @private
+   */
+  async extractDocxText(filePath) {
+    try {
+      const result = await mammoth.extractRawText({ path: filePath });
+      
+      if (result.messages && result.messages.length > 0) {
+        console.warn(`Warnings for ${path.basename(filePath)}:`, result.messages);
+      }
+      
+      return result.value.trim();
+    } catch (error) {
+      console.error(`Error extracting DOCX text from ${filePath}:`, error.message);
+      return '';
+    }
+  }
+
+  /**
+   * Read and extract text from all documents (DOCX and PDF) in the folder and subdirectories
+   * 
+   * Enhanced version that:
+   * - Recursively searches subdirectories (Competitive, Forecast, Risk, Strategy)
+   * - Handles both PDF and DOCX files
+   * - Provides better organization and error handling
    * 
    * @returns {Promise<string>} Combined text content from all documents
    * 
    * @private
-   * 
-   * Processing Details:
-   * - Filters out temporary files (starting with ~$)
-   * - Uses mammoth library for reliable .docx text extraction
-   * - Continues processing even if individual files fail
-   * - Provides clear document boundaries in the combined output
-   * 
-   * @example
-   * // Returns content like:
-   * // "--- Content from doc1.docx ---
-   * // Document text content here...
-   * // 
-   * // --- Content from doc2.docx ---
-   * // More document content..."
    */
   async readAllDocxFromFolder() {
     try {
@@ -383,48 +654,56 @@ FORMATTING RULES:
         return '';
       }
 
-      // Get all files and filter for .docx files, excluding temp files
-      const files = fs.readdirSync(this.documentsFolder);
-      const docxFiles = files.filter(file => 
-        file.toLowerCase().endsWith('.docx') && 
-        !file.startsWith('~$') // Ignore temporary Word files
-      );
+      // Get all supported files recursively
+      const allFiles = this.getAllSupportedFiles(this.documentsFolder);
       
-      if (docxFiles.length === 0) {
-        console.warn(`No .docx files found in: ${this.documentsFolder}`);
+      if (allFiles.length === 0) {
+        console.warn(`No supported files (.docx, .pdf) found in: ${this.documentsFolder}`);
         return '';
       }
 
-      console.log(`Found ${docxFiles.length} document(s) to process: ${docxFiles.join(', ')}`);
+      console.log(`Found ${allFiles.length} supported document(s):`);
+      allFiles.forEach(file => {
+        const dirInfo = file.directory ? ` (${file.directory})` : '';
+        console.log(`  ${file.fileName}${dirInfo}`);
+      });
 
       let allContent = '';
+      let processedCount = 0;
+      let errorCount = 0;
       
-      // Process each document individually with error isolation
-      for (const file of docxFiles) {
+      // Process each file with appropriate extractor
+      for (const file of allFiles) {
         try {
-          const filePath = path.join(this.documentsFolder, file);
+          let content = '';
           
-          // Extract raw text using mammoth library
-          const result = await mammoth.extractRawText({ path: filePath });
-          
-          // Format content with clear document boundaries
-          allContent += `\n--- Content from ${file} ---\n`;
-          allContent += result.value.trim();
-          allContent += '\n\n';
-          
-          // Log any warnings from the extraction process
-          if (result.messages && result.messages.length > 0) {
-            console.warn(`Warnings for ${file}:`, result.messages);
+          if (file.extension === '.pdf') {
+            content = await this.extractPdfText(file.fullPath);
+          } else if (file.extension === '.docx') {
+            content = await this.extractDocxText(file.fullPath);
           }
           
-          console.log(`Successfully processed ${file} (${result.value.length} characters)`);
+          if (content.trim()) {
+            // Format content with clear document boundaries and directory info
+            const dirInfo = file.directory ? ` (${file.directory})` : '';
+            allContent += `\n--- Content from ${file.fileName}${dirInfo} ---\n`;
+            allContent += content.trim();
+            allContent += '\n\n';
+            
+            processedCount++;
+            console.log(`✓ Successfully processed ${file.fileName} (${content.length} characters)`);
+          } else {
+            console.warn(`⚠ No content extracted from ${file.fileName}`);
+          }
           
         } catch (fileError) {
-          console.error(`Error reading file ${file}:`, fileError.message);
+          console.error(`✗ Error processing file ${file.fileName}:`, fileError.message);
+          errorCount++;
           // Continue processing other files even if one fails
         }
       }
       
+      console.log(`Document processing complete: ${processedCount} successful, ${errorCount} errors`);
       return allContent;
       
     } catch (error) {
@@ -433,75 +712,37 @@ FORMATTING RULES:
     }
   }
 
-  /**
-   * Get document content with intelligent caching system
-   * 
-   * Implements a 10-minute cache to balance between having current content
-   * and avoiding unnecessary file system operations. Documents are automatically
-   * reloaded when the cache expires or when explicitly refreshed.
-   * 
-   * @returns {Promise<string>} Cached or freshly loaded document content
-   * 
-   * @public
-   * 
-   * Cache Behavior:
-   * - Documents loaded on first request
-   * - Cache expires after 10 minutes
-   * - Automatic reload on cache expiry
-   * - Manual refresh available via refreshDocuments()
-   */
-  async getDocumentContent() {
-    const now = new Date();
-    const cacheExpiry = 10 * 60 * 1000; // 10 minutes in milliseconds
-    
-    // Load documents if not cached or cache expired
-    if (!this.documentContent || 
-        !this.lastDocumentLoad || 
-        (now - this.lastDocumentLoad) > cacheExpiry) {
-      
-      console.log('Loading documents (cache expired or first load)...');
-      this.documentContent = await this.readAllDocxFromFolder();
-      this.lastDocumentLoad = now;
-      
-      if (this.documentContent) {
-        console.log(`Loaded ${this.documentContent.length} characters of document content`);
-      }
-    }
-    
-    return this.documentContent;
-  }
+ 
 
   /**
    * Log chat interactions for monitoring and debugging
    * 
    * Provides structured logging of all chat interactions with timestamps
-   * and context information. Currently configured for development use
-   * but can be extended for production monitoring.
+   * and context information. Enhanced to include data analysis indicators.
    * 
    * @param {string} prompt - User's original question
    * @param {string} response - AI's generated response
    * @param {string} [analysisType=null] - Type of analysis performed
+   * @param {boolean} [useDocuments=true] - Whether documents were used
    * 
    * @private
-   * 
-   * Future Extensions:
-   * - Database logging for analytics
-   * - Performance metrics tracking
-   * - User behavior analysis
-   * - Error pattern identification
    */
-  logInteraction(prompt, response, analysisType = null) {
+  logInteraction(prompt, response, analysisType = null, useDocuments = true) {
     const timestamp = new Date().toISOString();
     const contextInfo = analysisType ? ` [${analysisType}]` : '';
+    const dataIndicator = prompt.includes('COMPLETE DATASET') ? ' [FULL_DATA_ANALYSIS]' : '';
+    const docIndicator = useDocuments ? ' [DOCS_ENABLED]' : ' [DOCS_DISABLED]';
     
     // Development logging (can be extended for production monitoring)
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[${timestamp}]${contextInfo} User: ${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}`);
+      console.log(`[${timestamp}]${contextInfo}${dataIndicator}${docIndicator} User: ${prompt.substring(0, 150)}${prompt.length > 150 ? '...' : ''}`);
       console.log(`[${timestamp}]${contextInfo} Response length: ${response.length} characters`);
+      
+      // Log if this was a data-driven analysis
+      if (prompt.includes('COMPLETE DATASET')) {
+        console.log(`[${timestamp}]${contextInfo} DATA ANALYSIS: Full dataset provided for analysis`);
+      }
     }
-    
-    // Uncomment for full response logging in development
-    // console.log(`[${timestamp}]${contextInfo} Full response:`, response);
   }
 
   /**
@@ -514,11 +755,6 @@ FORMATTING RULES:
    * @returns {Promise<string>} Freshly loaded document content
    * 
    * @public
-   * 
-   * @example
-   * // Refresh documents after updates
-   * const newContent = await chatbot.refreshDocuments();
-   * console.log(`Refreshed ${newContent.length} characters of content`);
    */
   async refreshDocuments() {
     console.log('Manually refreshing document cache...');
@@ -538,12 +774,6 @@ FORMATTING RULES:
    * @returns {Object} Detailed statistics about document loading
    * 
    * @public
-   * 
-   * @example
-   * const stats = chatbot.getDocumentStats();
-   * console.log(`Documents loaded: ${stats.hasContent ? 'Yes' : 'No'}`);
-   * console.log(`Content length: ${stats.contentLength} characters`);
-   * console.log(`Last loaded: ${stats.lastLoaded}`);
    */
   getDocumentStats() {
     return {
@@ -555,6 +785,61 @@ FORMATTING RULES:
       cacheExpired: this.lastDocumentLoad ? 
         (new Date() - this.lastDocumentLoad) > (10 * 60 * 1000) : true
     };
+  }
+
+  /**
+   * Validate that prompt contains complete dataset information
+   * 
+   * Helper method to ensure that data analysis requests include
+   * the full dataset rather than truncated samples.
+   * 
+   * @param {string} prompt - The prompt to validate
+   * @returns {boolean} True if prompt contains complete dataset indicators
+   * 
+   * @public
+   */
+  validateDataAnalysisPrompt(prompt) {
+    const dataIndicators = [
+      'COMPLETE DATASET',
+      'COMPLETE DATASET ANALYSIS',
+      'all rows of data',
+      'Row 1:', 'Row 2:', 'Row 3:' // Indicators of complete row enumeration
+    ];
+    
+    return dataIndicators.some(indicator => prompt.includes(indicator));
+  }
+
+  /**
+   * Get analysis quality metrics from response
+   * 
+   * Analyzes the AI response to determine if it contains specific
+   * data references and quantitative analysis as expected.
+   * 
+   * @param {string} response - AI response to analyze
+   * @returns {Object} Quality metrics object
+   * 
+   * @public
+   */
+  getAnalysisQualityMetrics(response) {
+    const metrics = {
+      hasSpecificNumbers: /\$[\d,]+|\d+\.\d+%|\d+bp|\d+ million/.test(response),
+      hasPercentageChanges: /%/.test(response),
+      hasDollarAmounts: /\$/.test(response),
+      hasComparisons: /compared to|vs\.|versus|from .+ to/.test(response),
+      hasCalculations: /increase|decrease|change|difference/.test(response),
+      wordCount: response.split(' ').length,
+      numberReferences: (response.match(/\d+/g) || []).length
+    };
+    
+    metrics.qualityScore = (
+      (metrics.hasSpecificNumbers ? 25 : 0) +
+      (metrics.hasPercentageChanges ? 20 : 0) +
+      (metrics.hasDollarAmounts ? 20 : 0) +
+      (metrics.hasComparisons ? 20 : 0) +
+      (metrics.hasCalculations ? 15 : 0)
+    );
+    
+    return metrics;
   }
 }
 

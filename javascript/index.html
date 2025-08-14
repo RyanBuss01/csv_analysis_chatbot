@@ -51,17 +51,18 @@
             left: 20px;
             transform: translateY(-50%);
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .tab-button {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 16px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             transition: all 0.3s ease;
             white-space: nowrap;
@@ -585,9 +586,14 @@
         }
 
         @media (max-width: 768px) {
+            .tab-controls {
+                left: 10px;
+                gap: 4px;
+            }
+            
             .tab-button {
-                font-size: 10px;
-                padding: 6px 12px;
+                font-size: 9px;
+                padding: 4px 8px;
             }
             
             .current-file {
@@ -616,6 +622,8 @@
             <div class="tab-controls">
                 <button class="tab-button active" data-tab="rate-risk">Rate Risk Management</button>
                 <button class="tab-button" data-tab="net-interest">Net Interest Margin</button>
+                <button class="tab-button" data-tab="rate-risk-reduced">RRM (reduced)</button>
+                <button class="tab-button" data-tab="net-interest-reduced">NIM (reduced)</button>
             </div>
             <button class="refresh-button" id="refreshButton" title="Reset Page">🔄</button>
         </div>
@@ -701,11 +709,12 @@
         let currentDataType = 'csv';
         let activeTab = 'rate-risk';
 
-        // Updated tab configuration with revised context
+        // Updated tab configuration with reduced variants
         const tabConfig = {
             'rate-risk': {
                 name: 'Rate Risk Management Strategy',
                 file: 'sample_rate_shock.csv',
+                useDocuments: true,
                 context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
 There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
@@ -713,6 +722,23 @@ There are also 3 elements in the Bubbles method: 1) The term and yield of assets
             'net-interest': {
                 name: 'Net Interest Margin Simulations',
                 file: 'sample_net_intrest.csv',
+                useDocuments: true,
+                context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
+
+Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
+            },
+            'rate-risk-reduced': {
+                name: 'Rate Risk Management Strategy',
+                file: 'sample_rate_shock.csv',
+                useDocuments: false,
+                context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
+
+There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
+            },
+            'net-interest-reduced': {
+                name: 'Net Interest Margin Simulations',
+                file: 'sample_net_intrest.csv',
+                useDocuments: false,
                 context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
 
 Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
@@ -788,6 +814,9 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             }
         }
 
+        // All the file handling and data processing functions remain the same from your original...
+        // (I'll keep the rest of your original JavaScript exactly as it was)
+
         // File upload handling
         fileInput.addEventListener('change', handleFileUpload);
         
@@ -811,7 +840,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 
                 switch (fileExtension) {
                     case 'csv':
-                        // Enhanced CSV reading with encoding detection
                         const fileContent = await readFileWithEncodingDetection(file);
                         data = parseCSVRobust(fileContent);
                         break;
@@ -836,7 +864,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             }
         }
 
-        // NEW: Enhanced file reading with encoding detection
         async function readFileWithEncodingDetection(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -844,28 +871,25 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 reader.onload = function(e) {
                     let content = e.target.result;
                     
-                    // Check for encoding issues (diamond symbols indicate corruption)
                     if (content.includes('�')) {
                         console.log('Encoding issue detected, trying alternative method...');
                         
-                        // Try reading as latin1 instead
                         const reader2 = new FileReader();
                         reader2.onload = function(e2) {
                             resolve(e2.target.result);
                         };
                         reader2.onerror = reject;
-                        reader2.readAsText(file, 'ISO-8859-1'); // latin1 equivalent
+                        reader2.readAsText(file, 'ISO-8859-1');
                     } else {
                         resolve(content);
                     }
                 };
                 
                 reader.onerror = reject;
-                reader.readAsText(file, 'UTF-8'); // Start with UTF-8
+                reader.readAsText(file, 'UTF-8');
             });
         }
 
-        // REPLACE the parseCSV function with this more robust version:
         function parseCSVRobust(csvText) {
             try {
                 const lines = csvText.trim().split('\n');
@@ -874,10 +898,8 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                     throw new Error('Empty CSV file');
                 }
                 
-                // Parse the raw CSV first
                 const rawData = parseRawCSV(lines);
                 
-                // Check if we need to transpose the data
                 if (shouldTransposeData(rawData)) {
                     console.log('Detected rate shock format - transposing data...');
                     return transposeCSVData(rawData);
@@ -892,41 +914,30 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         }
 
         function parseRawCSV(lines) {
-            // More careful header parsing
             const headerLine = lines[0];
             let headers;
             
-            // Check if headers are quoted and contain commas
             if (headerLine.includes('"')) {
-                // Use regex to properly split CSV with quoted fields
                 headers = headerLine.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
                 headers = headers.map(h => h.replace(/^"|"$/g, '').trim());
             } else {
-                // Simple split for non-quoted headers
                 headers = headerLine.split(',').map(h => h.trim());
             }
             
-            console.log('Raw parsed headers:', headers);
-            
-            // Parse data rows with more careful handling
             const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
             
             return dataRows.map((line, rowIndex) => {
                 let values;
                 
-                // Handle quoted values properly with more robust regex
                 if (line.includes('"')) {
-                    // Enhanced regex to handle quoted fields with commas, spaces, and special characters
                     values = line.match(/"([^"]*)"|([^,]+)/g) || [];
                     values = values.map(v => {
-                        // Remove quotes if present, otherwise trim whitespace
                         if (v.startsWith('"') && v.endsWith('"')) {
-                            return v.slice(1, -1); // Remove surrounding quotes
+                            return v.slice(1, -1);
                         }
                         return v.trim();
                     });
                 } else {
-                    // For non-quoted values, split by comma and trim
                     values = line.split(',').map(v => v.trim());
                 }
                 
@@ -934,12 +945,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 headers.forEach((header, index) => {
                     row[header] = values[index] || '';
                 });
-                
-                // Log first few rows for debugging
-                if (rowIndex < 3) {
-                    console.log(`Raw row ${rowIndex + 1}:`, row);
-                    console.log(`Raw values for row ${rowIndex + 1}:`, values);
-                }
                 
                 return row;
             });
@@ -951,15 +956,13 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             const firstRow = data[0];
             const headers = Object.keys(firstRow);
             
-            // Check if headers contain rate shock patterns
-            const rateShockPattern = /^[+-]?\d+bp$/i;  // Matches -400bp, +200bp, 100bp, etc.
-            const currentPattern = /^current$/i;       // Matches "Current"
+            const rateShockPattern = /^[+-]?\d+bp$/i;
+            const currentPattern = /^current$/i;
             
             const hasRateShockHeaders = headers.some(header => 
                 rateShockPattern.test(header) || currentPattern.test(header)
             );
             
-            // Also check if the first column contains generic labels like "Rate Shocks"
             const firstColumnName = headers[0];
             const isGenericFirstColumn = !firstColumnName || 
                 firstColumnName.toLowerCase().includes('rate') ||
@@ -972,21 +975,18 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             if (!originalData || originalData.length === 0) return originalData;
             
             const originalHeaders = Object.keys(originalData[0]);
-            const firstColumnName = originalHeaders[0]; // Keep original name like "Rate Shocks"
-            const rateShockColumns = originalHeaders.slice(1); // Skip first column
+            const firstColumnName = originalHeaders[0];
+            const rateShockColumns = originalHeaders.slice(1);
             
-            // Create new structure where rate shock scenarios become rows
             const transposedData = [];
             
-            // For each rate shock scenario, create a row
             rateShockColumns.forEach(rateShock => {
                 const newRow = {
-                    [firstColumnName]: rateShock  // Use original first column name, not "Scenario"
+                    [firstColumnName]: rateShock
                 };
                 
-                // Add each financial category as a column
                 originalData.forEach(originalRow => {
-                    const categoryName = originalRow[firstColumnName]; // e.g., "Loans *", "FFS & Other"
+                    const categoryName = originalRow[firstColumnName];
                     const value = originalRow[rateShock];
                     if (categoryName) {
                         newRow[categoryName] = value;
@@ -995,9 +995,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 
                 transposedData.push(newRow);
             });
-            
-            console.log('Transposed data sample:', transposedData[0]);
-            console.log('New headers:', Object.keys(transposedData[0]));
             
             return transposedData;
         }
@@ -1012,13 +1009,25 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         }
 
         function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            
-            // Use the robust parsing function for consistency
             return parseCSVRobust(csvText);
         }
 
-        // View data modal functions (keeping existing code)
+        function createDetailedDataContext(data, analysisType) {
+            let context = `COMPLETE DATASET ANALYSIS (${data.length} rows):\n\n`;
+            
+            context += `COLUMNS: ${Object.keys(data[0]).join(', ')}\n\n`;
+            
+            context += `COMPLETE DATASET:\n`;
+            data.forEach((row, index) => {
+                context += `Row ${index + 1}: ${JSON.stringify(row)}\n`;
+            });
+            
+            context += `\n- All ${data.length} rows of data are provided above - use the complete dataset for analysis\n- Calculate percentage changes and dollar amounts from the actual data`;
+            
+            return context;
+        }
+
+        // View data modal functions
         currentFile.addEventListener('click', showDataModal);
         closeModal.addEventListener('click', hideDataModal);
         modalOverlay.addEventListener('click', (e) => {
@@ -1076,7 +1085,7 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             return html;
         }
 
-        // UPDATED Analyze table button with revised analysis prompt
+        // Analyze table button
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
         async function startAnalysis() {
@@ -1090,45 +1099,51 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             
             const config = tabConfig[activeTab];
             
-            // Updated analysis prompt based on client feedback
+            const detailedContext = createDetailedDataContext(currentData, activeTab);
+            
             const analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
 
 Context: ${config.context}
 
-Please provide a strategic analysis of this dataset with the following structure:
+${detailedContext}
+
+Please provide a strategic analysis focusing on the ACTUAL DATA above. Your analysis must:
+
+1. Use specific numbers, percentages, and dollar amounts from the dataset
+2. Reference exact data points to support your conclusions
+3. Compare actual values between different scenarios/categories
+4. Calculate and show percentage changes where relevant
+5. Base all insights on observable patterns in the data
+6. Avoid making assumptions not supported by the actual data
 
 ## Dataset Overview
-Briefly describe what type of data this is and what it represents in the context of ${config.name.toLowerCase()}.
+Briefly describe what this specific dataset contains based on the actual data structure and values.
 
 ## Key Insights
-Focus on explaining WHY the patterns and changes occur in this data. Address the underlying business drivers:
+Focus on what the actual numbers reveal:
 
-${activeTab === 'net-interest' ? `
-- Explain why NIM responds differently to rate increases vs decreases
-- Identify what structural balance sheet characteristics drive these outcomes  
-- Describe how asset repricing vs liability repricing dynamics create the observed patterns
-- Explain what causes diminishing returns in higher rate scenarios
-- Address why cost of funds pressure is a key driver in different rate environments
+${activeTab.includes('net-interest') ? `
+- Specific NIM values and how they change across rate scenarios
+- Exact dollar amounts of NII changes
+- Percentage changes between scenarios
+- Which components drive the largest changes
+- Asset vs liability repricing patterns shown in the data
 ` : `
-- Explain what drives the risk/reward relationships observed
-- Identify structural factors affecting asset-liability mismatches
-- Describe how duration and repricing characteristics impact outcomes
-- Explain the underlying drivers of basis risk components
-- Address how yield curve positioning affects risk management strategy
+- Specific risk/reward ratios and gap amounts
+- Asset and liability maturity distributions from the data
+- Duration mismatches and their quantified impact
+- Basis risk measurements from the actual data
+- Yield curve relationships shown in the numbers
 `}
 
 ## Strategic Recommendations
-Provide actionable insights for ${config.name.toLowerCase()} management based on the analysis.
-
-Dataset to analyze:
-${JSON.stringify(currentData.slice(0, 10), null, 2)}
-${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} total rows)` : ''}`;
+Provide actionable insights based on the specific data patterns observed.`;
 
             await sendMessage(analysisPrompt, false);
             messageInput.focus();
         }
 
-        // Chat functions (keeping existing functions for message handling)
+        // Chat functions
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -1150,7 +1165,6 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
         }
 
         function formatBotResponse(text) {
-            // First, handle the markdown conversions
             let formatted = text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -1162,10 +1176,8 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code>$1</code>');
 
-            // Handle blockquotes first
             formatted = formatted.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
 
-            // Split into sections and process each one
             const sections = formatted.split(/\n\n+/);
             
             return sections
@@ -1173,17 +1185,14 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                     section = section.trim();
                     if (!section) return '';
                     
-                    // Check if this section contains bullet points
                     if (section.includes('•') || section.match(/^[-*]\s/m)) {
                         return processBulletSection(section);
                     }
                     
-                    // Handle headers, blockquotes, and other elements
                     if (section.startsWith('<h') || section.startsWith('<blockquote>')) {
                         return section;
                     }
                     
-                    // Regular paragraph
                     return `<p>${section.replace(/\n/g, ' ')}</p>`;
                 })
                 .join('');
@@ -1200,22 +1209,18 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
             for (let line of lines) {
                 line = line.trim();
                 
-                // Main bullet point (usually contains bold text or is a header)
                 if (line.match(/^[•*-]\s/)) {
-                    // Close previous sub-list if exists
                     if (inSubList && subItems.length > 0) {
                         currentMainItem += '<ul>' + subItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
                         subItems = [];
                         inSubList = false;
                     }
                     
-                    // Close previous main item if exists
                     if (currentMainItem) {
                         result += `<li>${currentMainItem}</li>`;
                         currentMainItem = '';
                     }
                     
-                    // Start new main item
                     if (!inMainList) {
                         result = '<ul>';
                         inMainList = true;
@@ -1223,30 +1228,25 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                     
                     currentMainItem = line.replace(/^[•*-]\s/, '');
                     
-                // Check if this looks like a sub-bullet (no bold, follows main bullet)
                 } else if (line.match(/^[•*-]\s/) && currentMainItem && !line.includes('<strong>')) {
                     if (!inSubList) {
                         inSubList = true;
                     }
                     subItems.push(line.replace(/^[•*-]\s/, ''));
                     
-                // Regular text that belongs to current main item
                 } else if (line && currentMainItem) {
                     currentMainItem += ' ' + line;
                 }
             }
             
-            // Close final sub-list if exists
             if (inSubList && subItems.length > 0) {
                 currentMainItem += '<ul>' + subItems.map(item => `<li>${item}</li>`).join('') + '</ul>';
             }
             
-            // Close final main item
             if (currentMainItem) {
                 result += `<li>${currentMainItem}</li>`;
             }
             
-            // Close main list
             if (inMainList) {
                 result += '</ul>';
             }
@@ -1336,14 +1336,11 @@ ${currentData.length > 10 ? `\n... (showing first 10 of ${currentData.length} to
                 let fullPrompt = message;
                 
                 if (currentData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
+                    const detailedContext = createDetailedDataContext(currentData, activeTab);
                     fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.
 ${config.context}
 
-Current dataset context:
-${JSON.stringify(currentData.slice(0, 5), null, 2)}`;
-                    if (currentData.length > 5) {
-                        fullPrompt += `\n... (showing first 5 of ${currentData.length} rows)`;
-                    }
+${detailedContext}`;
                 }
 
                 const response = await fetch('/Chatbot/api/chat', {
@@ -1353,7 +1350,8 @@ ${JSON.stringify(currentData.slice(0, 5), null, 2)}`;
                     },
                     body: JSON.stringify({ 
                         prompt: fullPrompt,
-                        analysisType: activeTab 
+                        analysisType: activeTab,
+                        useDocuments: config.useDocuments 
                     }),
                 });
 
