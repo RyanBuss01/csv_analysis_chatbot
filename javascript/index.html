@@ -24,7 +24,7 @@
 
         .chat-container {
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             height: 95vh;
             max-height: 95vh;
             background: white;
@@ -45,38 +45,54 @@
             position: relative;
         }
 
-        .tab-controls {
+        .analysis-selector {
             position: absolute;
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
         }
 
-        .tab-button {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 6px 12px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 11px;
+        .analysis-label {
+            font-size: 12px;
             font-weight: 500;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .tab-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .tab-button.active {
-            background: white;
+        .analysis-dropdown {
+            background: rgba(255, 255, 255, 0.95);
             color: #667eea;
-            border-color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23667eea" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 35px;
+        }
+
+        .analysis-dropdown:hover {
+            background: white;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-dropdown:focus {
+            background: white;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
         }
 
         .refresh-button {
@@ -111,6 +127,26 @@
             border-bottom: 1px solid #e1e5e9;
         }
 
+        .file-uploads-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .file-upload-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-type-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .current-file {
             background: white;
             border: 1px solid #e1e5e9;
@@ -123,6 +159,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            min-height: 60px;
         }
 
         .current-file:hover {
@@ -134,6 +171,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex: 1;
         }
 
         .file-icon {
@@ -141,16 +179,30 @@
             opacity: 0.8;
         }
 
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .file-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #2c3e50;
             margin: 0;
+            line-height: 1.2;
+        }
+
+        .file-status {
+            font-size: 11px;
+            color: #5a6c7d;
+            opacity: 0.8;
         }
 
         .change-file-wrapper {
             display: flex;
             align-items: center;
+            gap: 8px;
         }
 
         .file-input-wrapper {
@@ -168,15 +220,15 @@
             background: transparent;
             color: #667eea;
             border: 1px solid #667eea;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 500;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .change-file-btn:hover {
@@ -184,6 +236,33 @@
             color: white;
             transform: translateY(-1px);
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
+        }
+
+        .remove-file-btn {
+            background: transparent;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-file-btn:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
+        }
+
+        .no-file-state {
+            opacity: 0.6;
+            border-style: dashed;
         }
 
         .main-content {
@@ -324,25 +403,23 @@
         /* IMPROVED BULLET POINT FORMATTING */
         .message-content ul, .message-content ol {
             margin: 16px 0;
-            padding-left: 24px; /* Main bullet point indentation */
+            padding-left: 24px;
         }
 
         .message-content li {
-            margin: 8px 0; /* Increased spacing between list items */
+            margin: 8px 0;
             line-height: 1.5;
-            padding-left: 4px; /* Small additional padding for bullet points */
+            padding-left: 4px;
         }
 
-        /* Style for main bullet points (with bold headers) */
         .message-content li strong {
             font-weight: 600;
             color: #2c3e50;
         }
 
-        /* Create nested indentation for secondary bullet points */
         .message-content ul ul {
             margin: 8px 0 8px 0;
-            padding-left: 32px; /* Extra indentation for nested bullets */
+            padding-left: 32px;
         }
 
         .message-content ul ul li {
@@ -350,12 +427,10 @@
             font-weight: normal;
         }
 
-        /* Special formatting for nested content */
         .message-content li p {
-            margin: 4px 0; /* Reduced margin for paragraphs inside list items */
+            margin: 4px 0;
         }
 
-        /* Ensure regular paragraphs are flush left, not indented like bullets */
         .message-content > p {
             padding-left: 0;
             margin-left: 0;
@@ -374,7 +449,6 @@
             font-size: 12px;
         }
 
-        /* IMPROVED BLOCKQUOTE SPACING */
         .message-content blockquote {
             margin: 16px 0;
             padding: 8px 16px;
@@ -550,6 +624,19 @@
             background-color: #f9f9f9;
         }
 
+        .pdf-preview {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
+        }
+
         .json-view {
             background: #f5f5f5;
             padding: 15px;
@@ -586,14 +673,21 @@
         }
 
         @media (max-width: 768px) {
-            .tab-controls {
+            .file-uploads-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .analysis-selector {
                 left: 10px;
+                flex-direction: column;
                 gap: 4px;
             }
             
-            .tab-button {
-                font-size: 9px;
-                padding: 4px 8px;
+            .analysis-dropdown {
+                min-width: 160px;
+                font-size: 10px;
+                padding: 6px 12px;
             }
             
             .current-file {
@@ -601,12 +695,12 @@
             }
             
             .file-title {
-                font-size: 14px;
+                font-size: 12px;
             }
             
             .change-file-btn {
-                padding: 6px 12px;
-                font-size: 12px;
+                padding: 4px 8px;
+                font-size: 10px;
             }
             
             .analyze-table-btn {
@@ -619,31 +713,68 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <div class="tab-controls">
-                <button class="tab-button active" data-tab="rate-risk">Rate Risk Management</button>
-                <button class="tab-button" data-tab="net-interest">Net Interest Margin</button>
-                <button class="tab-button" data-tab="rate-risk-reduced">RRM (reduced)</button>
-                <button class="tab-button" data-tab="net-interest-reduced">NIM (reduced)</button>
+            <div class="analysis-selector">
+                <div class="analysis-label">Analysis Type</div>
+                <select class="analysis-dropdown" id="analysisDropdown">
+                    <option value="rate-risk">Rate Risk Management</option>
+                    <option value="net-interest">Net Interest Margin</option>
+                    <option value="forecast-kri">Forecast KRI</option>
+                    <option value="competitive-kri">Competitive KRI</option>
+                    <option value="rate-risk-reduced">RRM (reduced)</option>
+                    <option value="net-interest-reduced">NIM (reduced)</option>
+                </select>
             </div>
             <button class="refresh-button" id="refreshButton" title="Reset Page">🔄</button>
         </div>
         
         <div class="file-upload-section">
-            <div class="current-file" id="currentFile">
-                <div class="file-title-section">
-                    <div class="file-icon">📊</div>
-                    <div>
-                        <h4 class="file-title" id="fileName">sample_rate_shock.csv</h4>
+            <div class="file-uploads-container">
+                <!-- CSV Upload Section -->
+                <div class="file-upload-wrapper">
+                    <div class="file-type-label">CSV Data File</div>
+                    <div class="current-file" id="currentCsvFile">
+                        <div class="file-title-section">
+                            <div class="file-icon">📊</div>
+                            <div class="file-details">
+                                <h4 class="file-title" id="csvFileName">sample_rate_shock.csv</h4>
+                                <div class="file-status" id="csvStatus">Active</div>
+                            </div>
+                        </div>
+                        
+                        <div class="change-file-wrapper">
+                            <div class="file-input-wrapper">
+                                <input type="file" id="csvFileInput" class="file-input" accept=".csv,.xlsx,.json">
+                                <label for="csvFileInput" class="change-file-btn">
+                                    <span>📄</span>
+                                    Change
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="change-file-wrapper">
-                    <div class="file-input-wrapper">
-                        <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.json">
-                        <label for="fileInput" class="change-file-btn">
-                            <span>📄</span>
-                            Change File
-                        </label>
+
+                <!-- PDF Upload Section -->
+                <div class="file-upload-wrapper">
+                    <div class="file-type-label">PDF Source Report (Optional)</div>
+                    <div class="current-file" id="currentPdfFile">
+                        <div class="file-title-section">
+                            <div class="file-icon">📄</div>
+                            <div class="file-details">
+                                <h4 class="file-title" id="pdfFileName">sample_risk_report.pdf</h4>
+                                <div class="file-status" id="pdfStatus">Active</div>
+                            </div>
+                        </div>
+                        
+                        <div class="change-file-wrapper">
+                            <div class="file-input-wrapper">
+                                <input type="file" id="pdfFileInput" class="file-input" accept=".pdf">
+                                <label for="pdfFileInput" class="change-file-btn">
+                                    <span>📄</span>
+                                    Change
+                                </label>
+                            </div>
+                            <button class="remove-file-btn" id="removePdfBtn" title="Remove PDF">✕</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -653,7 +784,7 @@
             <div class="analyze-center" id="analyzeCenter">
                 <button class="analyze-table-btn" id="analyzeTableBtn">
                     <span>🔍</span>
-                    Analyze Table
+                    Analyze Data
                 </button>
             </div>
             
@@ -692,9 +823,15 @@
         const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
-        const fileInput = document.getElementById('fileInput');
-        const currentFile = document.getElementById('currentFile');
-        const fileName = document.getElementById('fileName');
+        const csvFileInput = document.getElementById('csvFileInput');
+        const pdfFileInput = document.getElementById('pdfFileInput');
+        const currentCsvFile = document.getElementById('currentCsvFile');
+        const currentPdfFile = document.getElementById('currentPdfFile');
+        const csvFileName = document.getElementById('csvFileName');
+        const pdfFileName = document.getElementById('pdfFileName');
+        const csvStatus = document.getElementById('csvStatus');
+        const pdfStatus = document.getElementById('pdfStatus');
+        const removePdfBtn = document.getElementById('removePdfBtn');
         const analyzeCenter = document.getElementById('analyzeCenter');
         const chatInterface = document.getElementById('chatInterface');
         const analyzeTableBtn = document.getElementById('analyzeTableBtn');
@@ -703,17 +840,19 @@
         const modalBody = document.getElementById('modalBody');
         const closeModal = document.getElementById('closeModal');
         const refreshButton = document.getElementById('refreshButton');
-        const tabButtons = document.querySelectorAll('.tab-button');
+        const analysisDropdown = document.getElementById('analysisDropdown');
 
-        let currentData = null;
+        let currentCsvData = null;
+        let currentPdfData = null;
         let currentDataType = 'csv';
-        let activeTab = 'rate-risk';
+        let activeAnalysis = 'rate-risk';
 
-        // Updated tab configuration with reduced variants
-        const tabConfig = {
+        // Updated analysis configuration with new KRI options
+        const analysisConfig = {
             'rate-risk': {
                 name: 'Rate Risk Management Strategy',
-                file: 'sample_rate_shock.csv',
+                csvFile: 'sample_rate_shock.csv',
+                pdfFile: 'sample_risk_report.pdf',
                 useDocuments: true,
                 context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
@@ -721,15 +860,35 @@ There are also 3 elements in the Bubbles method: 1) The term and yield of assets
             },
             'net-interest': {
                 name: 'Net Interest Margin Simulations',
-                file: 'sample_net_intrest.csv',
+                csvFile: 'sample_net_intrest.csv',
+                pdfFile: 'sample_risk_report.pdf',
                 useDocuments: true,
                 context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
 
 Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
             },
+            'forecast-kri': {
+                name: 'Forecast Key Risk Indicators',
+                csvFile: 'gps_kri_forecast.csv',
+                pdfFile: 'sample_risk_report.pdf',
+                useDocuments: true,
+                context: `Key Risk Indicators (KRI) Forecast Analysis provides forward-looking risk assessment across the CAELS framework (Capital, Asset Quality, Earnings, Liquidity, and Sensitivity to Market Risk). This analysis examines your bank's projected risk profile over a 3-year forecast period relative to risk tolerance guidelines and peer performance.
+
+The KRI Forecast Report analyzes historical and projected performance across critical risk metrics including: Capital ratios (Tier 1 Leverage, CET1, Tier 1, Total Capital), Asset Quality indicators (Texas Ratio, Coverage Ratio, NPL ratios, CRE concentrations), Earnings metrics (NIM, Core Earnings, ROA), Liquidity measures (Liquid Assets ratio, Non-core Funding Dependence, Wholesale Funding), and Market Risk sensitivity (Rate Risk, Mortgage concentrations, Margin Risk Tolerance). Each metric is categorized as Low, Moderate, or High risk based on your defined risk tolerance guidelines, with trend analysis showing Decreasing, Increasing, Stable, or Fluctuating risk patterns over the forecast period.`
+            },
+            'competitive-kri': {
+                name: 'Competitive Key Risk Indicators',
+                csvFile: 'gps_kri_competitive.csv',
+                pdfFile: 'sample_risk_report.pdf',
+                useDocuments: true,
+                context: `Competitive Key Risk Indicators (KRI) Analysis benchmarks your bank's risk profile against strategic peer groups and industry standards. This analysis provides context for risk-based decision making by comparing your bank's performance across CAELS risk categories relative to peer medians, quartile rankings, and industry benchmarks.
+
+The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`
+            },
             'rate-risk-reduced': {
                 name: 'Rate Risk Management Strategy',
-                file: 'sample_rate_shock.csv',
+                csvFile: 'sample_rate_shock.csv',
+                pdfFile: 'sample_risk_report.pdf',
                 useDocuments: false,
                 context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
@@ -737,7 +896,8 @@ There are also 3 elements in the Bubbles method: 1) The term and yield of assets
             },
             'net-interest-reduced': {
                 name: 'Net Interest Margin Simulations',
-                file: 'sample_net_intrest.csv',
+                csvFile: 'sample_net_intrest.csv',
+                pdfFile: 'sample_risk_report.pdf',
                 useDocuments: false,
                 context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
 
@@ -746,34 +906,28 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         };
 
         // Initialize on load
-        loadActiveTabData();
+        loadActiveAnalysisData();
 
-        // Tab switching
-        tabButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const newTab = e.target.dataset.tab;
-                if (newTab !== activeTab) {
-                    switchTab(newTab);
-                }
-            });
+        // Dropdown change handler
+        analysisDropdown.addEventListener('change', (e) => {
+            const newAnalysis = e.target.value;
+            if (newAnalysis !== activeAnalysis) {
+                switchAnalysis(newAnalysis);
+            }
         });
 
-        function switchTab(tabId) {
-            // Update active tab
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            
-            activeTab = tabId;
+        function switchAnalysis(analysisId) {
+            activeAnalysis = analysisId;
             
             // Reset to initial state and load new data
             resetToInitialState();
-            loadActiveTabData();
+            loadActiveAnalysisData();
         }
 
         // Refresh button
         refreshButton.addEventListener('click', () => {
             resetToInitialState();
-            loadActiveTabData();
+            loadActiveAnalysisData();
         });
 
         function resetToInitialState() {
@@ -795,68 +949,277 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             });
         }
 
-        async function loadActiveTabData() {
+        async function loadActiveAnalysisData() {
+            const config = analysisConfig[activeAnalysis];
+            
+            // Load CSV data
             try {
-                const config = tabConfig[activeTab];
-                const response = await fetch(`./assets/${config.file}`);
+                const csvResponse = await fetch(`./assets/${config.csvFile}`);
                 
-                if (response.ok) {
-                    const csvText = await response.text();
-                    currentData = parseCSV(csvText);
+                if (csvResponse.ok) {
+                    const csvText = await csvResponse.text();
+                    currentCsvData = parseAndPreprocessCSV(csvText, activeAnalysis);
                     currentDataType = 'csv';
-                    fileName.textContent = config.file;
+                    csvFileName.textContent = config.csvFile;
+                    csvStatus.textContent = 'Active';
+                    currentCsvFile.classList.remove('no-file-state');
                 } else {
-                    showError(`${config.file} not found in assets folder`);
+                    showError(`${config.csvFile} not found in assets folder`);
+                    csvStatus.textContent = 'Missing';
+                    currentCsvFile.classList.add('no-file-state');
                 }
             } catch (error) {
-                console.error('Error loading sample data:', error);
-                showError('Could not load sample data');
+                console.error('Error loading CSV data:', error);
+                showError('Could not load CSV data');
+                csvStatus.textContent = 'Error';
+                currentCsvFile.classList.add('no-file-state');
+            }
+
+            // Load PDF data
+            try {
+                const pdfResponse = await fetch(`./assets/${config.pdfFile}`);
+                
+                if (pdfResponse.ok) {
+                    const pdfBlob = await pdfResponse.blob();
+                    currentPdfData = pdfBlob;
+                    pdfFileName.textContent = config.pdfFile;
+                    pdfStatus.textContent = 'Active';
+                    currentPdfFile.classList.remove('no-file-state');
+                    removePdfBtn.style.display = 'flex';
+                } else {
+                    // PDF is optional, so no error message
+                    currentPdfData = null;
+                    pdfFileName.textContent = 'No PDF loaded';
+                    pdfStatus.textContent = 'Optional';
+                    currentPdfFile.classList.add('no-file-state');
+                    removePdfBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading PDF data:', error);
+                currentPdfData = null;
+                pdfFileName.textContent = 'No PDF loaded';
+                pdfStatus.textContent = 'Optional';
+                currentPdfFile.classList.add('no-file-state');
+                removePdfBtn.style.display = 'none';
             }
         }
 
-        // All the file handling and data processing functions remain the same from your original...
-        // (I'll keep the rest of your original JavaScript exactly as it was)
+        // Enhanced CSV parsing and preprocessing for KRI data
+        function parseAndPreprocessCSV(csvText, analysisType) {
+            try {
+                const data = parseCSVRobust(csvText);
+                
+                // Apply KRI-specific preprocessing
+                if (analysisType.includes('kri')) {
+                    return preprocessKRIData(data, analysisType);
+                }
+                
+                return data;
+                
+            } catch (error) {
+                console.error('CSV parsing error:', error);
+                throw new Error(`CSV parsing failed: ${error.message}`);
+            }
+        }
 
-        // File upload handling
-        fileInput.addEventListener('change', handleFileUpload);
+        // KRI-specific data preprocessing
+        function preprocessKRIData(data, analysisType) {
+            if (!data || data.length === 0) return data;
+            
+            console.log('Preprocessing KRI data...');
+            
+            // Clean and normalize column headers
+            const processedData = data.map(row => {
+                const cleanRow = {};
+                
+                Object.keys(row).forEach(key => {
+                    // Clean column headers
+                    let cleanKey = key.trim()
+                        .replace(/\s+/g, ' ') // Normalize spaces
+                        .replace(/[^\w\s%()/-]/g, '') // Remove special chars except common ones
+                        .trim();
+                    
+                    // Normalize common KRI column patterns
+                    if (cleanKey.toLowerCase().includes('risk status')) {
+                        cleanKey = 'Risk Status';
+                    } else if (cleanKey.toLowerCase().includes('risk trend')) {
+                        cleanKey = 'Risk Trend';
+                    } else if (cleanKey.toLowerCase().includes('risk outlook')) {
+                        cleanKey = 'Risk Outlook';
+                    } else if (cleanKey.toLowerCase().includes('current')) {
+                        cleanKey = 'Current Value';
+                    } else if (cleanKey.toLowerCase().includes('peer') && cleanKey.toLowerCase().includes('median')) {
+                        cleanKey = 'Peer Median';
+                    }
+                    
+                    // Clean and standardize cell values
+                    let value = row[key];
+                    if (typeof value === 'string') {
+                        value = value.trim();
+                        
+                        // Standardize risk levels
+                        if (value.toLowerCase() === 'low' || value.toLowerCase() === 'low risk') {
+                            value = 'Low';
+                        } else if (value.toLowerCase() === 'moderate' || value.toLowerCase() === 'moderate risk') {
+                            value = 'Moderate';
+                        } else if (value.toLowerCase() === 'high' || value.toLowerCase() === 'high risk') {
+                            value = 'High';
+                        }
+                        
+                        // Standardize trend indicators
+                        if (value.toLowerCase() === 'increasing') {
+                            value = 'Increasing';
+                        } else if (value.toLowerCase() === 'decreasing') {
+                            value = 'Decreasing';
+                        } else if (value.toLowerCase() === 'stable') {
+                            value = 'Stable';
+                        } else if (value.toLowerCase() === 'fluctuating') {
+                            value = 'Fluctuating';
+                        }
+                        
+                        // Convert percentage strings to numbers where appropriate
+                        if (value.match(/^\d+\.?\d*%$/)) {
+                            const numValue = parseFloat(value.replace('%', ''));
+                            if (!isNaN(numValue)) {
+                                cleanRow[cleanKey + ' (%)'] = numValue;
+                                cleanRow[cleanKey] = value; // Keep original format too
+                                return;
+                            }
+                        }
+                    }
+                    
+                    cleanRow[cleanKey] = value;
+                });
+                
+                return cleanRow;
+            });
+            
+            // Add metadata for better AI understanding
+            const metadata = {
+                dataType: 'KRI',
+                analysisType: analysisType,
+                categories: extractKRICategories(processedData),
+                riskMetrics: extractRiskMetrics(processedData),
+                timeHorizon: analysisType.includes('forecast') ? 'Forecast (3 years)' : 'Current vs Peers',
+                processingNotes: 'Data normalized for risk levels (Low/Moderate/High) and trends (Increasing/Decreasing/Stable/Fluctuating)'
+            };
+            
+            console.log('KRI preprocessing complete:', metadata);
+            
+            // Return data with metadata
+            processedData.metadata = metadata;
+            return processedData;
+        }
+
+        function extractKRICategories(data) {
+            const categories = new Set();
+            
+            data.forEach(row => {
+                Object.keys(row).forEach(key => {
+                    const lowerKey = key.toLowerCase();
+                    if (lowerKey.includes('capital')) categories.add('Capital');
+                    if (lowerKey.includes('asset') || lowerKey.includes('credit') || lowerKey.includes('npl') || lowerKey.includes('texas')) categories.add('Asset Quality');
+                    if (lowerKey.includes('earnings') || lowerKey.includes('nim') || lowerKey.includes('roa') || lowerKey.includes('roe')) categories.add('Earnings');
+                    if (lowerKey.includes('liquid') || lowerKey.includes('funding')) categories.add('Liquidity');
+                    if (lowerKey.includes('rate') || lowerKey.includes('market') || lowerKey.includes('duration')) categories.add('Market Risk');
+                });
+            });
+            
+            return Array.from(categories);
+        }
+
+        function extractRiskMetrics(data) {
+            const metrics = new Set();
+            
+            data.forEach(row => {
+                Object.keys(row).forEach(key => {
+                    if (key !== 'Risk Status' && key !== 'Risk Trend' && key !== 'Risk Outlook') {
+                        metrics.add(key);
+                    }
+                });
+            });
+            
+            return Array.from(metrics).slice(0, 10); // Limit to first 10 for brevity
+        }
+
+        // File upload handling (keeping existing logic)
+        csvFileInput.addEventListener('change', (e) => handleFileUpload(e, 'csv'));
+        pdfFileInput.addEventListener('change', (e) => handleFileUpload(e, 'pdf'));
         
-        document.querySelector('.change-file-wrapper').addEventListener('click', (e) => {
+        // Remove PDF functionality
+        removePdfBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            removePdf();
+        });
+
+        function removePdf() {
+            currentPdfData = null;
+            pdfFileName.textContent = 'No PDF loaded';
+            pdfStatus.textContent = 'Optional';
+            currentPdfFile.classList.add('no-file-state');
+            removePdfBtn.style.display = 'none';
+            pdfFileInput.value = '';
+            showSuccess('PDF removed successfully');
+        }
+        
+        document.querySelectorAll('.change-file-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         });
         
-        async function handleFileUpload(event) {
+        async function handleFileUpload(event, fileType) {
             const file = event.target.files[0];
             if (!file) return;
 
             const fileExtension = file.name.split('.').pop().toLowerCase();
             
-            if (!['csv', 'xlsx', 'json'].includes(fileExtension)) {
-                showError('Please upload a CSV, Excel (.xlsx), or JSON file');
-                return;
+            if (fileType === 'csv') {
+                if (!['csv', 'xlsx', 'json'].includes(fileExtension)) {
+                    showError('Please upload a CSV, Excel (.xlsx), or JSON file');
+                    return;
+                }
+            } else if (fileType === 'pdf') {
+                if (fileExtension !== 'pdf') {
+                    showError('Please upload a PDF file');
+                    return;
+                }
             }
 
             try {
-                let data;
-                
-                switch (fileExtension) {
-                    case 'csv':
-                        const fileContent = await readFileWithEncodingDetection(file);
-                        data = parseCSVRobust(fileContent);
-                        break;
-                    case 'json':
-                        const jsonContent = await readFileAsText(file);
-                        data = JSON.parse(jsonContent);
-                        break;
-                    case 'xlsx':
-                        showError('Excel files require additional processing. Please convert to CSV for now.');
-                        return;
-                }
+                if (fileType === 'csv') {
+                    let data;
+                    
+                    switch (fileExtension) {
+                        case 'csv':
+                            const fileContent = await readFileWithEncodingDetection(file);
+                            data = parseAndPreprocessCSV(fileContent, activeAnalysis);
+                            break;
+                        case 'json':
+                            const jsonContent = await readFileAsText(file);
+                            data = JSON.parse(jsonContent);
+                            break;
+                        case 'xlsx':
+                            showError('Excel files require additional processing. Please convert to CSV for now.');
+                            return;
+                    }
 
-                currentData = data;
-                currentDataType = fileExtension;
-                fileName.textContent = file.name;
-                
-                showSuccess(`${file.name} loaded successfully!`);
+                    currentCsvData = data;
+                    currentDataType = fileExtension;
+                    csvFileName.textContent = file.name;
+                    csvStatus.textContent = 'Active';
+                    currentCsvFile.classList.remove('no-file-state');
+                    
+                    showSuccess(`${file.name} loaded and preprocessed successfully!`);
+                } else if (fileType === 'pdf') {
+                    currentPdfData = file;
+                    pdfFileName.textContent = file.name;
+                    pdfStatus.textContent = 'Active';
+                    currentPdfFile.classList.remove('no-file-state');
+                    removePdfBtn.style.display = 'flex';
+                    
+                    showSuccess(`${file.name} loaded successfully!`);
+                }
                 
             } catch (error) {
                 console.error('File processing error:', error);
@@ -864,6 +1227,7 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             }
         }
 
+        // Keep all existing utility functions (readFileWithEncodingDetection, parseCSVRobust, etc.)
         async function readFileWithEncodingDetection(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -887,6 +1251,15 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 
                 reader.onerror = reject;
                 reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsText(file);
             });
         }
 
@@ -999,21 +1372,19 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             return transposedData;
         }
 
-        function readFileAsText(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => resolve(e.target.result);
-                reader.onerror = reject;
-                reader.readAsText(file);
-            });
-        }
-
-        function parseCSV(csvText) {
-            return parseCSVRobust(csvText);
-        }
-
         function createDetailedDataContext(data, analysisType) {
             let context = `COMPLETE DATASET ANALYSIS (${data.length} rows):\n\n`;
+            
+            // Add metadata if available
+            if (data.metadata) {
+                context += `DATA TYPE: ${data.metadata.dataType}\n`;
+                context += `ANALYSIS: ${data.metadata.analysisType}\n`;
+                context += `TIME HORIZON: ${data.metadata.timeHorizon}\n`;
+                if (data.metadata.categories.length > 0) {
+                    context += `RISK CATEGORIES: ${data.metadata.categories.join(', ')}\n`;
+                }
+                context += `PREPROCESSING: ${data.metadata.processingNotes}\n\n`;
+            }
             
             context += `COLUMNS: ${Object.keys(data[0]).join(', ')}\n\n`;
             
@@ -1027,25 +1398,43 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             return context;
         }
 
+        // Keep all existing modal, chat, and UI functions unchanged...
         // View data modal functions
-        currentFile.addEventListener('click', showDataModal);
+        currentCsvFile.addEventListener('click', () => showDataModal('csv'));
+        currentPdfFile.addEventListener('click', () => showDataModal('pdf'));
         closeModal.addEventListener('click', hideDataModal);
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) hideDataModal();
         });
 
-        function showDataModal() {
-            if (!currentData) {
-                showError('No data loaded');
-                return;
-            }
+        function showDataModal(fileType) {
+            if (fileType === 'csv') {
+                if (!currentCsvData) {
+                    showError('No CSV data loaded');
+                    return;
+                }
 
-            modalTitle.textContent = `${fileName.textContent} - Data Preview`;
-            
-            if (Array.isArray(currentData) && currentData.length > 0) {
-                modalBody.innerHTML = createTableHTML(currentData);
-            } else {
-                modalBody.innerHTML = `<div class="json-view">${JSON.stringify(currentData, null, 2)}</div>`;
+                modalTitle.textContent = `${csvFileName.textContent} - Data Preview`;
+                
+                if (Array.isArray(currentCsvData) && currentCsvData.length > 0) {
+                    modalBody.innerHTML = createTableHTML(currentCsvData);
+                } else {
+                    modalBody.innerHTML = `<div class="json-view">${JSON.stringify(currentCsvData, null, 2)}</div>`;
+                }
+            } else if (fileType === 'pdf') {
+                if (!currentPdfData) {
+                    showError('No PDF loaded');
+                    return;
+                }
+
+                modalTitle.textContent = `${pdfFileName.textContent} - PDF Preview`;
+                
+                if (currentPdfData instanceof File || currentPdfData instanceof Blob) {
+                    const pdfUrl = URL.createObjectURL(currentPdfData);
+                    modalBody.innerHTML = `<iframe src="${pdfUrl}" class="pdf-preview" title="PDF Preview"></iframe>`;
+                } else {
+                    modalBody.innerHTML = `<div class="pdf-preview">PDF preview not available for this file format</div>`;
+                }
             }
             
             modalOverlay.style.display = 'flex';
@@ -1053,12 +1442,17 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
 
         function hideDataModal() {
             modalOverlay.style.display = 'none';
+            // Clean up blob URLs
+            const iframe = modalBody.querySelector('iframe');
+            if (iframe && iframe.src.startsWith('blob:')) {
+                URL.revokeObjectURL(iframe.src);
+            }
         }
 
         function createTableHTML(data) {
             if (!data || data.length === 0) return '<p>No data to display</p>';
             
-            const headers = Object.keys(data[0]);
+            const headers = Object.keys(data[0]).filter(key => key !== 'metadata');
             const maxRows = 100;
             const displayData = data.slice(0, maxRows);
             
@@ -1082,6 +1476,17 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 html += `<p style="margin-top: 10px; color: #666;">Showing first ${maxRows} of ${data.length} rows</p>`;
             }
             
+            // Add metadata display if available
+            if (data.metadata) {
+                html += `<div style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                    <strong>Data Information:</strong><br>
+                    Type: ${data.metadata.dataType}<br>
+                    Analysis: ${data.metadata.analysisType}<br>
+                    Categories: ${data.metadata.categories.join(', ')}<br>
+                    Time Horizon: ${data.metadata.timeHorizon}
+                </div>`;
+            }
+            
             return html;
         }
 
@@ -1089,7 +1494,7 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
         async function startAnalysis() {
-            if (!currentData) {
+            if (!currentCsvData) {
                 showError('No data loaded to analyze');
                 return;
             }
@@ -1097,11 +1502,44 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             analyzeCenter.classList.add('hidden');
             chatInterface.classList.add('active');
             
-            const config = tabConfig[activeTab];
+            const config = analysisConfig[activeAnalysis];
             
-            const detailedContext = createDetailedDataContext(currentData, activeTab);
+            const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
             
-            const analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
+            let analysisPrompt = '';
+            
+            if (activeAnalysis.includes('kri')) {
+                analysisPrompt = `You are analyzing ${config.name} data for BankersGPS banking analytics.
+
+Context: ${config.context}
+
+${detailedContext}
+
+Please provide a comprehensive KRI analysis focusing on the ACTUAL DATA above. Your analysis must:
+
+1. Use specific risk levels, percentages, and values from the dataset
+2. Reference exact data points to support your conclusions about risk status and trends
+3. Compare actual values between different risk categories and metrics
+4. Identify patterns in risk trends (Increasing/Decreasing/Stable/Fluctuating)
+5. Base all insights on observable patterns in the complete KRI data
+6. Focus on CAELS framework implications (Capital, Asset Quality, Earnings, Liquidity, Sensitivity to Market Risk)
+
+## Dataset Overview
+Describe the specific KRI metrics and risk categories present in this dataset.
+
+## Key Risk Insights
+Focus on what the actual risk data reveals:
+
+- **Risk Status Analysis**: Current risk levels (Low/Moderate/High) across key metrics
+- **Risk Trend Analysis**: Directional trends and their implications  
+- **Critical Risk Areas**: Metrics showing concerning patterns or high risk levels
+- **Peer Comparisons** (if available): How risk metrics compare to peer institutions
+- **Forward-Looking Indicators**: Projected risk trends and their strategic implications
+
+## Strategic Risk Recommendations
+Provide actionable risk management insights based on the specific data patterns observed.`;
+            } else {
+                analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
 
 Context: ${config.context}
 
@@ -1122,7 +1560,7 @@ Briefly describe what this specific dataset contains based on the actual data st
 ## Key Insights
 Focus on what the actual numbers reveal:
 
-${activeTab.includes('net-interest') ? `
+${activeAnalysis.includes('net-interest') ? `
 - Specific NIM values and how they change across rate scenarios
 - Exact dollar amounts of NII changes
 - Percentage changes between scenarios
@@ -1138,12 +1576,13 @@ ${activeTab.includes('net-interest') ? `
 
 ## Strategic Recommendations
 Provide actionable insights based on the specific data patterns observed.`;
+            }
 
             await sendMessage(analysisPrompt, false);
             messageInput.focus();
         }
 
-        // Chat functions
+        // Keep all existing chat functions (addMessage, formatBotResponse, sendMessage, etc.)
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -1332,27 +1771,32 @@ Provide actionable insights based on the specific data patterns observed.`;
             showTyping();
 
             try {
-                const config = tabConfig[activeTab];
+                const config = analysisConfig[activeAnalysis];
                 let fullPrompt = message;
                 
-                if (currentData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
-                    const detailedContext = createDetailedDataContext(currentData, activeTab);
+                if (currentCsvData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
+                    const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
                     fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.
 ${config.context}
 
 ${detailedContext}`;
                 }
 
+                // Create FormData for file uploads
+                const formData = new FormData();
+                formData.append('prompt', fullPrompt);
+                formData.append('analysisType', activeAnalysis);
+                formData.append('useDocuments', config.useDocuments);
+
+                // Add PDF if available
+                if (currentPdfData) {
+                    formData.append('pdfFile', currentPdfData);
+                    formData.append('hasPdf', 'true');
+                }
+
                 const response = await fetch('/Chatbot/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        prompt: fullPrompt,
-                        analysisType: activeTab,
-                        useDocuments: config.useDocuments 
-                    }),
+                    body: formData
                 });
 
                 const data = await response.json();
