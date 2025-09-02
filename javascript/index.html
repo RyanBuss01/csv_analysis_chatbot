@@ -839,61 +839,63 @@
 
         // Updated analysis configuration with new KRI options
         const analysisConfig = {
-            'rate-risk': {
-                name: 'Rate Risk Management Strategy',
-                csvFile: 'sample_rate_shock.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: true,
-                context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
+        'rate-risk': {
+            name: 'Rate Risk Management Strategy',
+            csvFile: 'sample_rate_shock.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: true,
+            context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
-There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
-            },
-            'net-interest': {
-                name: 'Net Interest Margin Simulations',
-                csvFile: 'sample_net_intrest.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: true,
-                context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
+    There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
+        },
+        'net-interest': {
+            name: 'Net Interest Margin Simulations',
+            csvFile: 'sample_net_intrest.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: true,
+            context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
 
-Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
-            },
-            'forecast-kri': {
-                name: 'Forecast Key Risk Indicators',
-                csvFile: 'gps_kri_forecast.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: true,
-                context: `Key Risk Indicators (KRI) Forecast Analysis provides forward-looking risk assessment across the CAELS framework (Capital, Asset Quality, Earnings, Liquidity, and Sensitivity to Market Risk). This analysis examines your bank's projected risk profile over a 3-year forecast period relative to risk tolerance guidelines and peer performance.
+    Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
+        },
+        'forecast-kri': {
+            name: 'Forecast Key Risk Indicators',
+            csvFile: 'gps_kri_forecast.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: true,
+            context: `Key Risk Indicators (KRI) Forecast Analysis provides forward-looking strategic narrative insights about risk trajectory over a 3-year forecast period. This analysis creates compelling risk evolution stories that inform strategic decision-making rather than summarizing data points.
 
-The KRI Forecast Report analyzes historical and projected performance across critical risk metrics including: Capital ratios (Tier 1 Leverage, CET1, Tier 1, Total Capital), Asset Quality indicators (Texas Ratio, Coverage Ratio, NPL ratios, CRE concentrations), Earnings metrics (NIM, Core Earnings, ROA), Liquidity measures (Liquid Assets ratio, Non-core Funding Dependence, Wholesale Funding), and Market Risk sensitivity (Rate Risk, Mortgage concentrations, Margin Risk Tolerance). Each metric is categorized as Low, Moderate, or High risk based on your defined risk tolerance guidelines, with trend analysis showing Decreasing, Increasing, Stable, or Fluctuating risk patterns over the forecast period.`
-            },
-            'competitive-kri': {
-                name: 'Competitive Key Risk Indicators',
-                csvFile: 'gps_kri_competitive.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: true,
-                context: `Competitive Key Risk Indicators (KRI) Analysis benchmarks your bank's risk profile against strategic peer groups and industry standards. This analysis provides context for risk-based decision making by comparing your bank's performance across CAELS risk categories relative to peer medians, quartile rankings, and industry benchmarks.
+    The KRI Forecast Narrative focuses on risk trajectory storytelling across the CAELS framework (Capital, Asset Quality, Earnings, Liquidity, and Sensitivity to Market Risk). Rather than describing current risk status, this analysis interprets how risk patterns evolve, interconnect, and influence business strategy over time. The narrative connects individual metric trends to broader strategic themes including capital planning implications, regulatory compliance trajectory, market positioning challenges, and management priority shifts indicated by forecast patterns.
 
-The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`
-            },
-            'rate-risk-reduced': {
-                name: 'Rate Risk Management Strategy',
-                csvFile: 'sample_rate_shock.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: false,
-                context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
+    This forward-looking analysis emphasizes strategic storytelling about compound risk interactions, critical inflection points where risk trajectories change, and business model sustainability implications. The goal is strategic risk narrative that guides leadership decision-making rather than data reporting.`
+        },
+        'competitive-kri': {
+            name: 'Competitive Key Risk Indicators',
+            csvFile: 'gps_kri_competitive.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: true,
+            context: `Competitive Key Risk Indicators (KRI) Analysis benchmarks your bank's risk profile against strategic peer groups and industry standards. This analysis provides context for risk-based decision making by comparing your bank's performance across CAELS risk categories relative to peer medians, quartile rankings, and industry benchmarks.
 
-There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
-            },
-            'net-interest-reduced': {
-                name: 'Net Interest Margin Simulations',
-                csvFile: 'sample_net_intrest.csv',
-                pdfFile: 'sample_risk_report.pdf',
-                useDocuments: false,
-                context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
+    The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`
+        },
+        'rate-risk-reduced': {
+            name: 'Rate Risk Management Strategy',
+            csvFile: 'sample_rate_shock.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: false,
+            context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
 
-Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
-            }
-        };
+    There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
+        },
+        'net-interest-reduced': {
+            name: 'Net Interest Margin Simulations',
+            csvFile: 'sample_net_intrest.csv',
+            pdfFile: 'sample_risk_report.pdf',
+            useDocuments: false,
+            context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
+
+    Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
+        }
+    };
 
         // Initialize on load
         loadActiveAnalysisData();
@@ -942,7 +944,13 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         async function loadActiveAnalysisData() {
             const config = analysisConfig[activeAnalysis];
             
-            // Load CSV data
+            // Only load sample data if no user data is already loaded
+            if (isUserUploadedData()) {
+                console.log('User data already loaded, keeping current data');
+                return; // Don't overwrite user data with sample data
+            }
+            
+            // Load CSV data (sample data)
             try {
                 const csvResponse = await fetch(`./assets/${config.csvFile}`);
                 
@@ -951,8 +959,9 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                     currentCsvData = parseAndPreprocessCSV(csvText, activeAnalysis);
                     currentDataType = 'csv';
                     csvFileName.textContent = config.csvFile;
-                    csvStatus.textContent = 'Active';
+                    csvStatus.textContent = 'Active (Sample)';
                     currentCsvFile.classList.remove('no-file-state');
+                    currentCsvFile.style.borderColor = '#e1e5e9'; // Default border for sample data
                 } else {
                     showError(`${config.csvFile} not found in assets folder`);
                     csvStatus.textContent = 'Missing';
@@ -965,7 +974,13 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 currentCsvFile.classList.add('no-file-state');
             }
 
-            // Load PDF data
+            // Load PDF data (similar logic for PDF)
+            const currentPdfName = pdfFileName.textContent;
+            if (currentPdfName && !currentPdfName.includes('sample_') && !currentPdfName.includes('No PDF')) {
+                console.log('User PDF already loaded, keeping current PDF');
+                return; // Don't overwrite user PDF
+            }
+            
             try {
                 const pdfResponse = await fetch(`./assets/${config.pdfFile}`);
                 
@@ -973,15 +988,16 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                     const pdfBlob = await pdfResponse.blob();
                     currentPdfData = pdfBlob;
                     pdfFileName.textContent = config.pdfFile;
-                    pdfStatus.textContent = 'Active';
+                    pdfStatus.textContent = 'Active (Sample)';
                     currentPdfFile.classList.remove('no-file-state');
+                    currentPdfFile.style.borderColor = '#e1e5e9'; // Default border for sample data
                     removePdfBtn.style.display = 'flex';
                 } else {
-                    // PDF is optional, so no error message
                     currentPdfData = null;
                     pdfFileName.textContent = 'No PDF loaded';
                     pdfStatus.textContent = 'Optional';
                     currentPdfFile.classList.add('no-file-state');
+                    currentPdfFile.style.borderColor = '#e1e5e9';
                     removePdfBtn.style.display = 'none';
                 }
             } catch (error) {
@@ -993,7 +1009,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 removePdfBtn.style.display = 'none';
             }
         }
-
         // Enhanced CSV parsing and preprocessing for KRI data
         function parseAndPreprocessCSV(csvText, analysisType) {
             try {
@@ -1101,6 +1116,16 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
             return processedData;
         }
 
+        function isUserUploadedData() {
+            // More comprehensive check for user data
+            const fileName = csvFileName.textContent.toLowerCase();
+            return !fileName.includes('sample_') && 
+                !fileName.includes('gps_') && 
+                !fileName.includes('demo') && 
+                !fileName.includes('example') &&
+                fileName !== 'no csv loaded';
+        }
+
         function extractKRICategories(data) {
             const categories = new Set();
             
@@ -1194,18 +1219,23 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                             return;
                     }
 
+                    // CRITICAL: Replace the current data completely, don't merge
                     currentCsvData = data;
                     currentDataType = fileExtension;
                     csvFileName.textContent = file.name;
-                    csvStatus.textContent = 'Active';
+                    csvStatus.textContent = 'Active (User Data)'; // Make it clear this is user data
                     currentCsvFile.classList.remove('no-file-state');
                     
-                    showSuccess(`${file.name} loaded and preprocessed successfully!`);
+                    // Add visual indicator for user data
+                    currentCsvFile.style.borderColor = '#28a745'; // Green border for user data
+                    
+                    showSuccess(`${file.name} loaded successfully! Analysis will use your institution's data.`);
                 } else if (fileType === 'pdf') {
                     currentPdfData = file;
                     pdfFileName.textContent = file.name;
-                    pdfStatus.textContent = 'Active';
+                    pdfStatus.textContent = 'Active (User Data)';
                     currentPdfFile.classList.remove('no-file-state');
+                    currentPdfFile.style.borderColor = '#28a745'; // Green border for user data
                     removePdfBtn.style.display = 'flex';
                     
                     showSuccess(`${file.name} loaded successfully!`);
@@ -1216,7 +1246,6 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
                 showError('Error processing file. Please check the format.');
             }
         }
-
         // Keep all existing utility functions (readFileWithEncodingDetection, parseCSVRobust, etc.)
         async function readFileWithEncodingDetection(file) {
             return new Promise((resolve, reject) => {
@@ -1483,95 +1512,153 @@ Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the
         // Analyze table button
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
-        async function startAnalysis() {
-            if (!currentCsvData) {
-                showError('No data loaded to analyze');
-                return;
-            }
-
-            analyzeCenter.classList.add('hidden');
-            chatInterface.classList.add('active');
-            
-            const config = analysisConfig[activeAnalysis];
-            
-            const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-            
-            let analysisPrompt = '';
-            
-            if (activeAnalysis.includes('kri')) {
-                analysisPrompt = `You are analyzing ${config.name} data for BankersGPS banking analytics.
-
-Context: ${config.context}
-
-${detailedContext}
-
-Please provide a comprehensive KRI analysis focusing on the ACTUAL DATA above. Your analysis must:
-
-1. Use specific risk levels, percentages, and values from the dataset
-2. Reference exact data points to support your conclusions about risk status and trends
-3. Compare actual values between different risk categories and metrics
-4. Identify patterns in risk trends (Increasing/Decreasing/Stable/Fluctuating)
-5. Base all insights on observable patterns in the complete KRI data
-6. Focus on CAELS framework implications (Capital, Asset Quality, Earnings, Liquidity, Sensitivity to Market Risk)
-
-## Dataset Overview
-Describe the specific KRI metrics and risk categories present in this dataset.
-
-## Key Risk Insights
-Focus on what the actual risk data reveals:
-
-- **Risk Status Analysis**: Current risk levels (Low/Moderate/High) across key metrics
-- **Risk Trend Analysis**: Directional trends and their implications  
-- **Critical Risk Areas**: Metrics showing concerning patterns or high risk levels
-- **Peer Comparisons** (if available): How risk metrics compare to peer institutions
-- **Forward-Looking Indicators**: Projected risk trends and their strategic implications
-
-## Strategic Risk Recommendations
-Provide actionable risk management insights based on the specific data patterns observed.`;
-            } else {
-                analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
-
-Context: ${config.context}
-
-${detailedContext}
-
-Please provide a strategic analysis focusing on the ACTUAL DATA above. Your analysis must:
-
-1. Use specific numbers, percentages, and dollar amounts from the dataset
-2. Reference exact data points to support your conclusions
-3. Compare actual values between different scenarios/categories
-4. Calculate and show percentage changes where relevant
-5. Base all insights on observable patterns in the data
-6. Avoid making assumptions not supported by the actual data
-
-## Dataset Overview
-Briefly describe what this specific dataset contains based on the actual data structure and values.
-
-## Key Insights
-Focus on what the actual numbers reveal:
-
-${activeAnalysis.includes('net-interest') ? `
-- Specific NIM values and how they change across rate scenarios
-- Exact dollar amounts of NII changes
-- Percentage changes between scenarios
-- Which components drive the largest changes
-- Asset vs liability repricing patterns shown in the data
-` : `
-- Specific risk/reward ratios and gap amounts
-- Asset and liability maturity distributions from the data
-- Duration mismatches and their quantified impact
-- Basis risk measurements from the actual data
-- Yield curve relationships shown in the numbers
-`}
-
-## Strategic Recommendations
-Provide actionable insights based on the specific data patterns observed.`;
-            }
-
-            await sendMessage(analysisPrompt, false);
-            messageInput.focus();
+      async function startAnalysis() {
+        if (!currentCsvData && !currentPdfData) {
+            showError('No data loaded to analyze');
+            return;
         }
 
+        analyzeCenter.classList.add('hidden');
+        chatInterface.classList.add('active');
+        
+        const config = analysisConfig[activeAnalysis];
+        
+        let analysisPrompt = '';
+        
+        // UPDATE the Forecast KRI section in startAnalysis function
+        if (activeAnalysis === 'forecast-kri') {
+            // Simplified Forecast KRI with minimal structure guidance
+            const detailedContext = currentCsvData ? createDetailedDataContext(currentCsvData, activeAnalysis) : '';
+            
+            analysisPrompt = `You are analyzing ${config.name} data for BankersGPS banking analytics.
+
+        Context: ${config.context}
+
+        ${detailedContext}
+
+        INSTRUCTIONS:
+        - DO NOT provide "Dataset Overview," "Key Status Analysis," "Critical Risk Areas," or "Strategic Risk Recommendations" sections
+        - Focus on narrative insights about risk trajectory over the forecast period
+        - Use specific data points and bold numbers from the CSV
+        - Organize with clear headers and professional formatting
+        - Include bullet points when listing specific metrics or action items
+
+        Please provide analysis with these TWO sections:
+
+        ## Risk Trend Analysis
+        Analyze the directional patterns and trajectories across CAELS risk categories, focusing on how risk metrics evolve over the forecast period. Use specific numbers from the data and explain what these trends mean strategically.
+
+        ## Strategic Risk Implications  
+        Focus on forward-looking business implications and management priorities based on the risk trends identified in the data.
+
+        Use professional formatting with headers, bullet points where appropriate, and bold specific numbers and percentages from the dataset.`;
+            
+        } else {
+            // FOR ALL OTHER ANALYSIS TYPES
+            if (currentCsvData) {
+                const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
+                
+                // Check if this is user-uploaded data vs default sample data
+                const isUserUploadedData = !csvFileName.textContent.includes('sample_') && !csvFileName.textContent.includes('gps_');
+                
+                if (isUserUploadedData) {
+                    // USER DATA - Focus entirely on their specific institution
+                    analysisPrompt = `You are analyzing ${config.name} data for a specific financial institution using BankersGPS banking analytics.
+
+    CRITICAL: This is REAL INSTITUTIONAL DATA uploaded by the user. You must analyze ONLY the actual values from this specific institution's dataset.
+
+    Context: ${config.context}
+
+    ${detailedContext}
+
+    MANDATORY INSTRUCTIONS:
+    - Use ONLY the exact numbers, percentages, and dollar amounts from the institution's dataset above
+    - Reference specific data points to support every conclusion
+    - Compare actual values between different scenarios/categories using REAL NUMBERS from the data
+    - Calculate percentage changes and show work using the PROVIDED INSTITUTIONAL DATA
+    - Base ALL insights on observable patterns in this institution's complete dataset
+    - Do NOT reference generic examples or sample data
+    - This institution's name may be evident in the data - reference it appropriately
+
+    Please provide a strategic analysis focusing on THIS INSTITUTION'S ACTUAL DATA:
+
+    ## Dataset Overview
+    Briefly describe this specific institution's data based on the actual data structure and values provided.
+
+    ## Key Insights
+    Focus on what this institution's actual numbers reveal:
+
+    ${activeAnalysis.includes('net-interest') ? `
+    - This institution's specific NIM values and changes across rate scenarios
+    - Exact dollar amounts of NII changes for this institution
+    - Percentage changes between scenarios calculated from this institution's data
+    - Which components drive the largest changes for this specific institution
+    - This institution's asset vs liability repricing patterns
+    ` : `
+    - This institution's specific risk/reward ratios and gap amounts
+    - This institution's asset and liability maturity distributions
+    - Duration mismatches and their quantified impact for this institution
+    - Basis risk measurements from this institution's actual data
+    - Yield curve relationships shown in this institution's numbers
+    `}
+
+    ## Strategic Recommendations
+    Provide actionable insights based on this specific institution's data patterns and strategic position.
+
+    REMINDER: Every number, percentage, and insight must come from this institution's uploaded dataset only.`;
+                } else {
+                    // SAMPLE DATA - Use existing logic
+                    analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
+
+    Context: ${config.context}
+
+    ${detailedContext}
+
+    Please provide a strategic analysis focusing on the ACTUAL DATA above. Your analysis must:
+
+    1. Use specific numbers, percentages, and dollar amounts from the dataset
+    2. Reference exact data points to support your conclusions
+    3. Compare actual values between different scenarios/categories
+    4. Calculate and show percentage changes where relevant
+    5. Base all insights on observable patterns in the data
+    6. Avoid making assumptions not supported by the actual data
+
+    ## Dataset Overview
+    Briefly describe what this specific dataset contains based on the actual data structure and values.
+
+    ## Key Insights
+    Focus on what the actual numbers reveal:
+
+    ${activeAnalysis.includes('net-interest') ? `
+    - Specific NIM values and how they change across rate scenarios
+    - Exact dollar amounts of NII changes
+    - Percentage changes between scenarios
+    - Which components drive the largest changes
+    - Asset vs liability repricing patterns shown in the data
+    ` : `
+    - Specific risk/reward ratios and gap amounts
+    - Asset and liability maturity distributions from the data
+    - Duration mismatches and their quantified impact
+    - Basis risk measurements from the actual data
+    - Yield curve relationships shown in the numbers
+    `}
+
+    ## Strategic Recommendations
+    Provide actionable insights based on the specific data patterns observed.`;
+                }
+            } else if (currentPdfData) {
+                // PDF only case
+                analysisPrompt = `You are analyzing ${config.name} data from the uploaded PDF report for BankersGPS banking analytics.
+
+    Context: ${config.context}
+
+    Please extract and analyze the relevant financial data from the uploaded PDF report, focusing on the specific institution's metrics and values.`;
+            }
+        }
+
+        await sendMessage(analysisPrompt, false);
+        messageInput.focus();
+    }
         // Keep all existing chat functions (addMessage, formatBotResponse, sendMessage, etc.)
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
@@ -1764,12 +1851,27 @@ Provide actionable insights based on the specific data patterns observed.`;
                 const config = analysisConfig[activeAnalysis];
                 let fullPrompt = message;
                 
+                // CSV data is primary, PDF is supplementary context
                 if (currentCsvData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
                     const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-                    fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.
-${config.context}
+                    
+                    // Check if this is user-uploaded data
+                    const isUserUploadedData = !csvFileName.textContent.includes('sample_');
+                    const dataContext = isUserUploadedData ? 
+                        `\n\nYou are analyzing the specific institution's uploaded data. Focus exclusively on the actual values from this institution's dataset.` :
+                        `\n\nYou are analyzing sample demonstration data.`;
+                    
+                    fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.${dataContext}
+        ${config.context}
 
-${detailedContext}`;
+        ${detailedContext}
+
+        CRITICAL: Use ONLY the specific values, metrics, and data points from the provided dataset above. Do not reference any other data sources or samples.`;
+                }
+
+                // PDF provides additional institutional context
+                if (currentPdfData) {
+                    fullPrompt += `\n\nADDITIONAL CONTEXT: A PDF report has been uploaded that provides broader institutional context and background for this analysis. Use this as supplementary context to better understand the institution's overall risk profile and strategic position.`;
                 }
 
                 // Create FormData for file uploads
@@ -1778,7 +1880,7 @@ ${detailedContext}`;
                 formData.append('analysisType', activeAnalysis);
                 formData.append('useDocuments', config.useDocuments);
 
-                // Add PDF if available
+                // Add PDF if available (as supplementary context)
                 if (currentPdfData) {
                     formData.append('pdfFile', currentPdfData);
                     formData.append('hasPdf', 'true');
@@ -1809,7 +1911,6 @@ ${detailedContext}`;
                 }
             }
         }
-
         sendButton.addEventListener('click', () => sendMessage());
         
         messageInput.addEventListener('keypress', (e) => {
