@@ -159,13 +159,13 @@ class Chatbot {
   }
 
   getBankingContext(analysisType) {
-      // Reduced tabs return empty for minimal context
-      if (analysisType?.includes('reduced')) {
-        return '';
-      }
+    // Reduced tabs return empty for minimal context
+    if (analysisType?.includes('reduced')) {
+      return '';
+    }
 
-      const contexts = {
-        'rate-risk': `
+    const contexts = {
+      'rate-risk': `
   BANKING CONTEXT - ECONOMIC VALUE OF EQUITY (EVE) RISK ANALYSIS:
   You are analyzing Economic Value of Equity (EVE) risk data, NOT Net Interest Income.
 
@@ -195,7 +195,7 @@ class Chatbot {
   - Bullet points (•) on separate lines for data details
   - Concise analysis with specific numbers and percentages`,
 
-        'net-interest': `
+      'net-interest': `
   BANKING CONTEXT - NET INTEREST MARGIN (NIM) SIMULATIONS:
   You are analyzing Net Interest Margin (NIM) simulation data, NOT Economic Value data.
 
@@ -225,7 +225,7 @@ class Chatbot {
   - Bullet points (•) on separate lines for data details
   - Focus on rate vulnerability and margin dynamics with specific data`,
 
-        'forecast-kri': `
+      'forecast-kri': `
   BANKING CONTEXT - FORECAST KEY RISK INDICATORS (KRI) ANALYSIS:
   You are analyzing forward-looking Key Risk Indicators across the CAELS framework over a 3-year forecast period.
 
@@ -259,7 +259,7 @@ class Chatbot {
   - Bullet points (•) on separate lines for specific risk metrics and trends
   - Emphasize forward-looking risk management implications`,
 
-        'competitive-kri': `
+      'competitive-kri': `
   BANKING CONTEXT - COMPETITIVE KEY RISK INDICATORS (KRI) ANALYSIS:
   You are analyzing peer-comparative Key Risk Indicators to benchmark risk position against strategic peer groups.
 
@@ -292,10 +292,10 @@ class Chatbot {
   - Numbered points (1, 2, 3) with **bold titles** for each comparative analysis
   - Bullet points (•) on separate lines for specific peer comparisons and quartile data
   - Emphasize relative risk position and competitive risk strategy implications`
-      };
+    };
 
-      return contexts[analysisType] || '';
-    }
+    return contexts[analysisType] || '';
+  }
 
   /**
    * Enhanced chat function optimized for caching with PDF upload support
@@ -308,8 +308,36 @@ class Chatbot {
    * @returns {Promise<string>} AI response
    */
   async chat(prompt, docContent, analysisType = null, uploadedPdfContent = '', pdfFileName = null) {
+    // Minimal modes: send only the user prompt (no system message, no docs)
+    if (analysisType && analysisType.includes('minimal')) {
+      // Build single-user-message content using exact prompt + uploaded PDF context (if any)
+      let minimalUserContent = prompt;
+      if (uploadedPdfContent && uploadedPdfContent.trim()) {
+        const normalizedPdf = this.normalizeDocumentContentAdvanced(uploadedPdfContent);
+        minimalUserContent += `\n\n=== UPLOADED PDF CONTEXT ===\n${normalizedPdf}\n\n=== END PDF CONTEXT ===`;
+      }
+
+      // For "minimal + docs" variants, also append normalized documentation content
+      if (analysisType.includes('minimal-docs') && docContent && docContent.trim()) {
+        const normalizedDocs = this.normalizeDocumentContentAdvanced(docContent);
+        minimalUserContent += `\n\n=== DOCUMENTATION CONTEXT ===\n${normalizedDocs}\n\n=== END DOCUMENTATION CONTEXT ===`;
+      }
+
+      const completion = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "user", content: minimalUserContent }
+        ],
+        temperature: 0.2,
+        max_tokens: 4000,
+        stream: false
+      });
+      this.trackCacheUsage(completion.usage);
+      return completion.choices[0].message.content;
+    }
+
     // Build deterministic base system context (will be cached)
-    const baseSystemContext = this.buildBaseSystemContext();
+    const baseSystemContext = this.buildBaseSystemContext(analysisType);
     
     // Add analysis-specific context (also cacheable)
     let contextualSystemContent = baseSystemContext;
@@ -365,7 +393,7 @@ class Chatbot {
   /**
    * Build deterministic base system context for consistent caching
    */
-  buildBaseSystemContext() {
+  buildBaseSystemContext(analysisType) {
     return `You are a specialized banking analytics expert assistant for BankersGPS.
 You provide high-level strategic analysis with clear, concise formatting based on ACTUAL DATA.
 
@@ -687,7 +715,13 @@ CRITICAL FORMATTING REQUIREMENTS:
   logInteraction(prompt, response, analysisType = null, useDocuments = true, hasPdfUpload = false) {
     const timestamp = new Date().toISOString();
     const contextInfo = analysisType ? ` [${analysisType}]` : '';
-    const dataIndicator = prompt.includes('COMPLETE DATASET') ? ' [FULL_DATA]' : '';
+    // Detect dataset presence markers from frontend prompts
+    let dataIndicator = '';
+    if (prompt.includes('COMPLETE DATASET')) {
+      dataIndicator = ' [FULL_DATA]';
+    } else if (prompt.includes('DATASET (')) {
+      dataIndicator = ' [CSV_DATA]';
+    }
     const docIndicator = useDocuments ? ' [DOCS_ON]' : ' [DOCS_OFF]';
     const pdfIndicator = hasPdfUpload ? ' [PDF_UPLOADED]' : '';
     const cacheInfo = ` [CACHE_HITS:${this.cacheStats.hits}]`;

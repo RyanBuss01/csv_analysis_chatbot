@@ -710,8 +710,11 @@
                     <option value="net-interest">Net Interest Margin</option>
                     <option value="forecast-kri">Forecast KRI</option>
                     <option value="competitive-kri">Competitive KRI</option>
-                    <option value="rate-risk-reduced">RRM (reduced)</option>
-                    <option value="net-interest-reduced">NIM (reduced)</option>
+                    <option value="rate-risk-minimal">RRM (minimal)</option>
+                    <option value="net-interest-minimal">NIM (minimal)</option>
+                    <option value="rate-risk-minimal-docs">RRM (minimal + docs)</option>
+                    <option value="net-interest-minimal-docs">NIM (minimal + docs)</option>
+                    
                 </select>
             </div>
             <button class="refresh-button" id="refreshButton" title="Reset Page">🔄</button>
@@ -877,23 +880,33 @@
 
     The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`
         },
-        'rate-risk-reduced': {
-            name: 'Rate Risk Management Strategy',
+        'rate-risk-minimal': {
+            name: 'Rate Risk (Minimal)',
+            csvFile: 'sample_rate_shock.csv',
+            pdfFile: null,
+            useDocuments: false,
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+        },
+        'net-interest-minimal': {
+            name: 'Net Interest Margin (Minimal)',
+            csvFile: 'sample_net_intrest.csv',
+            pdfFile: null,
+            useDocuments: false,
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+        },
+        'rate-risk-minimal-docs': {
+            name: 'Rate Risk (Minimal + Docs)',
             csvFile: 'sample_rate_shock.csv',
             pdfFile: 'sample_risk_report.pdf',
-            useDocuments: false,
-            context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
-
-    There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
+            useDocuments: true,
+            minimalPrompt: `Using only the uploaded file, and incorporating relevant documentation for context, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
         },
-        'net-interest-reduced': {
-            name: 'Net Interest Margin Simulations',
+        'net-interest-minimal-docs': {
+            name: 'Net Interest Margin (Minimal + Docs)',
             csvFile: 'sample_net_intrest.csv',
             pdfFile: 'sample_risk_report.pdf',
-            useDocuments: false,
-            context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
-
-    Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
+            useDocuments: true,
+            minimalPrompt: `Using only the uploaded file, and incorporating relevant documentation for context, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
         }
     };
 
@@ -962,10 +975,15 @@
                     csvStatus.textContent = 'Active (Sample)';
                     currentCsvFile.classList.remove('no-file-state');
                     currentCsvFile.style.borderColor = '#e1e5e9'; // Default border for sample data
+                    try {
+                        const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
+                        console.log(`[CSV] Sample loaded: ${config.csvFile} (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount})`);
+                    } catch (_) {}
                 } else {
                     showError(`${config.csvFile} not found in assets folder`);
                     csvStatus.textContent = 'Missing';
                     currentCsvFile.classList.add('no-file-state');
+                    console.warn(`[CSV] Sample missing: ${config.csvFile}`);
                 }
             } catch (error) {
                 console.error('Error loading CSV data:', error);
@@ -974,39 +992,50 @@
                 currentCsvFile.classList.add('no-file-state');
             }
 
-            // Load PDF data (similar logic for PDF)
+            // Load PDF data (only if a sample PDF is configured)
             const currentPdfName = pdfFileName.textContent;
             if (currentPdfName && !currentPdfName.includes('sample_') && !currentPdfName.includes('No PDF')) {
                 console.log('User PDF already loaded, keeping current PDF');
                 return; // Don't overwrite user PDF
             }
-            
-            try {
-                const pdfResponse = await fetch(`./assets/${config.pdfFile}`);
-                
-                if (pdfResponse.ok) {
-                    const pdfBlob = await pdfResponse.blob();
-                    currentPdfData = pdfBlob;
-                    pdfFileName.textContent = config.pdfFile;
-                    pdfStatus.textContent = 'Active (Sample)';
-                    currentPdfFile.classList.remove('no-file-state');
-                    currentPdfFile.style.borderColor = '#e1e5e9'; // Default border for sample data
-                    removePdfBtn.style.display = 'flex';
-                } else {
+
+            if (analysisConfig[activeAnalysis].pdfFile) {
+                try {
+                    const pdfResponse = await fetch(`./assets/${config.pdfFile}`);
+                    
+                    if (pdfResponse.ok) {
+                        const pdfBlob = await pdfResponse.blob();
+                        currentPdfData = pdfBlob;
+                        pdfFileName.textContent = config.pdfFile;
+                        pdfStatus.textContent = 'Active (Sample)';
+                        currentPdfFile.classList.remove('no-file-state');
+                        currentPdfFile.style.borderColor = '#e1e5e9'; // Default border for sample data
+                        removePdfBtn.style.display = 'flex';
+                        console.log(`[PDF] Sample loaded: ${config.pdfFile} (size=${pdfBlob.size} bytes)`);
+                    } else {
+                        currentPdfData = null;
+                        pdfFileName.textContent = 'No PDF loaded';
+                        pdfStatus.textContent = 'Optional';
+                        currentPdfFile.classList.add('no-file-state');
+                        currentPdfFile.style.borderColor = '#e1e5e9';
+                        removePdfBtn.style.display = 'none';
+                        console.warn(`[PDF] Sample not found: ${config.pdfFile}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading PDF data:', error);
                     currentPdfData = null;
                     pdfFileName.textContent = 'No PDF loaded';
                     pdfStatus.textContent = 'Optional';
                     currentPdfFile.classList.add('no-file-state');
-                    currentPdfFile.style.borderColor = '#e1e5e9';
                     removePdfBtn.style.display = 'none';
                 }
-            } catch (error) {
-                console.error('Error loading PDF data:', error);
+            } else {
                 currentPdfData = null;
                 pdfFileName.textContent = 'No PDF loaded';
                 pdfStatus.textContent = 'Optional';
                 currentPdfFile.classList.add('no-file-state');
                 removePdfBtn.style.display = 'none';
+                console.log('[PDF] No sample PDF configured for this analysis');
             }
         }
         // Enhanced CSV parsing and preprocessing for KRI data
@@ -1230,6 +1259,10 @@
                     currentCsvFile.style.borderColor = '#28a745'; // Green border for user data
                     
                     showSuccess(`${file.name} loaded successfully! Analysis will use your institution's data.`);
+                    try {
+                        const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
+                        console.log(`[CSV] User file loaded: ${file.name} (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount})`);
+                    } catch (_) {}
                 } else if (fileType === 'pdf') {
                     currentPdfData = file;
                     pdfFileName.textContent = file.name;
@@ -1239,6 +1272,7 @@
                     removePdfBtn.style.display = 'flex';
                     
                     showSuccess(`${file.name} loaded successfully!`);
+                    console.log(`[PDF] User file loaded: ${file.name} (size=${file.size} bytes)`);
                 }
                 
             } catch (error) {
@@ -1417,6 +1451,29 @@
             return context;
         }
 
+        // Minimal data block: just columns and rows, no extra instructions
+        function createMinimalDataBlock(data) {
+            if (!Array.isArray(data) || data.length === 0) return 'DATASET: (no rows)';
+            let block = `DATASET (${data.length} rows)\nCOLUMNS: ${Object.keys(data[0]).join(', ')}\n`;
+            data.forEach((row, idx) => {
+                block += `Row ${idx + 1}: ${JSON.stringify(row)}\n`;
+            });
+            return block;
+        }
+
+        // Detect dataset type from columns to prevent cross-type analysis
+        function detectDataTypeFromColumns(data) {
+            if (!Array.isArray(data) || data.length === 0) return 'unknown';
+            const headers = Object.keys(data[0]).map(h => (h || '').toLowerCase());
+            const hasEve = headers.some(h => h.includes('eve') || h.includes('economic value')) || headers.includes('assets (ev)'.toLowerCase());
+            const hasNim = headers.some(h => h.includes('nim') || h.includes('net interest income'));
+            const hasKri = headers.some(h => h.includes('risk status') || h.includes('risk trend') || h.includes('risk outlook'));
+            if (hasKri) return 'kri';
+            if (hasEve) return 'eve';
+            if (hasNim) return 'nim';
+            return 'unknown';
+        }
+
         // Keep all existing modal, chat, and UI functions unchanged...
         // View data modal functions
         currentCsvFile.addEventListener('click', () => showDataModal('csv'));
@@ -1555,98 +1612,31 @@
             
         } else {
             // FOR ALL OTHER ANALYSIS TYPES
+            // Replace the long analysisPrompt section in startAnalysis() with this:
+
             if (currentCsvData) {
-                const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-                
-                // Check if this is user-uploaded data vs default sample data
-                const isUserUploadedData = !csvFileName.textContent.includes('sample_') && !csvFileName.textContent.includes('gps_');
-                
-                if (isUserUploadedData) {
-                    // USER DATA - Focus entirely on their specific institution
-                    analysisPrompt = `You are analyzing ${config.name} data for a specific financial institution using BankersGPS banking analytics.
+            const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
+            
+            analysisPrompt = `Provide a brief, high-level analysis of this ${config.name} data.
 
-    CRITICAL: This is REAL INSTITUTIONAL DATA uploaded by the user. You must analyze ONLY the actual values from this specific institution's dataset.
+            ${detailedContext}
 
-    Context: ${config.context}
+            Keep it simple and concise:
 
-    ${detailedContext}
+            ## What This Data Shows
+            Brief overview of the dataset and key metrics.
 
-    MANDATORY INSTRUCTIONS:
-    - Use ONLY the exact numbers, percentages, and dollar amounts from the institution's dataset above
-    - Reference specific data points to support every conclusion
-    - Compare actual values between different scenarios/categories using REAL NUMBERS from the data
-    - Calculate percentage changes and show work using the PROVIDED INSTITUTIONAL DATA
-    - Base ALL insights on observable patterns in this institution's complete dataset
-    - Do NOT reference generic examples or sample data
-    - This institution's name may be evident in the data - reference it appropriately
+            ## Key Findings  
+            • 3-4 bullet points highlighting what's happening in the data
+            • Use actual numbers and percentages from the dataset
+            • Keep each point to 1-2 sentences
 
-    Please provide a strategic analysis focusing on THIS INSTITUTION'S ACTUAL DATA:
+            ## Main Takeaway
+            One paragraph summary of the overall situation and what it means.
 
-    ## Dataset Overview
-    Briefly describe this specific institution's data based on the actual data structure and values provided.
-
-    ## Key Insights
-    Focus on what this institution's actual numbers reveal:
-
-    ${activeAnalysis.includes('net-interest') ? `
-    - This institution's specific NIM values and changes across rate scenarios
-    - Exact dollar amounts of NII changes for this institution
-    - Percentage changes between scenarios calculated from this institution's data
-    - Which components drive the largest changes for this specific institution
-    - This institution's asset vs liability repricing patterns
-    ` : `
-    - This institution's specific risk/reward ratios and gap amounts
-    - This institution's asset and liability maturity distributions
-    - Duration mismatches and their quantified impact for this institution
-    - Basis risk measurements from this institution's actual data
-    - Yield curve relationships shown in this institution's numbers
-    `}
-
-    ## Strategic Recommendations
-    Provide actionable insights based on this specific institution's data patterns and strategic position.
-
-    REMINDER: Every number, percentage, and insight must come from this institution's uploaded dataset only.`;
-                } else {
-                    // SAMPLE DATA - Use existing logic
-                    analysisPrompt = `You are analyzing a ${config.name} dataset for BankersGPS. 
-
-    Context: ${config.context}
-
-    ${detailedContext}
-
-    Please provide a strategic analysis focusing on the ACTUAL DATA above. Your analysis must:
-
-    1. Use specific numbers, percentages, and dollar amounts from the dataset
-    2. Reference exact data points to support your conclusions
-    3. Compare actual values between different scenarios/categories
-    4. Calculate and show percentage changes where relevant
-    5. Base all insights on observable patterns in the data
-    6. Avoid making assumptions not supported by the actual data
-
-    ## Dataset Overview
-    Briefly describe what this specific dataset contains based on the actual data structure and values.
-
-    ## Key Insights
-    Focus on what the actual numbers reveal:
-
-    ${activeAnalysis.includes('net-interest') ? `
-    - Specific NIM values and how they change across rate scenarios
-    - Exact dollar amounts of NII changes
-    - Percentage changes between scenarios
-    - Which components drive the largest changes
-    - Asset vs liability repricing patterns shown in the data
-    ` : `
-    - Specific risk/reward ratios and gap amounts
-    - Asset and liability maturity distributions from the data
-    - Duration mismatches and their quantified impact
-    - Basis risk measurements from the actual data
-    - Yield curve relationships shown in the numbers
-    `}
-
-    ## Strategic Recommendations
-    Provide actionable insights based on the specific data patterns observed.`;
-                }
-            } else if (currentPdfData) {
+            Focus on explaining what's happening rather than detailed methodology.`;
+            }
+            else if (currentPdfData) {
                 // PDF only case
                 analysisPrompt = `You are analyzing ${config.name} data from the uploaded PDF report for BankersGPS banking analytics.
 
@@ -1685,6 +1675,7 @@
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
+                .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
                 .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                 .replace(/^## (.*$)/gm, '<h2>$1</h2>')
                 .replace(/^# (.*$)/gm, '<h1>$1</h1>')
@@ -1851,26 +1842,49 @@
                 const config = analysisConfig[activeAnalysis];
                 let fullPrompt = message;
                 
-                // CSV data is primary, PDF is supplementary context
-                if (currentCsvData && (message.toLowerCase().includes('data') || message.toLowerCase().includes('analyze') || !showUserMessage)) {
-                    const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-                    
-                    // Check if this is user-uploaded data
-                    const isUserUploadedData = !csvFileName.textContent.includes('sample_');
-                    const dataContext = isUserUploadedData ? 
-                        `\n\nYou are analyzing the specific institution's uploaded data. Focus exclusively on the actual values from this institution's dataset.` :
-                        `\n\nYou are analyzing sample demonstration data.`;
-                    
-                    fullPrompt += `\n\nContext: You are analyzing ${config.name} data for BankersGPS banking analytics.${dataContext}
-        ${config.context}
+                // CSV data is primary: ALWAYS include it when available
+                if (currentCsvData) {
+                    try {
+                        const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
+                        console.log(`[SEND] Attaching CSV dataset (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount}) for analysis='${activeAnalysis}'`);
+                    } catch (_) {}
+                    // Minimal modes: exact prompt from config + dataset only (always include dataset)
+                    if (activeAnalysis.includes('-minimal')) {
+                        const minimalInstruction = analysisConfig[activeAnalysis].minimalPrompt || '';
+                        const minimalData = createMinimalDataBlock(currentCsvData);
+                        const userIntent = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
 
-        ${detailedContext}
+                        // Add strict guardrails to force citing only dataset values
+                        const detectedType = detectDataTypeFromColumns(currentCsvData);
+                        let strictRules = `\n\nSTRICT RULES (Data Fidelity):\n- Only cite numbers that appear verbatim in the DATASET below.\n- After each number, include a short citation like [Scenario: value from 'Rate Change', Column: column name].\n- If a metric is not present as a column, write "Not available" instead of estimating.\n- Do not introduce concepts outside the dataset type. For NIM datasets, do NOT mention EVE/economic value. For EVE datasets, do NOT mention NIM/Net Interest unless a column exists.\n- Keep analysis tied to actual rows (e.g., -400bp, Current, +400bp).`;
 
-        CRITICAL: Use ONLY the specific values, metrics, and data points from the provided dataset above. Do not reference any other data sources or samples.`;
+                        // Add dataset type hint to align the model
+                        if (detectedType !== 'unknown') {
+                            strictRules += `\nDATASET TYPE DETECTED: ${detectedType.toUpperCase()} (derived from column headers). Align analysis accordingly.`;
+                        }
+
+                        fullPrompt = `${minimalInstruction}${strictRules}${userIntent}\n\n${minimalData}`;
+                    } else {
+                        // Regular modes: add a concise, structured instruction then attach the dataset block
+                        const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
+                        let instruction;
+                        if (activeAnalysis.includes('net-interest')) {
+                            instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across rate shocks (-400 to +400 bps), not just the figures.\n\n- Overall shape: describe earnings sensitivity and any asymmetry (losses in cuts vs gains in hikes).\n- Most adverse: name the scenario and list NIM change (bps) and NII change ($), then one sentence on the driver (e.g., asset yield drop vs liability floors, deposit cost lag).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note tapering or reversal if visible (e.g., deposit costs accelerate above +200 bps).\n- Drivers: explain asset-side (loans, investments) and liability-side (deposits, borrowings) behavior using patterns in the data (repricing timing, betas, floors, mix shifts).\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
+                        } else if (activeAnalysis.includes('rate-risk')) {
+                            instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across shocks (-400 to +400 bps) based on the data.\n\n- Overall shape: describe interest rate sensitivity and whether outcomes are symmetric or skewed.\n- Most adverse: name the scenario and report the magnitude on the key metric(s) present (EVE %, $, or NIM/NII), then one sentence on the main cause (e.g., duration/convexity effects, liability floors).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note any tapering or reversals; explain with liability repricing acceleration or asset sensitivity.\n- Drivers: explain asset categories and liability categories that matter most, grounded in repricing timing, duration/sensitivity, deposit betas, floors, and mix.\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
+                        } else {
+                            instruction = `Provide a concise executive narrative using only the dataset below. Include an Executive Summary, a section on extremes with magnitudes, primary drivers, and assumptions to review. Bold key figures. If metrics are missing, say "Not available."`;
+                        }
+
+                        fullPrompt = `${message}\n\n${instruction}\n\n${detailedContext}`;
+                    }
+                } else {
+                    console.warn(`[SEND] No CSV dataset available to attach for analysis='${activeAnalysis}'. Using PDF/doc context only.`);
                 }
 
                 // PDF provides additional institutional context
-                if (currentPdfData) {
+                // For minimal modes, do not add PDF context
+                if (currentPdfData && !activeAnalysis.endsWith('-minimal')) {
                     fullPrompt += `\n\nADDITIONAL CONTEXT: A PDF report has been uploaded that provides broader institutional context and background for this analysis. Use this as supplementary context to better understand the institution's overall risk profile and strategic position.`;
                 }
 
