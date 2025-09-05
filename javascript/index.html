@@ -885,28 +885,36 @@
             csvFile: 'sample_rate_shock.csv',
             pdfFile: null,
             useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+
+Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.`
         },
         'net-interest-minimal': {
             name: 'Net Interest Margin (Minimal)',
             csvFile: 'sample_net_intrest.csv',
             pdfFile: null,
             useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+
+Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
         },
         'rate-risk-minimal-docs': {
             name: 'Rate Risk (Minimal + Docs)',
             csvFile: 'sample_rate_shock.csv',
             pdfFile: 'sample_risk_report.pdf',
             useDocuments: true,
-            minimalPrompt: `Using only the uploaded file, and incorporating relevant documentation for context, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+
+Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.`
         },
         'net-interest-minimal-docs': {
             name: 'Net Interest Margin (Minimal + Docs)',
             csvFile: 'sample_net_intrest.csv',
             pdfFile: 'sample_risk_report.pdf',
             useDocuments: true,
-            minimalPrompt: `Using only the uploaded file, and incorporating relevant documentation for context, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results. The format should be primarily narrative.`
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+
+Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
         }
     };
 
@@ -1474,6 +1482,19 @@
             return 'unknown';
         }
 
+        function deriveTitleFromType(detectedType) {
+            switch (detectedType) {
+                case 'nim':
+                    return 'Net Interest Margin Analysis';
+                case 'eve':
+                    return 'Economic Value of Equity (EVE) Risk Analysis';
+                case 'kri':
+                    return 'Key Risk Indicators Analysis';
+                default:
+                    return 'Banking Analytics Summary';
+            }
+        }
+
         // Keep all existing modal, chat, and UI functions unchanged...
         // View data modal functions
         currentCsvFile.addEventListener('click', () => showDataModal('csv'));
@@ -1856,7 +1877,8 @@
 
                         // Add strict guardrails to force citing only dataset values
                         const detectedType = detectDataTypeFromColumns(currentCsvData);
-                        let strictRules = `\n\nSTRICT RULES (Data Fidelity):\n- Only cite numbers that appear verbatim in the DATASET below.\n- After each number, include a short citation like [Scenario: value from 'Rate Change', Column: column name].\n- If a metric is not present as a column, write "Not available" instead of estimating.\n- Do not introduce concepts outside the dataset type. For NIM datasets, do NOT mention EVE/economic value. For EVE datasets, do NOT mention NIM/Net Interest unless a column exists.\n- Keep analysis tied to actual rows (e.g., -400bp, Current, +400bp).`;
+                        const title = deriveTitleFromType(detectedType);
+                        let strictRules = `\n\nFORMAT & DATA RULES:\n- Begin with the header: ## ${title}.\n- Only cite numbers that appear verbatim in the DATASET.\n- When citing a figure, reference the scenario and column in natural prose (e.g., Net Interest Income at -400bp is 29,098).\n- If a metric is not present as a column, write "Not available".\n- Do not introduce concepts outside the dataset type. For NIM datasets, do NOT mention EVE/economic value. For EVE datasets, do NOT mention NIM/Net Interest unless a column exists.\n- Keep analysis tied to actual rows (e.g., -400bp, Current, +400bp).`;
 
                         // Add dataset type hint to align the model
                         if (detectedType !== 'unknown') {
@@ -1864,6 +1886,13 @@
                         }
 
                         fullPrompt = `${minimalInstruction}${strictRules}${userIntent}\n\n${minimalData}`;
+                        // OVERRIDE: Respect exact minimal prompt with dataset only (no extra rules)
+                        {
+                            const _mi = analysisConfig[activeAnalysis].minimalPrompt || '';
+                            const _md = createMinimalDataBlock(currentCsvData);
+                            const _ui = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
+                            fullPrompt = `${_mi}${_ui}\n\n${_md}`;
+                        }
                     } else {
                         // Regular modes: add a concise, structured instruction then attach the dataset block
                         const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
@@ -1884,7 +1913,7 @@
 
                 // PDF provides additional institutional context
                 // For minimal modes, do not add PDF context
-                if (currentPdfData && !activeAnalysis.endsWith('-minimal')) {
+                if (currentPdfData && !activeAnalysis.includes('-minimal')) {
                     fullPrompt += `\n\nADDITIONAL CONTEXT: A PDF report has been uploaded that provides broader institutional context and background for this analysis. Use this as supplementary context to better understand the institution's overall risk profile and strategic position.`;
                 }
 
