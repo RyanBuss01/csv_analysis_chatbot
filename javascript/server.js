@@ -185,6 +185,7 @@ app.get('/assets/:filename', (req, res) => {
  *   "error": "Error description"
  * }
  */
+
 app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async (req, res) => {
   try {
     const { prompt, analysisType, useDocuments = 'true', hasPdf } = req.body;

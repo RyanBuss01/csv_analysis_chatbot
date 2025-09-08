@@ -917,40 +917,36 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 - Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
         },
         'rate-risk-minimal-3': {
-            name: 'Rate Risk (Minimal 3: Narrative + Structure)',
+            name: 'Rate Risk (Minimal 3: Focused Narrative)',
             csvFile: 'sample_rate_shock.csv',
             pdfFile: null,
             useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write an executive narrative focused on clarity and structure.
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
-Required structure (write natural paragraphs):
-- Title: Executive Narrative — Full-Spectrum EVE Shock Analysis
-- Overall Sensitivity: one paragraph on the shape and asymmetry across -400 to +400 bps.
-- Scenario Extremes: most adverse and most favorable scenarios; quantify EVE change (%, $) and one-sentence drivers for each.
-- Key Drivers: two short paragraphs — Assets (duration/convexity, repricing), Liabilities (floors, deposit betas, mix).
-- High-Shock Dynamics: note tapering/reversal at higher positive shocks and why.
-- Summary: concise wrap-up of what matters most.
-- Assumptions to Review: 3–5 bullets linked to observed patterns.
+Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.
 
-Rules: Bold key figures; cite only values from the dataset; if a metric is missing, write "Not available." Do not restate the table; explain what happens and why.`
+Focused explanation and formatting:
+- Start with a 2–3 sentence overview of rate sensitivity and any asymmetry across shocks.
+- Extremes: identify the most adverse and most favorable scenarios; quantify EVE change (%, $) and include one sentence on the primary driver for each.
+- Drivers: one short paragraph on asset-side dynamics (duration/convexity, repricing timing) and one short paragraph on liability-side dynamics (rate floors, deposit betas, funding mix) grounded in the dataset.
+- High-shock behavior: call out any tapering or reversal at higher positive shocks and explain briefly.
+- Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn’t present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
         },
         'net-interest-minimal-3': {
-            name: 'Net Interest Margin (Minimal 3: Narrative + Structure)',
+            name: 'Net Interest Margin (Minimal 3: Focused Narrative)',
             csvFile: 'sample_net_intrest.csv',
             pdfFile: null,
             useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write an executive narrative focused on clarity and structure.
+            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
-Required structure (write natural paragraphs):
-- Title: Executive Narrative — Full-Spectrum NIM Shock Analysis
-- Overall Sensitivity: one paragraph on the shape and asymmetry across -400 to +400 bps.
-- Scenario Extremes: most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($) with one-sentence drivers for each.
-- Key Drivers: two short paragraphs — Assets (loans, investments; repricing timing), Liabilities (deposits, borrowings; betas, floors, mix).
-- High-Shock Dynamics: note tapering/reversal at higher positive shocks as funding costs accelerate.
-- Summary: concise wrap-up of what matters most.
-- Assumptions to Review: 3–5 bullets linked to observed patterns.
+Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
 
-Rules: Bold key figures; cite only values from the dataset; if a metric is missing, write "Not available." Do not restate the table; explain what happens and why.`
+Focused explanation and formatting:
+- Start with a 2–3 sentence overview of earnings sensitivity and any asymmetry across shocks.
+- Extremes: identify the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($) and include one sentence on the primary driver for each.
+- Drivers: one short paragraph on asset-side dynamics (loans and investments; repricing timing) and one short paragraph on liability-side dynamics (deposits and borrowings; deposit betas, rate floors, funding mix) grounded in the dataset.
+- High-shock behavior: call out any tapering or reversal at higher positive shocks as funding costs accelerate.
+- Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn’t present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
         },
         'rate-risk-minimal': {
             name: 'Rate Risk (Minimal)',
