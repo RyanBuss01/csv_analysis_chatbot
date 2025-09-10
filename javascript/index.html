@@ -55,13 +55,7 @@
             gap: 10px;
         }
 
-        .analysis-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        /* analysis label removed */
 
         .analysis-dropdown {
             background: rgba(255, 255, 255, 0.95);
@@ -81,6 +75,24 @@
             background-position: right 12px center;
             background-size: 12px;
             padding-right: 35px;
+        }
+
+        .docs-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 10px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .docs-toggle input[type="checkbox"] {
+            accent-color: #667eea;
+            width: 16px;
+            height: 16px;
         }
 
         
@@ -105,6 +117,36 @@
             justify-content: center;
         }
 
+        .model-selector {
+            position: absolute;
+            top: 50%;
+            right: 70px; /* leave room for refresh button */
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .model-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 160px;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23667eea" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 35px;
+        }
+
         .refresh-button:hover {
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.5);
@@ -115,12 +157,134 @@
             background: #f8f9fa;
             padding: 5px 20px;
             border-bottom: 1px solid #e1e5e9;
+            max-height: 100px; /* cap row height similar to original */
+            overflow: hidden;
         }
 
         .file-uploads-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            display: flex;
+            gap: 14px;
+            align-items: stretch;
+            flex-wrap: nowrap;
+            height: 100%;
+        }
+
+        .left-upload-group {
+            flex: 1 1 50%;
+            max-width: 50%;
+            display: flex;
+            flex-direction: row; /* place CSV and PDF side-by-side */
+            align-items: center;
+            gap: 12px;
+            height: 100%;
+        }
+
+        /* Override default full-width for compact row cards on the left */
+        .left-upload-group .current-file {
+            width: auto;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .right-prompt-group {
+            flex: 1 1 50%;
+            max-width: 50%;
+            height: 100%;
+            display: flex;
+        }
+
+        .upload-square {
+            width: 72px;
+            height: 72px;
+            background: #fff;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: box-shadow .2s ease, border-color .2s ease;
+            user-select: none;
+        }
+
+        .upload-square:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: #cfd6dd; }
+        .upload-square.no-file-state { opacity: .5; border-style: dashed; }
+
+        .upload-square .icon-btn { position: absolute; right: 6px; bottom: 6px; }
+        .upload-square .file-icon { font-size: 28px; }
+
+        .prompt-panel {
+            flex: 1 1 auto;
+            background: #fff;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .prompt-panel .left { display: flex; gap: 10px; align-items: center; }
+        .prompt-panel .file-icon { font-size: 22px; }
+        .prompt-panel .file-title { font-size: 13px; font-weight: 700; color: #2c3e50; }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid #e1e5e9;
+            color: #667eea;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .icon-btn:hover {
+            border-color: #667eea;
+            background: rgba(102,126,234,0.08);
+        }
+
+        .custom-prompt-section { display: none; }
+
+        .custom-prompt-section label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        #promptEditor {
+            width: 100%;
+            min-height: 240px; /* doubled from 120px */
+            resize: vertical;
+            padding: 10px 12px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .prompt-preview {
+            font-size: 13px;
+            color: #5a6c7d;
+            line-height: 1.45;
+            max-height: 6.2em; /* ~4 lines visible in capped row */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
         }
 
         .file-upload-wrapper {
@@ -162,10 +326,11 @@
             align-items: center;
             gap: 12px;
             flex: 1;
+            min-width: 0;
         }
 
         .file-icon {
-            font-size: 24px;
+            font-size: 18px;
             opacity: 0.8;
         }
 
@@ -173,6 +338,8 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .file-title {
@@ -181,13 +348,14 @@
             color: #2c3e50;
             margin: 0;
             line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            max-width: 100%;
         }
 
-        .file-status {
-            font-size: 11px;
-            color: #5a6c7d;
-            opacity: 0.8;
-        }
+        .file-status { display: none; }
 
         .change-file-wrapper {
             display: flex;
@@ -210,15 +378,17 @@
             background: transparent;
             color: #667eea;
             border: 1px solid #667eea;
-            padding: 6px 12px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 500;
             transition: all 0.2s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
         }
 
         .change-file-btn:hover {
@@ -571,6 +741,12 @@
             position: relative;
         }
 
+        /* Wider layout used for the Prompt editor modal only */
+        .modal-content.wide {
+            width: 80vw;           /* make overlay noticeably wider */
+            max-width: 1200px;     /* cap width on large screens */
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -704,21 +880,24 @@
     <div class="chat-container">
         <div class="chat-header">
             <div class="analysis-selector">
-                <div class="analysis-label">Analysis Type</div>
                 <select class="analysis-dropdown" id="analysisDropdown">
-                    <option value="rate-risk">Rate Risk Management</option>
-                    <option value="net-interest">Net Interest Margin</option>
+                    <option value="rate-risk-minimal-2">Rate Risk Management</option>
+                    <option value="net-interest-minimal-2" selected>Net Intrest Margin</option>
                     <option value="forecast-kri">Forecast KRI</option>
                     <option value="competitive-kri">Competitive KRI</option>
-                    <option value="rate-risk-minimal">RRM (minimal)</option>
-                    <option value="net-interest-minimal">NIM (minimal)</option>
-                    <option value="rate-risk-minimal-2">RRM (minimal 2)</option>
-                    <option value="net-interest-minimal-2">NIM (minimal 2)</option>
-                    <option value="rate-risk-minimal-3">RRM (minimal 3)</option>
-                    <option value="net-interest-minimal-3">NIM (minimal 3)</option>
-                    <option value="rate-risk-minimal-docs">RRM (minimal + docs)</option>
-                    <option value="net-interest-minimal-docs">NIM (minimal + docs)</option>
-                    
+                </select>
+                <label class="docs-toggle" title="Append documentation context">
+                    <input type="checkbox" id="addDocsCheckbox" />
+                    Add docs
+                </label>
+            </div>
+            <div class="model-selector">
+                <select class="model-dropdown" id="modelDropdown" title="Select GPT model">
+                    <option value="gpt-4.1-mini" selected>gpt-4.1-mini</option>
+                    <option value="gpt-4.1">gpt-4.1</option>
+                    <option value="gpt-4o">gpt-4o</option>
+                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="gpt-5">gpt-5</option>
                 </select>
             </div>
             <button class="refresh-button" id="refreshButton" title="Reset Page">🔄</button>
@@ -726,10 +905,9 @@
         
         <div class="file-upload-section">
             <div class="file-uploads-container">
-                <!-- CSV Upload Section -->
-                <div class="file-upload-wrapper">
-                    <div class="file-type-label">CSV Data File</div>
-                    <div class="current-file" id="currentCsvFile">
+                <div class="left-upload-group">
+                    <!-- CSV Original Card -->
+                    <div class="current-file" id="currentCsvFile" title="Click to preview CSV">
                         <div class="file-title-section">
                             <div class="file-icon">📊</div>
                             <div class="file-details">
@@ -737,23 +915,18 @@
                                 <div class="file-status" id="csvStatus">Active</div>
                             </div>
                         </div>
-                        
                         <div class="change-file-wrapper">
                             <div class="file-input-wrapper">
                                 <input type="file" id="csvFileInput" class="file-input" accept=".csv,.xlsx,.json">
-                                <label for="csvFileInput" class="change-file-btn">
+                                <label for="csvFileInput" class="change-file-btn" title="Change CSV">
                                     <span>📄</span>
-                                    Change
                                 </label>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- PDF Upload Section -->
-                <div class="file-upload-wrapper">
-                    <div class="file-type-label">PDF Source Report (Optional)</div>
-                    <div class="current-file" id="currentPdfFile">
+                    <!-- PDF Original Card -->
+                    <div class="current-file" id="currentPdfFile" title="Click to preview PDF">
                         <div class="file-title-section">
                             <div class="file-icon">📄</div>
                             <div class="file-details">
@@ -761,19 +934,38 @@
                                 <div class="file-status" id="pdfStatus">Active</div>
                             </div>
                         </div>
-                        
                         <div class="change-file-wrapper">
                             <div class="file-input-wrapper">
                                 <input type="file" id="pdfFileInput" class="file-input" accept=".pdf">
-                                <label for="pdfFileInput" class="change-file-btn">
+                                <label for="pdfFileInput" class="change-file-btn" title="Change PDF">
                                     <span>📄</span>
-                                    Change
                                 </label>
                             </div>
                             <button class="remove-file-btn" id="removePdfBtn" title="Remove PDF">✕</button>
                         </div>
                     </div>
                 </div>
+
+                <div class="right-prompt-group">
+                    <!-- Prompt Panel (right half) -->
+                    <div class="prompt-panel">
+                        <div class="left">
+                            <div class="file-icon">📝</div>
+                            <div>
+                                <div class="file-title">Prompt</div>
+                                <div class="prompt-preview" id="promptPreview">Edit the analysis prompt…</div>
+                            </div>
+                        </div>
+                        <div style="margin-left:auto;">
+                            <button class="icon-btn" id="editPromptBtn" title="Edit prompt">✎</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Hidden prompt editor (shown in modal when editing) -->
+            <div class="custom-prompt-section">
+                <label for="promptEditor">Prompt</label>
+                <textarea id="promptEditor" placeholder="Customize the analysis prompt..."></textarea>
             </div>
         </div>
         
@@ -836,13 +1028,20 @@
         const modalTitle = document.getElementById('modalTitle');
         const modalBody = document.getElementById('modalBody');
         const closeModal = document.getElementById('closeModal');
+        const modalContent = document.querySelector('.modal-content');
         const refreshButton = document.getElementById('refreshButton');
         const analysisDropdown = document.getElementById('analysisDropdown');
+        const modelDropdown = document.getElementById('modelDropdown');
+        const promptEditor = document.getElementById('promptEditor');
+        const promptPreview = document.getElementById('promptPreview');
+        const editPromptBtn = document.getElementById('editPromptBtn');
 
         let currentCsvData = null;
         let currentPdfData = null;
         let currentDataType = 'csv';
-        let activeAnalysis = 'rate-risk';
+        let activeAnalysis = 'net-interest-minimal-2';
+        let includeDocs = false; // 'Add docs' checkbox state
+        let selectedModel = 'gpt-4.1-mini';
 
         // Updated analysis configuration with new KRI options
         const analysisConfig = {
@@ -873,7 +1072,8 @@
 
     The KRI Forecast Narrative focuses on risk trajectory storytelling across the CAELS framework (Capital, Asset Quality, Earnings, Liquidity, and Sensitivity to Market Risk). Rather than describing current risk status, this analysis interprets how risk patterns evolve, interconnect, and influence business strategy over time. The narrative connects individual metric trends to broader strategic themes including capital planning implications, regulatory compliance trajectory, market positioning challenges, and management priority shifts indicated by forecast patterns.
 
-    This forward-looking analysis emphasizes strategic storytelling about compound risk interactions, critical inflection points where risk trajectories change, and business model sustainability implications. The goal is strategic risk narrative that guides leadership decision-making rather than data reporting.`
+    This forward-looking analysis emphasizes strategic storytelling about compound risk interactions, critical inflection points where risk trajectories change, and business model sustainability implications. The goal is strategic risk narrative that guides leadership decision-making rather than data reporting.`,
+            defaultPrompt: `You are analyzing Forecast KRI data for BankersGPS.\n\nWrite a concise, executive narrative that focuses on forward-looking risk trends across CAELS over the 3-year forecast period. Use actual values from the dataset.\n\nFormat:\n- ## Risk Trend Analysis: Explain directional patterns and inflection points; bold key numbers.\n- ## Strategic Risk Implications: What the trends mean for management priorities.\n\nKeep it strategic and insight-led; avoid table restatement.`
         },
         'competitive-kri': {
             name: 'Competitive Key Risk Indicators',
@@ -882,7 +1082,8 @@
             useDocuments: true,
             context: `Competitive Key Risk Indicators (KRI) Analysis benchmarks your bank's risk profile against strategic peer groups and industry standards. This analysis provides context for risk-based decision making by comparing your bank's performance across CAELS risk categories relative to peer medians, quartile rankings, and industry benchmarks.
 
-    The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`
+    The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`,
+            defaultPrompt: `You are analyzing Competitive KRI data for BankersGPS.\n\nWrite a peer-comparative executive narrative using actual values from the dataset.\n\nFormat:\n- ## Competitive Risk Analysis: Summarize relative position vs peer medians and quartiles; bold key numbers.\n- ## Strategic Positioning: Identify competitive advantages, gaps, and actions.`
         },
         'rate-risk-minimal-2': {
             name: 'Rate Risk (Minimal 2)',
@@ -908,14 +1109,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
 Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
-
-Executive-style guidance (keep this brief and insight-led, not a table recap):
-- Describe overall earnings sensitivity and any asymmetry across shocks.
-- Name the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($), then explain the primary drivers.
-- Identify which asset and liability categories matter most (loans, investments vs deposits, borrowings), referencing repricing timing, deposit betas, and rate floors apparent in the data.
-- Note any tapering or reversal at higher positive shocks as funding costs accelerate.
-- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        },
+`  },
         'rate-risk-minimal-3': {
             name: 'Rate Risk (Minimal 3: Focused Narrative)',
             csvFile: 'sample_rate_shock.csv',
@@ -1002,6 +1196,10 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         // Initialize on load
         loadActiveAnalysisData();
+        loadDefaultPromptForAnalysis();
+        updatePromptPreview();
+
+        // Keep KRI options and both minimal-2 modes; no trimming
 
         // Dropdown change handler
         analysisDropdown.addEventListener('change', (e) => {
@@ -1011,18 +1209,117 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             }
         });
 
+        // Docs toggle handler
+        const addDocsCheckbox = document.getElementById('addDocsCheckbox');
+        addDocsCheckbox.addEventListener('change', (e) => {
+            includeDocs = e.target.checked;
+            console.log(`[UI] Add docs toggled: ${includeDocs}`);
+        });
+
+        // Model dropdown handler
+        modelDropdown.addEventListener('change', (e) => {
+            selectedModel = e.target.value || 'gpt-4.1-mini';
+            console.log(`[UI] Model selected: ${selectedModel}`);
+        });
+
         function switchAnalysis(analysisId) {
             activeAnalysis = analysisId;
             
             // Reset to initial state and load new data
             resetToInitialState();
             loadActiveAnalysisData();
+            loadDefaultPromptForAnalysis();
+            updatePromptPreview();
         }
 
-        // Refresh button
+        function getDefaultPromptForAnalysis() {
+            const config = analysisConfig[activeAnalysis] || {};
+            if (activeAnalysis.includes('-minimal')) {
+                return config.minimalPrompt || '';
+            }
+            return config.defaultPrompt || '';
+        }
+
+        function loadDefaultPromptForAnalysis() {
+            try {
+                promptEditor.value = getDefaultPromptForAnalysis();
+            } catch (_) {
+                promptEditor.value = '';
+            }
+        }
+
+        function updatePromptPreview() {
+            const text = (promptEditor.value || '').trim();
+            promptPreview.textContent = text ? text : 'Edit the analysis prompt…';
+        }
+
+        editPromptBtn.addEventListener('click', () => {
+            openPromptModal();
+        });
+
+        function openPromptModal() {
+            modalTitle.textContent = 'Edit Prompt';
+            // Make the edit prompt modal wider for better editing experience
+            modalContent.classList.add('wide');
+            // Clear modal body and insert the editor
+            modalBody.innerHTML = '';
+            promptEditor.style.display = 'block';
+            modalBody.appendChild(promptEditor);
+            
+            // Add actions
+            const actions = document.createElement('div');
+            actions.style.marginTop = '12px';
+            actions.style.display = 'flex';
+            actions.style.gap = '8px';
+            
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.className = 'change-file-btn';
+            saveBtn.addEventListener('click', () => {
+                updatePromptPreview();
+                modalOverlay.style.display = 'none';
+            });
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.className = 'remove-file-btn';
+            cancelBtn.addEventListener('click', () => closeModal.click());
+            
+            actions.appendChild(saveBtn);
+            actions.appendChild(cancelBtn);
+            modalBody.appendChild(actions);
+            
+            // Show modal
+            modalOverlay.style.display = 'flex';
+        }
+
+        closeModal.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
+
+        // Refresh button: perform full page reload; fallback to soft reset
         refreshButton.addEventListener('click', () => {
-            resetToInitialState();
-            loadActiveAnalysisData();
+            try {
+                // Attempt a hard reload to fully reset app state
+                window.location.reload();
+            } catch (err) {
+                // Fallback: soft reset to initial state
+                console.warn('Hard reload failed; performing soft reset.', err);
+                // Reset selects and toggles to defaults
+                analysisDropdown.value = 'net-interest-minimal-2';
+                activeAnalysis = 'net-interest-minimal-2';
+                addDocsCheckbox.checked = false;
+                includeDocs = false;
+                modelDropdown.value = 'gpt-4.1-mini';
+                selectedModel = 'gpt-4.1-mini';
+
+                // Clear prompt editor and reload defaults
+                promptEditor.value = '';
+                resetToInitialState();
+                loadActiveAnalysisData();
+                loadDefaultPromptForAnalysis();
+                updatePromptPreview();
+            }
         });
 
         function resetToInitialState() {
@@ -1131,7 +1428,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         // Enhanced CSV parsing and preprocessing for KRI data
         function parseAndPreprocessCSV(csvText, analysisType) {
             try {
-                const data = parseCSVRobust(csvText);
+                const data = parseCSVRobust(csvText, analysisType);
                 
                 // Apply KRI-specific preprocessing
                 if (analysisType.includes('kri')) {
@@ -1406,21 +1703,28 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             });
         }
 
-        function parseCSVRobust(csvText) {
+        function parseCSVRobust(csvText, analysisType) {
             try {
-                const lines = csvText.trim().split('\n');
+                const normalized = csvText.replace(/\r\n?/g, '\n').trim();
+                const lines = normalized.split('\n');
                 
                 if (lines.length === 0) {
                     throw new Error('Empty CSV file');
                 }
                 
                 const rawData = parseRawCSV(lines);
-                
-                if (shouldTransposeData(rawData)) {
-                    console.log('Detected rate shock format - transposing data...');
-                    return transposeCSVData(rawData);
+
+                // Always normalize orientation for Net Interest / Rate Risk
+                const a = (analysisType || '').toLowerCase();
+                if (a.includes('net-interest') || a.includes('rate-risk')) {
+                    const normalizedData = normalizeBankOrientation(rawData);
+                    try {
+                        const headers = Object.keys(normalizedData[0] || {});
+                        console.log('[CSV] Normalized headers:', headers.join(', '));
+                    } catch (_) {}
+                    return normalizedData;
                 }
-                
+
                 return rawData;
                 
             } catch (error) {
@@ -1430,87 +1734,280 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         }
 
         function parseRawCSV(lines) {
-            const headerLine = lines[0];
-            let headers;
-            
-            if (headerLine.includes('"')) {
-                headers = headerLine.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-                headers = headers.map(h => h.replace(/^"|"$/g, '').trim());
-            } else {
-                headers = headerLine.split(',').map(h => h.trim());
-            }
-            
-            const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
-            
-            return dataRows.map((line, rowIndex) => {
-                let values;
-                
-                if (line.includes('"')) {
-                    values = line.match(/"([^"]*)"|([^,]+)/g) || [];
-                    values = values.map(v => {
-                        if (v.startsWith('"') && v.endsWith('"')) {
-                            return v.slice(1, -1);
-                        }
-                        return v.trim();
-                    });
+        const headerLineRaw = lines[0] || '';
+        
+        // Detect delimiter
+        const commaCount = (headerLineRaw.match(/,/g) || []).length;
+        const tabCount = (headerLineRaw.match(/\t/g) || []).length;
+        const delimiter = tabCount > commaCount ? '\t' : ',';
+
+        // Split CSV line respecting quotes
+        const splitRespectingQuotes = (line) => {
+            const out = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (!inQuotes && ch === delimiter) {
+                    out.push(current);
+                    current = '';
                 } else {
-                    values = line.split(',').map(v => v.trim());
+                    current += ch;
                 }
-                
+            }
+            out.push(current);
+            return out.map(v => v.replace(/^\uFEFF/, '').trim());
+        };
+
+        // Check if first row contains rate scenarios instead of headers
+        const firstRowValues = splitRespectingQuotes(headerLineRaw).map(h => h.replace(/^"|"$/g, '').trim());
+        const rateShockPattern = /^[+-]?\d+\s*bp$|^current$/i;
+        const rateScenarioCount = firstRowValues.filter(val => rateShockPattern.test(val)).length;
+
+        console.log('CSV PARSING - First row:', firstRowValues);
+        console.log('Rate scenarios found:', rateScenarioCount);
+
+        if (rateScenarioCount >= 3) {
+            console.log('Treating as headerless CSV - first row contains data');
+            
+            // Create synthetic column names
+            const columnNames = firstRowValues.map((_, index) => `col_${index}`);
+            console.log('Synthetic columns:', columnNames);
+            
+            // Process all lines as data
+            const allLines = lines.filter(line => line.trim().length > 0);
+            
+            const result = allLines.map((line) => {
+                const values = splitRespectingQuotes(line);
+                const row = {};
+                columnNames.forEach((colName, index) => {
+                    row[colName] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
+                });
+                return row;
+            });
+            
+            console.log('Parsed result sample:', result[0]);
+            return result;
+        } else {
+            console.log('Standard CSV with headers');
+            const headers = firstRowValues;
+            const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
+
+            return dataRows.map((line) => {
+                const values = splitRespectingQuotes(line);
                 const row = {};
                 headers.forEach((header, index) => {
-                    row[header] = values[index] || '';
+                    const key = header || `Column_${index}`;
+                    row[key] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
                 });
-                
                 return row;
             });
         }
+    }
 
-        function shouldTransposeData(data) {
+        // Ensure final layout is: first column header 'bp', values like "-400bp/Current/+200bp" down the rows;
+        // top headers are category titles taken from the original first column when needed.
+        function normalizeBankOrientation(data) {
+            if (!Array.isArray(data) || data.length === 0) return data;
+
+            const rateShockPattern = /^[+-]?\d+\s*bp$|^current$/i;
+            const headers = Object.keys(data[0] || {});
+            const firstKey = headers[0] || '';
+
+            console.log('Normalize Debug - Original headers:', headers);
+            console.log('Normalize Debug - First row:', data[0]);
+
+            // Check if first column contains rate scenarios (already correct orientation)
+            const sampleCount = Math.min(10, data.length);
+            let bpMatches = 0;
+            for (let i = 0; i < sampleCount; i++) {
+                const v = String(data[i][firstKey] || '').trim();
+                if (rateShockPattern.test(v)) bpMatches++;
+            }
+            const firstColHasRateScenarios = bpMatches >= Math.max(2, Math.ceil(sampleCount * 0.6));
+
+            if (firstColHasRateScenarios) {
+                console.log('Data is already in correct format');
+                // Do not rename headers; preserve the original first column header (e.g., 'Rate Change')
+                return data;
+            }
+
+            // Check if FIRST ROW has rate scenarios across multiple columns
+            // In your case: Row 1 has -400bp, -300bp, -200bp, etc. going horizontally
+            const firstRow = data[0];
+            // Exclude a potential label column like 'Column_0' from the scenario scan
+            const firstRowValues = headers
+                .filter(h => h !== 'Column_0')
+                .map(header => String(firstRow[header] || '').trim());
+            const firstRowHasRateScenarios = firstRowValues.filter(val => rateShockPattern.test(val)).length >= 3;
+
+            console.log('First row values (excluding last):', firstRowValues);
+            console.log('First row has rate scenarios:', firstRowHasRateScenarios);
+
+            if (firstRowHasRateScenarios) {
+                console.log('Need to transpose - rate scenarios are in first row');
+                return transposeCSVData(data);
+            }
+
+            // Fallback cases...
+            const headersHaveRateScenarios = headers.some(h => rateShockPattern.test(h));
+            if (headersHaveRateScenarios) {
+                console.log('Headers have rate scenarios, transposing');
+                return transposeCSVData(data);
+            }
+
+            if (headers.includes('bp') && headers[0] !== 'bp') {
+                console.log('Moving bp column to first position');
+                return data.map(row => {
+                    const newRow = { bp: row.bp };
+                    headers.forEach(key => {
+                        if (key !== 'bp') newRow[key] = row[key];
+                    });
+                    return newRow;
+                });
+            }
+
+            console.log('No changes needed');
+            return data;
+        }
+
+        function renameKeyAndMoveFirst(rows, oldKey, newKey) {
+            return rows.map(r => {
+                const out = {};
+                out[newKey] = r[oldKey];
+                Object.keys(r).forEach(k => { if (k !== oldKey) out[k] = r[k]; });
+                return out;
+            });
+        }
+
+        function moveKeyFirst(rows, key) {
+            return rows.map(r => {
+                const out = {};
+                out[key] = r[key];
+                Object.keys(r).forEach(k => { if (k !== key) out[k] = r[k]; });
+                return out;
+            });
+        }
+
+        function shouldTransposeData(data, analysisType) {
             if (!data || data.length === 0) return false;
-            
+            // Only auto-flip for Net Interest and Rate Risk analyses
+            const a = (analysisType || '').toLowerCase();
+            const flipEligible = a.includes('net-interest') || a.includes('rate-risk');
+            if (!flipEligible) return false;
+
             const firstRow = data[0];
             const headers = Object.keys(firstRow);
-            
-            const rateShockPattern = /^[+-]?\d+bp$/i;
+
+            const rateShockPattern = /^[+-]?\d+\s*bp$/i;
             const currentPattern = /^current$/i;
-            
-            const hasRateShockHeaders = headers.some(header => 
-                rateShockPattern.test(header) || currentPattern.test(header)
-            );
-            
-            const firstColumnName = headers[0];
-            const isGenericFirstColumn = !firstColumnName || 
-                firstColumnName.toLowerCase().includes('rate') ||
-                firstColumnName.toLowerCase().includes('shock');
-            
-            return hasRateShockHeaders && isGenericFirstColumn;
+
+            // Count how many headers (excluding first) look like bp columns or 'Current'
+            const bpLikeCount = headers.slice(1).reduce((acc, h) => {
+                return acc + (rateShockPattern.test(h) || currentPattern.test(h) ? 1 : 0);
+            }, 0);
+
+            // Check if first column already contains bp-like values (meaning it's already correct orientation)
+            const firstColKey = headers[0];
+            const sampleCount = Math.min(10, data.length);
+            let firstColBpMatches = 0;
+            for (let i = 0; i < sampleCount; i++) {
+                const v = (data[i][firstColKey] || '').toString().trim();
+                if (rateShockPattern.test(v) || currentPattern.test(v)) firstColBpMatches++;
+            }
+
+            // If first column is already bp-like for most sampled rows, do NOT transpose
+            if (firstColBpMatches >= Math.max(2, Math.floor(sampleCount * 0.6))) {
+                return false;
+            }
+
+            // Heuristic: if at least 2 bp-like headers exist and first column is NOT bp-like, transpose
+            return bpLikeCount >= 2;
         }
 
         function transposeCSVData(originalData) {
             if (!originalData || originalData.length === 0) return originalData;
-            
+
+            console.log('REAL TRANSPOSE - Original structure:');
+            console.log('Original headers:', Object.keys(originalData[0]));
+            console.log('Original first row:', originalData[0]);
+            console.log('Original data rows:', originalData.length);
+
+            // Get the original structure
             const originalHeaders = Object.keys(originalData[0]);
-            const firstColumnName = originalHeaders[0];
-            const rateShockColumns = originalHeaders.slice(1);
+            const lastColumnName = originalHeaders[originalHeaders.length - 1];
             
+            // Extract rate scenarios from FIRST ROW (excluding last column which has "Rate Change")
+            const rateScenarios = [];
+            for (let i = 0; i < originalHeaders.length - 1; i++) {
+                const headerName = originalHeaders[i];
+                const scenarioValue = originalData[0][headerName];
+                if (scenarioValue && String(scenarioValue).trim()) {
+                    rateScenarios.push(String(scenarioValue).trim());
+                }
+            }
+            
+            // Extract metric names from LAST COLUMN (excluding first row)
+            const metricNames = [];
+            for (let rowIndex = 1; rowIndex < originalData.length; rowIndex++) {
+                const metricName = originalData[rowIndex][lastColumnName];
+                if (metricName && String(metricName).trim()) {
+                    metricNames.push(String(metricName).trim());
+                }
+            }
+
+            // Determine the desired first column header name (scenario header),
+            // using the value in the first row, last column when available (e.g., 'Rate Change').
+            const scenarioHeaderCandidate = originalData[0][lastColumnName] && String(originalData[0][lastColumnName]).trim();
+            const scenarioHeaderName = scenarioHeaderCandidate || lastColumnName || 'bp';
+
+            // Exclude the scenario header name from metric columns if it appears there
+            const filteredMetricNames = metricNames.filter(m => m.toLowerCase() !== String(scenarioHeaderName).toLowerCase());
+            
+            console.log('Rate scenarios extracted:', rateScenarios);
+            console.log('Metric names extracted:', filteredMetricNames);
+            
+            // NOW DO THE ACTUAL TRANSPOSE:
+            // Create one row per rate scenario, with metrics as columns
             const transposedData = [];
             
-            rateShockColumns.forEach(rateShock => {
-                const newRow = {
-                    [firstColumnName]: rateShock
-                };
+            for (let scenarioIndex = 0; scenarioIndex < rateScenarios.length; scenarioIndex++) {
+                const scenario = rateScenarios[scenarioIndex];
+                const newRow = {};
+                newRow[scenarioHeaderName] = scenario;
                 
-                originalData.forEach(originalRow => {
-                    const categoryName = originalRow[firstColumnName];
-                    const value = originalRow[rateShock];
-                    if (categoryName) {
-                        newRow[categoryName] = value;
-                    }
-                });
+                // For each metric, get its value for this scenario
+                for (let metricIndex = 0; metricIndex < filteredMetricNames.length; metricIndex++) {
+                    const metricName = filteredMetricNames[metricIndex];
+                    
+                    // Find the value in the original data:
+                    // - Row: metricIndex + 1 (skip the first row which has scenarios)
+                    // - Column: scenarioIndex (which scenario column)
+                    const sourceRowIndex = metricIndex + 1;
+                    const sourceColumnName = originalHeaders[scenarioIndex];
+                    
+                    const value = originalData[sourceRowIndex] && originalData[sourceRowIndex][sourceColumnName] 
+                        ? originalData[sourceRowIndex][sourceColumnName] 
+                        : '';
+                    
+                    newRow[metricName] = value;
+                }
                 
                 transposedData.push(newRow);
-            });
+            }
+            
+            console.log('TRANSPOSED RESULT:');
+            console.log('New headers:', Object.keys(transposedData[0] || {}));
+            console.log('First row:', transposedData[0]);
+            console.log('Second row:', transposedData[1]);
+            console.log('Total rows:', transposedData.length);
             
             return transposedData;
         }
@@ -1581,12 +2078,18 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         // View data modal functions
         currentCsvFile.addEventListener('click', () => showDataModal('csv'));
         currentPdfFile.addEventListener('click', () => showDataModal('pdf'));
+        // Prevent preview when clicking upload/remove icons or buttons
+        document.querySelectorAll('.file-input-wrapper label, #removePdfBtn, .change-file-btn, .remove-file-btn').forEach(el => {
+            el.addEventListener('click', (e) => e.stopPropagation());
+        });
         closeModal.addEventListener('click', hideDataModal);
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) hideDataModal();
         });
 
         function showDataModal(fileType) {
+            // Ensure data preview uses the default width
+            modalContent.classList.remove('wide');
             if (fileType === 'csv') {
                 if (!currentCsvData) {
                     showError('No CSV data loaded');
@@ -1621,6 +2124,8 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         function hideDataModal() {
             modalOverlay.style.display = 'none';
+            // Reset any width customization
+            modalContent.classList.remove('wide');
             // Clean up blob URLs
             const iframe = modalBody.querySelector('iframe');
             if (iframe && iframe.src.startsWith('blob:')) {
@@ -1680,76 +2185,9 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         analyzeCenter.classList.add('hidden');
         chatInterface.classList.add('active');
-        
-        const config = analysisConfig[activeAnalysis];
-        
-        let analysisPrompt = '';
-        
-        // UPDATE the Forecast KRI section in startAnalysis function
-        if (activeAnalysis === 'forecast-kri') {
-            // Simplified Forecast KRI with minimal structure guidance
-            const detailedContext = currentCsvData ? createDetailedDataContext(currentCsvData, activeAnalysis) : '';
-            
-            analysisPrompt = `You are analyzing ${config.name} data for BankersGPS banking analytics.
 
-        Context: ${config.context}
-
-        ${detailedContext}
-
-        INSTRUCTIONS:
-        - DO NOT provide "Dataset Overview," "Key Status Analysis," "Critical Risk Areas," or "Strategic Risk Recommendations" sections
-        - Focus on narrative insights about risk trajectory over the forecast period
-        - Use specific data points and bold numbers from the CSV
-        - Organize with clear headers and professional formatting
-        - Include bullet points when listing specific metrics or action items
-
-        Please provide analysis with these TWO sections:
-
-        ## Risk Trend Analysis
-        Analyze the directional patterns and trajectories across CAELS risk categories, focusing on how risk metrics evolve over the forecast period. Use specific numbers from the data and explain what these trends mean strategically.
-
-        ## Strategic Risk Implications  
-        Focus on forward-looking business implications and management priorities based on the risk trends identified in the data.
-
-        Use professional formatting with headers, bullet points where appropriate, and bold specific numbers and percentages from the dataset.`;
-            
-        } else {
-            // FOR ALL OTHER ANALYSIS TYPES
-            // Replace the long analysisPrompt section in startAnalysis() with this:
-
-            if (currentCsvData) {
-            const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-            
-            analysisPrompt = `Provide a brief, high-level analysis of this ${config.name} data.
-
-            ${detailedContext}
-
-            Keep it simple and concise:
-
-            ## What This Data Shows
-            Brief overview of the dataset and key metrics.
-
-            ## Key Findings  
-            • 3-4 bullet points highlighting what's happening in the data
-            • Use actual numbers and percentages from the dataset
-            • Keep each point to 1-2 sentences
-
-            ## Main Takeaway
-            One paragraph summary of the overall situation and what it means.
-
-            Focus on explaining what's happening rather than detailed methodology.`;
-            }
-            else if (currentPdfData) {
-                // PDF only case
-                analysisPrompt = `You are analyzing ${config.name} data from the uploaded PDF report for BankersGPS banking analytics.
-
-    Context: ${config.context}
-
-    Please extract and analyze the relevant financial data from the uploaded PDF report, focusing on the specific institution's metrics and values.`;
-            }
-        }
-
-        await sendMessage(analysisPrompt, false);
+        // Use the current prompt editor content for all modes; dataset/context is appended inside sendMessage
+        await sendMessage('Analyze', false);
         messageInput.focus();
     }
         // Keep all existing chat functions (addMessage, formatBotResponse, sendMessage, etc.)
@@ -1953,7 +2391,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                     } catch (_) {}
                     // Minimal modes: exact prompt from config + dataset only (always include dataset)
                     if (activeAnalysis.includes('-minimal')) {
-                        const minimalInstruction = analysisConfig[activeAnalysis].minimalPrompt || '';
+                        const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].minimalPrompt || '');
                         const minimalData = createMinimalDataBlock(currentCsvData);
                         const userIntent = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
 
@@ -1970,7 +2408,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                         fullPrompt = `${minimalInstruction}${strictRules}${userIntent}\n\n${minimalData}`;
                         // OVERRIDE: Respect exact minimal prompt with dataset only (no extra rules)
                         {
-                            const _mi = analysisConfig[activeAnalysis].minimalPrompt || '';
+                            const _mi = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].minimalPrompt || '');
                             const _md = createMinimalDataBlock(currentCsvData);
                             const _ui = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
                             fullPrompt = `${_mi}${_ui}\n\n${_md}`;
@@ -1978,13 +2416,15 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                     } else {
                         // Regular modes: add a concise, structured instruction then attach the dataset block
                         const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-                        let instruction;
-                        if (activeAnalysis.includes('net-interest')) {
-                            instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across rate shocks (-400 to +400 bps), not just the figures.\n\n- Overall shape: describe earnings sensitivity and any asymmetry (losses in cuts vs gains in hikes).\n- Most adverse: name the scenario and list NIM change (bps) and NII change ($), then one sentence on the driver (e.g., asset yield drop vs liability floors, deposit cost lag).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note tapering or reversal if visible (e.g., deposit costs accelerate above +200 bps).\n- Drivers: explain asset-side (loans, investments) and liability-side (deposits, borrowings) behavior using patterns in the data (repricing timing, betas, floors, mix shifts).\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
-                        } else if (activeAnalysis.includes('rate-risk')) {
-                            instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across shocks (-400 to +400 bps) based on the data.\n\n- Overall shape: describe interest rate sensitivity and whether outcomes are symmetric or skewed.\n- Most adverse: name the scenario and report the magnitude on the key metric(s) present (EVE %, $, or NIM/NII), then one sentence on the main cause (e.g., duration/convexity effects, liability floors).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note any tapering or reversals; explain with liability repricing acceleration or asset sensitivity.\n- Drivers: explain asset categories and liability categories that matter most, grounded in repricing timing, duration/sensitivity, deposit betas, floors, and mix.\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
-                        } else {
-                            instruction = `Provide a concise executive narrative using only the dataset below. Include an Executive Summary, a section on extremes with magnitudes, primary drivers, and assumptions to review. Bold key figures. If metrics are missing, say "Not available."`;
+                        let instruction = (promptEditor.value && promptEditor.value.trim()) || '';
+                        if (!instruction) {
+                            if (activeAnalysis.includes('net-interest')) {
+                                instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across rate shocks (-400 to +400 bps), not just the figures.\n\n- Overall shape: describe earnings sensitivity and any asymmetry (losses in cuts vs gains in hikes).\n- Most adverse: name the scenario and list NIM change (bps) and NII change ($), then one sentence on the driver (e.g., asset yield drop vs liability floors, deposit cost lag).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note tapering or reversal if visible (e.g., deposit costs accelerate above +200 bps).\n- Drivers: explain asset-side (loans, investments) and liability-side (deposits, borrowings) behavior using patterns in the data (repricing timing, betas, floors, mix shifts).\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
+                            } else if (activeAnalysis.includes('rate-risk')) {
+                                instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across shocks (-400 to +400 bps) based on the data.\n\n- Overall shape: describe interest rate sensitivity and whether outcomes are symmetric or skewed.\n- Most adverse: name the scenario and report the magnitude on the key metric(s) present (EVE %, $, or NIM/NII), then one sentence on the main cause (e.g., duration/convexity effects, liability floors).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note any tapering or reversals; explain with liability repricing acceleration or asset sensitivity.\n- Drivers: explain asset categories and liability categories that matter most, grounded in repricing timing, duration/sensitivity, deposit betas, floors, and mix.\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
+                            } else {
+                                instruction = `Provide a concise executive narrative using only the dataset below. Include an Executive Summary, a section on extremes with magnitudes, primary drivers, and assumptions to review. Bold key figures. If metrics are missing, say "Not available."`;
+                            }
                         }
 
                         fullPrompt = `${message}\n\n${instruction}\n\n${detailedContext}`;
@@ -2002,8 +2442,10 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 // Create FormData for file uploads
                 const formData = new FormData();
                 formData.append('prompt', fullPrompt);
-                formData.append('analysisType', activeAnalysis);
-                formData.append('useDocuments', config.useDocuments);
+                const effectiveAnalysisType = includeDocs ? `${activeAnalysis} minimal-docs` : activeAnalysis;
+                formData.append('analysisType', effectiveAnalysisType);
+                formData.append('useDocuments', includeDocs);
+                formData.append('model', selectedModel);
 
                 // Add PDF if available (as supplementary context)
                 if (currentPdfData) {

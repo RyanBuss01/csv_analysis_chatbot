@@ -55,7 +55,14 @@ class Chatbot {
    * @param {string} pdfFileName - Name of the uploaded PDF file
    * @returns {Object} Response object with success/error status
    */
-  async handleChatRequest(prompt, analysisType = null, useDocuments = true, uploadedPdfBuffer = null, pdfFileName = null) {
+  async handleChatRequest(
+    prompt,
+    analysisType = null,
+    useDocuments = true,
+    uploadedPdfBuffer = null,
+    pdfFileName = null,
+    modelName = 'gpt-4.1-mini'
+  ) {
     try {
       if (!prompt || prompt.trim() === '') {
         return {
@@ -89,7 +96,14 @@ class Chatbot {
         }
       }
       
-      const response = await this.chat(prompt, docContent, analysisType, uploadedPdfContent, pdfFileName);
+      const response = await this.chat(
+        prompt,
+        docContent,
+        analysisType,
+        uploadedPdfContent,
+        pdfFileName,
+        modelName
+      );
       this.logInteraction(prompt, response, analysisType, useDocuments, !!uploadedPdfContent);
       
       return {
@@ -307,7 +321,14 @@ class Chatbot {
    * @param {string} pdfFileName - Name of uploaded PDF
    * @returns {Promise<string>} AI response
    */
-  async chat(prompt, docContent, analysisType = null, uploadedPdfContent = '', pdfFileName = null) {
+  async chat(
+    prompt,
+    docContent,
+    analysisType = null,
+    uploadedPdfContent = '',
+    pdfFileName = null,
+    modelName = 'gpt-4.1-mini'
+  ) {
     // Minimal modes: send only the user prompt (no system message, no docs)
     if (analysisType && analysisType.includes('minimal')) {
       // Build single-user-message content using exact prompt + uploaded PDF context (if any)
@@ -324,7 +345,7 @@ class Chatbot {
       }
 
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: modelName || 'gpt-4.1-mini',
         messages: [
           { role: "user", content: minimalUserContent }
         ],
@@ -376,7 +397,7 @@ class Chatbot {
 
     // Make API call with caching optimization
     const completion = await this.openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: modelName || 'gpt-4.1-mini',
       messages: messages,
       temperature: 0.2,
       max_tokens: 4000,

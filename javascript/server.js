@@ -189,12 +189,13 @@ app.get('/assets/:filename', (req, res) => {
 app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async (req, res) => {
   try {
     const { prompt, analysisType, useDocuments = 'true', hasPdf } = req.body;
+    const model = req.body.model || 'gpt-4.1-mini';
     
     // Convert string 'true'/'false' to boolean
     const useDocsBoolean = useDocuments === 'true' || useDocuments === true;
     
     // Log the request for debugging
-    console.log(`Chat request: analysisType=${analysisType}, useDocuments=${useDocsBoolean}, hasPdf=${hasPdf}`);
+    console.log(`Chat request: analysisType=${analysisType}, useDocuments=${useDocsBoolean}, hasPdf=${hasPdf}, model=${model}`);
     
     // Handle uploaded PDF
     let uploadedPdfBuffer = null;
@@ -214,7 +215,8 @@ app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async
       analysisType, 
       useDocsBoolean,
       uploadedPdfBuffer,
-      pdfFileName
+      pdfFileName,
+      model
     );
     
     if (result.success) {
