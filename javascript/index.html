@@ -1102,14 +1102,16 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 - Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
         },
         'net-interest-minimal-2': {
-            name: 'Net Interest Margin (Minimal 2)',
-            csvFile: 'sample_net_intrest.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+    name: 'Net Interest Margin (Minimal 2)',
+    csvFile: 'sample_net_intrest.csv',
+    pdfFile: null,
+    useDocuments: false,
+    minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
-Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
-`  },
+CRITICAL DATA UNITS: Most dollar amounts in the dataset are in thousands (000s), so 29098 = $29.1 million. Only fields labeled "Percent" or "%" are actual percentages. Convert thousands to millions when discussing dollar amounts for clarity.
+
+Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
+},
         'rate-risk-minimal-3': {
             name: 'Rate Risk (Minimal 3: Focused Narrative)',
             csvFile: 'sample_rate_shock.csv',
@@ -1133,14 +1135,16 @@ Focused explanation and formatting:
             useDocuments: false,
             minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
-Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
+        CRITICAL DATA UNITS: Most dollar amounts in the dataset are in thousands (000s), so 29098 = $29.1 million. Only fields labeled "Percent" or "%" are actual percentages. Convert thousands to millions when discussing dollar amounts for clarity.
 
-Focused explanation and formatting:
-- Start with a 2–3 sentence overview of earnings sensitivity and any asymmetry across shocks.
-- Extremes: identify the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($) and include one sentence on the primary driver for each.
-- Drivers: one short paragraph on asset-side dynamics (loans and investments; repricing timing) and one short paragraph on liability-side dynamics (deposits and borrowings; deposit betas, rate floors, funding mix) grounded in the dataset.
-- High-shock behavior: call out any tapering or reversal at higher positive shocks as funding costs accelerate.
-- Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn’t present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
+        Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
+
+        Focused explanation and formatting:
+        - Start with a 2–3 sentence overview of earnings sensitivity and any asymmetry across shocks.
+        - Extremes: identify the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($) and include one sentence on the primary driver for each.
+        - Drivers: one short paragraph on asset-side dynamics (loans and investments; repricing timing) and one short paragraph on liability-side dynamics (deposits and borrowings; deposit betas, rate floors, funding mix) grounded in the dataset.
+        - High-shock behavior: call out any tapering or reversal at higher positive shocks as funding costs accelerate.
+        - Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn't present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
         },
         'rate-risk-minimal': {
             name: 'Rate Risk (Minimal)',

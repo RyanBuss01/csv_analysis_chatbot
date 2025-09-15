@@ -215,6 +215,12 @@ class Chatbot {
 
   CRITICAL: This is NIM analysis focusing on INCOME STATEMENT impacts, not balance sheet values.
 
+  CRITICAL DATA UNITS INTERPRETATION:
+  - Most dollar amounts are expressed in THOUSANDS (000s), so 29098 = $29,098,000 (29.1 million)
+  - Only fields explicitly labeled with "Percent" or "%" should be interpreted as percentages
+  - Examples: "Loans" column showing 38300 = $38.3 million, "Net Interest Income" showing 29098 = $29.1 million
+  - When referencing dollar amounts, convert to millions for readability (e.g., 29098 becomes $29.1 million)
+
   KEY NIM CONCEPTS:
   - Net Interest Margin (NIM): Net interest income as % of earning assets
   - Net Interest Income (NII): Interest income minus interest expense
@@ -228,9 +234,9 @@ class Chatbot {
 
   ANALYSIS REQUIREMENTS:
   - FIRST: Identify NIM vs EVE data based on column headers
-  - Use EXACT numbers from the complete dataset
+  - Use EXACT numbers from the complete dataset, converting thousands to millions for clarity
   - Focus on INCOME/EARNINGS changes, not economic values
-  - Reference specific NIM percentages and NII dollar changes
+  - Reference specific NIM percentages and NII dollar changes (in millions)
   - Calculate income changes and margin impacts
 
   FORMATTING:
