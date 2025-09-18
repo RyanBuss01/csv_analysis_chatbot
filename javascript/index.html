@@ -55,8 +55,6 @@
             gap: 10px;
         }
 
-        /* analysis label removed */
-
         .analysis-dropdown {
             background: rgba(255, 255, 255, 0.95);
             color: #667eea;
@@ -95,8 +93,6 @@
             height: 16px;
         }
 
-        
-
         .refresh-button {
             position: absolute;
             top: 50%;
@@ -120,7 +116,7 @@
         .model-selector {
             position: absolute;
             top: 50%;
-            right: 70px; /* leave room for refresh button */
+            right: 70px;
             transform: translateY(-50%);
             display: flex;
             align-items: center;
@@ -157,7 +153,7 @@
             background: #f8f9fa;
             padding: 5px 20px;
             border-bottom: 1px solid #e1e5e9;
-            max-height: 100px; /* cap row height similar to original */
+            max-height: 100px;
             overflow: hidden;
         }
 
@@ -173,13 +169,12 @@
             flex: 1 1 50%;
             max-width: 50%;
             display: flex;
-            flex-direction: row; /* place CSV and PDF side-by-side */
+            flex-direction: row;
             align-items: center;
             gap: 12px;
             height: 100%;
         }
 
-        /* Override default full-width for compact row cards on the left */
         .left-upload-group .current-file {
             width: auto;
             flex: 1 1 0;
@@ -265,7 +260,7 @@
 
         #promptEditor {
             width: 100%;
-            min-height: 240px; /* doubled from 120px */
+            min-height: 240px;
             resize: vertical;
             padding: 10px 12px;
             border: 1px solid #e1e5e9;
@@ -279,7 +274,7 @@
             font-size: 13px;
             color: #5a6c7d;
             line-height: 1.45;
-            max-height: 6.2em; /* ~4 lines visible in capped row */
+            max-height: 6.2em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -525,7 +520,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* IMPROVED MARKDOWN FORMATTING */
         .message-content h1, .message-content h2, .message-content h3 {
             margin: 12px 0 8px 0;
             color: #2c3e50;
@@ -547,20 +541,17 @@
             margin-top: 14px;
         }
 
-        /* IMPROVED PARAGRAPH SPACING */
         .message-content p {
             margin: 12px 0;
             line-height: 1.6;
         }
 
-        /* First paragraph after headers should have less top margin */
         .message-content h1 + p,
         .message-content h2 + p,
         .message-content h3 + p {
             margin-top: 8px;
         }
 
-        /* IMPROVED BULLET POINT FORMATTING */
         .message-content ul, .message-content ol {
             margin: 16px 0;
             padding-left: 24px;
@@ -741,10 +732,9 @@
             position: relative;
         }
 
-        /* Wider layout used for the Prompt editor modal only */
         .modal-content.wide {
-            width: 80vw;           /* make overlay noticeably wider */
-            max-width: 1200px;     /* cap width on large screens */
+            width: 80vw;
+            max-width: 1200px;
         }
 
         .modal-header {
@@ -881,8 +871,8 @@
         <div class="chat-header">
             <div class="analysis-selector">
                 <select class="analysis-dropdown" id="analysisDropdown">
-                    <option value="rate-risk-minimal-2">Rate Risk Management</option>
-                    <option value="net-interest-minimal-2" selected>Net Intrest Margin</option>
+                    <option value="rate-risk-management">Rate Risk Management</option>
+                    <option value="net-interest-margin" selected>Net Interest Margin</option>
                     <option value="forecast-kri">Forecast KRI</option>
                     <option value="competitive-kri">Competitive KRI</option>
                 </select>
@@ -906,7 +896,6 @@
         <div class="file-upload-section">
             <div class="file-uploads-container">
                 <div class="left-upload-group">
-                    <!-- CSV Original Card -->
                     <div class="current-file" id="currentCsvFile" title="Click to preview CSV">
                         <div class="file-title-section">
                             <div class="file-icon">📊</div>
@@ -925,13 +914,12 @@
                         </div>
                     </div>
 
-                    <!-- PDF Original Card -->
-                    <div class="current-file" id="currentPdfFile" title="Click to preview PDF">
+                    <div class="current-file no-file-state" id="currentPdfFile" title="Click to preview PDF">
                         <div class="file-title-section">
                             <div class="file-icon">📄</div>
                             <div class="file-details">
-                                <h4 class="file-title" id="pdfFileName">sample_risk_report.pdf</h4>
-                                <div class="file-status" id="pdfStatus">Active</div>
+                                <h4 class="file-title" id="pdfFileName">No PDF loaded</h4>
+                                <div class="file-status" id="pdfStatus">Optional</div>
                             </div>
                         </div>
                         <div class="change-file-wrapper">
@@ -941,13 +929,12 @@
                                     <span>📄</span>
                                 </label>
                             </div>
-                            <button class="remove-file-btn" id="removePdfBtn" title="Remove PDF">✕</button>
+                            <button class="remove-file-btn" id="removePdfBtn" title="Remove PDF" style="display:none;">✕</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="right-prompt-group">
-                    <!-- Prompt Panel (right half) -->
                     <div class="prompt-panel">
                         <div class="left">
                             <div class="file-icon">📝</div>
@@ -962,7 +949,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Hidden prompt editor (shown in modal when editing) -->
             <div class="custom-prompt-section">
                 <label for="promptEditor">Prompt</label>
                 <textarea id="promptEditor" placeholder="Customize the analysis prompt..."></textarea>
@@ -1039,58 +1025,18 @@
         let currentCsvData = null;
         let currentPdfData = null;
         let currentDataType = 'csv';
-        let activeAnalysis = 'net-interest-minimal-2';
-        let includeDocs = false; // 'Add docs' checkbox state
+        let activeAnalysis = 'net-interest-margin';
+        let includeDocs = false;
         let selectedModel = 'gpt-4.1-mini';
 
-        // Updated analysis configuration with new KRI options
+        // Simplified analysis configuration
         const analysisConfig = {
-        'rate-risk': {
-            name: 'Rate Risk Management Strategy',
-            csvFile: 'sample_rate_shock.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            context: `Risk is present when there is a repricing term mismatch between assets and liabilities. If the volume and the term of these opposing balances were equal and priced off of the same indexes, theoretically there would be no interest rate risk. The reality, however, is that there is a mismatch. Gap is one technique for measuring this mismatch; Plansmith's Risk Management Bubbles is another. The Bubbles method is like a visual Gap report; however, there are 3 differences. 1) Bubbles are easier to understand, 2) bubbles account for the entire term of the bank's position, and 3) by including the current Yield Curve the risk management strategy is more apparent.
-
-    There are also 3 elements in the Bubbles method: 1) The term and yield of assets (The yields are not tax equivalent), 2) the term and cost of liabilities, and 3) the Yield Curve. Now we can quantify the components of the margin; the Asset Benefit (the vertical distance from the Asset Bubble to the Yield Curve), the Deposit Benefit (the distance from the Liability Bubble to the Yield Curve), and the Basis Risk Component (the vertical distance in the Yield Curve between Asset and Liability Bubbles). Dividing the Basis Risk Component (basis points) by the Duration Mismatch (months) quantifies the Risk / Reward Trade-Off.`
-        },
-        'net-interest': {
-            name: 'Net Interest Margin Simulations',
-            csvFile: 'sample_net_intrest.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            context: `The Gap Analysis provides the basis for more detailed analysis in the simulation model. Also, gap results are popular rate risk indicators. However, to truly evaluate the impact of rate change on income, simulation is the best technique because variables are changed for the various rate conditions. Each category's interest change is calculated as rates move up and down. In addition, the repayment speeds and repricing speeds are changed.
-
-    Rate Shock is a method for stress testing the Net Interest Margin (NIM) over the next four quarters under several rate change levels. These levels span 100bp increments up and down from the current interest rates. In order to simulate activity, maturing balances are replaced with the new balances at the new rate level, and repricing balances are adjusted to the new rate shock level. The interest is recalculated for each level along with the new average yield. NIM is then calculated and a margin risk profile is developed. The results of these calculations can be seen in the chart below.`
-        },
-        'forecast-kri': {
-            name: 'Forecast Key Risk Indicators',
-            csvFile: 'gps_kri_forecast.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            context: `Key Risk Indicators (KRI) Forecast Analysis provides forward-looking strategic narrative insights about risk trajectory over a 3-year forecast period. This analysis creates compelling risk evolution stories that inform strategic decision-making rather than summarizing data points.
-
-    The KRI Forecast Narrative focuses on risk trajectory storytelling across the CAELS framework (Capital, Asset Quality, Earnings, Liquidity, and Sensitivity to Market Risk). Rather than describing current risk status, this analysis interprets how risk patterns evolve, interconnect, and influence business strategy over time. The narrative connects individual metric trends to broader strategic themes including capital planning implications, regulatory compliance trajectory, market positioning challenges, and management priority shifts indicated by forecast patterns.
-
-    This forward-looking analysis emphasizes strategic storytelling about compound risk interactions, critical inflection points where risk trajectories change, and business model sustainability implications. The goal is strategic risk narrative that guides leadership decision-making rather than data reporting.`,
-            defaultPrompt: `You are analyzing Forecast KRI data for BankersGPS.\n\nWrite a concise, executive narrative that focuses on forward-looking risk trends across CAELS over the 3-year forecast period. Use actual values from the dataset.\n\nFormat:\n- ## Risk Trend Analysis: Explain directional patterns and inflection points; bold key numbers.\n- ## Strategic Risk Implications: What the trends mean for management priorities.\n\nKeep it strategic and insight-led; avoid table restatement.`
-        },
-        'competitive-kri': {
-            name: 'Competitive Key Risk Indicators',
-            csvFile: 'gps_kri_competitive.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            context: `Competitive Key Risk Indicators (KRI) Analysis benchmarks your bank's risk profile against strategic peer groups and industry standards. This analysis provides context for risk-based decision making by comparing your bank's performance across CAELS risk categories relative to peer medians, quartile rankings, and industry benchmarks.
-
-    The Competitive KRI Report examines your bank's relative risk position across all major risk categories: Capital strength vs peers, Asset Quality comparisons with peer banks of similar size and market focus, Earnings stability and profitability metrics relative to peer performance, Liquidity position compared to peer funding strategies, and Interest Rate Risk sensitivity benchmarked against similar institutions. This peer-relative analysis helps identify where your bank's risk profile diverges from industry norms and provides strategic context for risk tolerance decisions and performance objectives.`,
-            defaultPrompt: `You are analyzing Competitive KRI data for BankersGPS.\n\nWrite a peer-comparative executive narrative using actual values from the dataset.\n\nFormat:\n- ## Competitive Risk Analysis: Summarize relative position vs peer medians and quartiles; bold key numbers.\n- ## Strategic Positioning: Identify competitive advantages, gaps, and actions.`
-        },
-        'rate-risk-minimal-2': {
-            name: 'Rate Risk (Minimal 2)',
-            csvFile: 'sample_rate_shock.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+            'rate-risk-management': {
+                name: 'Rate Risk Management',
+                csvFile: 'sample_rate_shock.csv',
+                pdfFile: null,
+                useDocuments: false,
+                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
 Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.
 
@@ -1099,111 +1045,53 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 - Name the most adverse and most favorable scenarios; quantify EVE change (%, $) and explain the main drivers.
 - Explain which asset and liability categories drive results (e.g., duration/convexity, repricing timing, rate floors, deposit betas) using patterns visible in the data.
 - Note any tapering or reversal at higher positive shocks as liability costs/floors pressure results.
-- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        },
-        'net-interest-minimal-2': {
-    name: 'Net Interest Margin (Minimal 2)',
-    csvFile: 'sample_net_intrest.csv',
-    pdfFile: null,
-    useDocuments: false,
-    minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn't present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
+            },
+            'net-interest-margin': {
+                name: 'Net Interest Margin',
+                csvFile: 'sample_net_intrest.csv',
+                pdfFile: null,
+                useDocuments: false,
+                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
 
-CRITICAL DATA UNITS: Most dollar amounts in the dataset are in thousands (000s), so 29098 = $29.1 million. Only fields labeled "Percent" or "%" are actual percentages. Convert thousands to millions when discussing dollar amounts for clarity.
-
-Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
-},
-        'rate-risk-minimal-3': {
-            name: 'Rate Risk (Minimal 3: Focused Narrative)',
-            csvFile: 'sample_rate_shock.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
-
-Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.
-
-Focused explanation and formatting:
-- Start with a 2–3 sentence overview of rate sensitivity and any asymmetry across shocks.
-- Extremes: identify the most adverse and most favorable scenarios; quantify EVE change (%, $) and include one sentence on the primary driver for each.
-- Drivers: one short paragraph on asset-side dynamics (duration/convexity, repricing timing) and one short paragraph on liability-side dynamics (rate floors, deposit betas, funding mix) grounded in the dataset.
-- High-shock behavior: call out any tapering or reversal at higher positive shocks and explain briefly.
-- Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn’t present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        },
-        'net-interest-minimal-3': {
-            name: 'Net Interest Margin (Minimal 3: Focused Narrative)',
-            csvFile: 'sample_net_intrest.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
-
-        CRITICAL DATA UNITS: Most dollar amounts in the dataset are in thousands (000s), so 29098 = $29.1 million. Only fields labeled "Percent" or "%" are actual percentages. Convert thousands to millions when discussing dollar amounts for clarity.
-
-        Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
-
-        Focused explanation and formatting:
-        - Start with a 2–3 sentence overview of earnings sensitivity and any asymmetry across shocks.
-        - Extremes: identify the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($) and include one sentence on the primary driver for each.
-        - Drivers: one short paragraph on asset-side dynamics (loans and investments; repricing timing) and one short paragraph on liability-side dynamics (deposits and borrowings; deposit betas, rate floors, funding mix) grounded in the dataset.
-        - High-shock behavior: call out any tapering or reversal at higher positive shocks as funding costs accelerate.
-        - Formatting: single title and a closing "Summary"; natural paragraphs (avoid table restatement); bold key figures; if a metric isn't present, write "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        },
-        'rate-risk-minimal': {
-            name: 'Rate Risk (Minimal)',
-            csvFile: 'sample_rate_shock.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
-
-Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.`
-        },
-        'net-interest-minimal': {
-            name: 'Net Interest Margin (Minimal)',
-            csvFile: 'sample_net_intrest.csv',
-            pdfFile: null,
-            useDocuments: false,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.
 
 Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
-        },
-        'rate-risk-minimal-docs': {
-            name: 'Rate Risk (Minimal + Docs)',
-            csvFile: 'sample_rate_shock.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+            },
+            'forecast-kri': {
+                name: 'Forecast Key Risk Indicators',
+                csvFile: 'gps_kri_forecast.csv',
+                pdfFile: null,
+                useDocuments: true,
+                prompt: `You are analyzing Forecast KRI data for BankersGPS.
 
-Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.
+Write a concise, executive narrative that focuses on forward-looking risk trends across CAELS over the 3-year forecast period. Use actual values from the dataset.
 
-Executive-style guidance (keep this brief and insight-led, not a table recap):
-- Describe overall rate sensitivity and any asymmetry across shocks.
-- Name the most adverse and most favorable scenarios; quantify EVE change (%, $) and explain the main drivers.
-- Explain which asset and liability categories drive results (e.g., duration/convexity, repricing timing, rate floors, deposit betas) using patterns visible in the data.
-- Note any tapering or reversal at higher positive shocks as liability costs/floors pressure results.
-- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        },
-        'net-interest-minimal-docs': {
-            name: 'Net Interest Margin (Minimal + Docs)',
-            csvFile: 'sample_net_intrest.csv',
-            pdfFile: 'sample_risk_report.pdf',
-            useDocuments: true,
-            minimalPrompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+Format:
+- ## Risk Trend Analysis: Explain directional patterns and inflection points; bold key numbers.
+- ## Strategic Risk Implications: What the trends mean for management priorities.
 
-Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.
+Keep it strategic and insight-led; avoid table restatement.`
+            },
+            'competitive-kri': {
+                name: 'Competitive Key Risk Indicators',
+                csvFile: 'gps_kri_competitive.csv',
+                pdfFile: null,
+                useDocuments: true,
+                prompt: `You are analyzing Competitive KRI data for BankersGPS.
 
-Executive-style guidance (keep this brief and insight-led, not a table recap):
-- Describe overall earnings sensitivity and any asymmetry across shocks.
-- Name the most adverse and most favorable scenarios; quantify NIM change (bps) and NII change ($), then explain the primary drivers.
-- Identify which asset and liability categories matter most (loans, investments vs deposits, borrowings), referencing repricing timing, deposit betas, and rate floors apparent in the data.
-- Note any tapering or reversal at higher positive shocks as funding costs accelerate.
-- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn’t present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
-        }
-    };
+Write a peer-comparative executive narrative using actual values from the dataset.
+
+Format:
+- ## Competitive Risk Analysis: Summarize relative position vs peer medians and quartiles; bold key numbers.
+- ## Strategic Positioning: Identify competitive advantages, gaps, and actions.`
+            }
+        };
 
         // Initialize on load
         loadActiveAnalysisData();
         loadDefaultPromptForAnalysis();
         updatePromptPreview();
-
-        // Keep KRI options and both minimal-2 modes; no trimming
 
         // Dropdown change handler
         analysisDropdown.addEventListener('change', (e) => {
@@ -1228,8 +1116,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         function switchAnalysis(analysisId) {
             activeAnalysis = analysisId;
-            
-            // Reset to initial state and load new data
             resetToInitialState();
             loadActiveAnalysisData();
             loadDefaultPromptForAnalysis();
@@ -1238,10 +1124,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         function getDefaultPromptForAnalysis() {
             const config = analysisConfig[activeAnalysis] || {};
-            if (activeAnalysis.includes('-minimal')) {
-                return config.minimalPrompt || '';
-            }
-            return config.defaultPrompt || '';
+            return config.prompt || '';
         }
 
         function loadDefaultPromptForAnalysis() {
@@ -1263,14 +1146,11 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         function openPromptModal() {
             modalTitle.textContent = 'Edit Prompt';
-            // Make the edit prompt modal wider for better editing experience
             modalContent.classList.add('wide');
-            // Clear modal body and insert the editor
             modalBody.innerHTML = '';
             promptEditor.style.display = 'block';
             modalBody.appendChild(promptEditor);
             
-            // Add actions
             const actions = document.createElement('div');
             actions.style.marginTop = '12px';
             actions.style.display = 'flex';
@@ -1293,7 +1173,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             actions.appendChild(cancelBtn);
             modalBody.appendChild(actions);
             
-            // Show modal
             modalOverlay.style.display = 'flex';
         }
 
@@ -1301,23 +1180,18 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             modalOverlay.style.display = 'none';
         });
 
-        // Refresh button: perform full page reload; fallback to soft reset
         refreshButton.addEventListener('click', () => {
             try {
-                // Attempt a hard reload to fully reset app state
                 window.location.reload();
             } catch (err) {
-                // Fallback: soft reset to initial state
                 console.warn('Hard reload failed; performing soft reset.', err);
-                // Reset selects and toggles to defaults
-                analysisDropdown.value = 'net-interest-minimal-2';
-                activeAnalysis = 'net-interest-minimal-2';
+                analysisDropdown.value = 'net-interest-margin';
+                activeAnalysis = 'net-interest-margin';
                 addDocsCheckbox.checked = false;
                 includeDocs = false;
                 modelDropdown.value = 'gpt-4.1-mini';
                 selectedModel = 'gpt-4.1-mini';
 
-                // Clear prompt editor and reload defaults
                 promptEditor.value = '';
                 resetToInitialState();
                 loadActiveAnalysisData();
@@ -1327,19 +1201,13 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         });
 
         function resetToInitialState() {
-            // Reset UI state
             analyzeCenter.classList.remove('hidden');
             chatInterface.classList.remove('active');
-            
-            // Clear chat messages
             chatMessages.innerHTML = '';
-            
-            // Reset input
             messageInput.value = '';
             messageInput.disabled = false;
             sendButton.disabled = false;
             
-            // Hide any error/success messages
             document.querySelectorAll('.error-message, .success-message').forEach(msg => {
                 if (msg.parentNode) msg.remove();
             });
@@ -1348,13 +1216,12 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         async function loadActiveAnalysisData() {
             const config = analysisConfig[activeAnalysis];
             
-            // Only load sample data if no user data is already loaded
             if (isUserUploadedData()) {
                 console.log('User data already loaded, keeping current data');
-                return; // Don't overwrite user data with sample data
+                return;
             }
             
-            // Load CSV data (sample data)
+            // Load CSV data
             try {
                 const csvResponse = await fetch(`./assets/${config.csvFile}`);
                 
@@ -1365,7 +1232,8 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                     csvFileName.textContent = config.csvFile;
                     csvStatus.textContent = 'Active (Sample)';
                     currentCsvFile.classList.remove('no-file-state');
-                    currentCsvFile.style.borderColor = '#e1e5e9'; // Default border for sample data
+                    currentCsvFile.style.borderColor = '#e1e5e9';
+                    
                     try {
                         const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
                         console.log(`[CSV] Sample loaded: ${config.csvFile} (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount})`);
@@ -1383,14 +1251,14 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 currentCsvFile.classList.add('no-file-state');
             }
 
-            // Load PDF data (only if a sample PDF is configured)
+            // Load PDF data
             const currentPdfName = pdfFileName.textContent;
             if (currentPdfName && !currentPdfName.includes('sample_') && !currentPdfName.includes('No PDF')) {
                 console.log('User PDF already loaded, keeping current PDF');
-                return; // Don't overwrite user PDF
+                return;
             }
 
-            if (analysisConfig[activeAnalysis].pdfFile) {
+            if (config.pdfFile) {
                 try {
                     const pdfResponse = await fetch(`./assets/${config.pdfFile}`);
                     
@@ -1400,7 +1268,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                         pdfFileName.textContent = config.pdfFile;
                         pdfStatus.textContent = 'Active (Sample)';
                         currentPdfFile.classList.remove('no-file-state');
-                        currentPdfFile.style.borderColor = '#e1e5e9'; // Default border for sample data
+                        currentPdfFile.style.borderColor = '#e1e5e9';
                         removePdfBtn.style.display = 'flex';
                         console.log(`[PDF] Sample loaded: ${config.pdfFile} (size=${pdfBlob.size} bytes)`);
                     } else {
@@ -1429,12 +1297,11 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 console.log('[PDF] No sample PDF configured for this analysis');
             }
         }
-        // Enhanced CSV parsing and preprocessing for KRI data
+
         function parseAndPreprocessCSV(csvText, analysisType) {
             try {
                 const data = parseCSVRobust(csvText, analysisType);
                 
-                // Apply KRI-specific preprocessing
                 if (analysisType.includes('kri')) {
                     return preprocessKRIData(data, analysisType);
                 }
@@ -1447,24 +1314,20 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             }
         }
 
-        // KRI-specific data preprocessing
         function preprocessKRIData(data, analysisType) {
             if (!data || data.length === 0) return data;
             
             console.log('Preprocessing KRI data...');
             
-            // Clean and normalize column headers
             const processedData = data.map(row => {
                 const cleanRow = {};
                 
                 Object.keys(row).forEach(key => {
-                    // Clean column headers
                     let cleanKey = key.trim()
-                        .replace(/\s+/g, ' ') // Normalize spaces
-                        .replace(/[^\w\s%()/-]/g, '') // Remove special chars except common ones
+                        .replace(/\s+/g, ' ')
+                        .replace(/[^\w\s%()/-]/g, '')
                         .trim();
                     
-                    // Normalize common KRI column patterns
                     if (cleanKey.toLowerCase().includes('risk status')) {
                         cleanKey = 'Risk Status';
                     } else if (cleanKey.toLowerCase().includes('risk trend')) {
@@ -1477,12 +1340,10 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                         cleanKey = 'Peer Median';
                     }
                     
-                    // Clean and standardize cell values
                     let value = row[key];
                     if (typeof value === 'string') {
                         value = value.trim();
                         
-                        // Standardize risk levels
                         if (value.toLowerCase() === 'low' || value.toLowerCase() === 'low risk') {
                             value = 'Low';
                         } else if (value.toLowerCase() === 'moderate' || value.toLowerCase() === 'moderate risk') {
@@ -1491,7 +1352,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                             value = 'High';
                         }
                         
-                        // Standardize trend indicators
                         if (value.toLowerCase() === 'increasing') {
                             value = 'Increasing';
                         } else if (value.toLowerCase() === 'decreasing') {
@@ -1502,12 +1362,11 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                             value = 'Fluctuating';
                         }
                         
-                        // Convert percentage strings to numbers where appropriate
                         if (value.match(/^\d+\.?\d*%$/)) {
                             const numValue = parseFloat(value.replace('%', ''));
                             if (!isNaN(numValue)) {
                                 cleanRow[cleanKey + ' (%)'] = numValue;
-                                cleanRow[cleanKey] = value; // Keep original format too
+                                cleanRow[cleanKey] = value;
                                 return;
                             }
                         }
@@ -1519,7 +1378,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 return cleanRow;
             });
             
-            // Add metadata for better AI understanding
             const metadata = {
                 dataType: 'KRI',
                 analysisType: analysisType,
@@ -1531,13 +1389,11 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             
             console.log('KRI preprocessing complete:', metadata);
             
-            // Return data with metadata
             processedData.metadata = metadata;
             return processedData;
         }
 
         function isUserUploadedData() {
-            // More comprehensive check for user data
             const fileName = csvFileName.textContent.toLowerCase();
             return !fileName.includes('sample_') && 
                 !fileName.includes('gps_') && 
@@ -1574,14 +1430,13 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 });
             });
             
-            return Array.from(metrics).slice(0, 10); // Limit to first 10 for brevity
+            return Array.from(metrics).slice(0, 10);
         }
 
-        // File upload handling (keeping existing logic)
+        // File upload handling
         csvFileInput.addEventListener('change', (e) => handleFileUpload(e, 'csv'));
         pdfFileInput.addEventListener('change', (e) => handleFileUpload(e, 'pdf'));
         
-        // Remove PDF functionality
         removePdfBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             removePdf();
@@ -1639,15 +1494,12 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                             return;
                     }
 
-                    // CRITICAL: Replace the current data completely, don't merge
                     currentCsvData = data;
                     currentDataType = fileExtension;
                     csvFileName.textContent = file.name;
-                    csvStatus.textContent = 'Active (User Data)'; // Make it clear this is user data
+                    csvStatus.textContent = 'Active (User Data)';
                     currentCsvFile.classList.remove('no-file-state');
-                    
-                    // Add visual indicator for user data
-                    currentCsvFile.style.borderColor = '#28a745'; // Green border for user data
+                    currentCsvFile.style.borderColor = '#28a745';
                     
                     showSuccess(`${file.name} loaded successfully! Analysis will use your institution's data.`);
                     try {
@@ -1659,7 +1511,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                     pdfFileName.textContent = file.name;
                     pdfStatus.textContent = 'Active (User Data)';
                     currentPdfFile.classList.remove('no-file-state');
-                    currentPdfFile.style.borderColor = '#28a745'; // Green border for user data
+                    currentPdfFile.style.borderColor = '#28a745';
                     removePdfBtn.style.display = 'flex';
                     
                     showSuccess(`${file.name} loaded successfully!`);
@@ -1671,7 +1523,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 showError('Error processing file. Please check the format.');
             }
         }
-        // Keep all existing utility functions (readFileWithEncodingDetection, parseCSVRobust, etc.)
+
         async function readFileWithEncodingDetection(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1718,7 +1570,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 
                 const rawData = parseRawCSV(lines);
 
-                // Always normalize orientation for Net Interest / Rate Risk
                 const a = (analysisType || '').toLowerCase();
                 if (a.includes('net-interest') || a.includes('rate-risk')) {
                     const normalizedData = normalizeBankOrientation(rawData);
@@ -1738,86 +1589,79 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         }
 
         function parseRawCSV(lines) {
-        const headerLineRaw = lines[0] || '';
-        
-        // Detect delimiter
-        const commaCount = (headerLineRaw.match(/,/g) || []).length;
-        const tabCount = (headerLineRaw.match(/\t/g) || []).length;
-        const delimiter = tabCount > commaCount ? '\t' : ',';
+            const headerLineRaw = lines[0] || '';
+            
+            const commaCount = (headerLineRaw.match(/,/g) || []).length;
+            const tabCount = (headerLineRaw.match(/\t/g) || []).length;
+            const delimiter = tabCount > commaCount ? '\t' : ',';
 
-        // Split CSV line respecting quotes
-        const splitRespectingQuotes = (line) => {
-            const out = [];
-            let current = '';
-            let inQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                const ch = line[i];
-                if (ch === '"') {
-                    if (inQuotes && line[i + 1] === '"') {
-                        current += '"';
-                        i++;
+            const splitRespectingQuotes = (line) => {
+                const out = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        if (inQuotes && line[i + 1] === '"') {
+                            current += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (!inQuotes && ch === delimiter) {
+                        out.push(current);
+                        current = '';
                     } else {
-                        inQuotes = !inQuotes;
+                        current += ch;
                     }
-                } else if (!inQuotes && ch === delimiter) {
-                    out.push(current);
-                    current = '';
-                } else {
-                    current += ch;
                 }
+                out.push(current);
+                return out.map(v => v.replace(/^\uFEFF/, '').trim());
+            };
+
+            const firstRowValues = splitRespectingQuotes(headerLineRaw).map(h => h.replace(/^"|"$/g, '').trim());
+            const rateShockPattern = /^[+-]?\d+\s*bp$|^current$/i;
+            const rateScenarioCount = firstRowValues.filter(val => rateShockPattern.test(val)).length;
+
+            console.log('CSV PARSING - First row:', firstRowValues);
+            console.log('Rate scenarios found:', rateScenarioCount);
+
+            if (rateScenarioCount >= 3) {
+                console.log('Treating as headerless CSV - first row contains data');
+                
+                const columnNames = firstRowValues.map((_, index) => `col_${index}`);
+                console.log('Synthetic columns:', columnNames);
+                
+                const allLines = lines.filter(line => line.trim().length > 0);
+                
+                const result = allLines.map((line) => {
+                    const values = splitRespectingQuotes(line);
+                    const row = {};
+                    columnNames.forEach((colName, index) => {
+                        row[colName] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
+                    });
+                    return row;
+                });
+                
+                console.log('Parsed result sample:', result[0]);
+                return result;
+            } else {
+                console.log('Standard CSV with headers');
+                const headers = firstRowValues;
+                const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
+
+                return dataRows.map((line) => {
+                    const values = splitRespectingQuotes(line);
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        const key = header || `Column_${index}`;
+                        row[key] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
+                    });
+                    return row;
+                });
             }
-            out.push(current);
-            return out.map(v => v.replace(/^\uFEFF/, '').trim());
-        };
-
-        // Check if first row contains rate scenarios instead of headers
-        const firstRowValues = splitRespectingQuotes(headerLineRaw).map(h => h.replace(/^"|"$/g, '').trim());
-        const rateShockPattern = /^[+-]?\d+\s*bp$|^current$/i;
-        const rateScenarioCount = firstRowValues.filter(val => rateShockPattern.test(val)).length;
-
-        console.log('CSV PARSING - First row:', firstRowValues);
-        console.log('Rate scenarios found:', rateScenarioCount);
-
-        if (rateScenarioCount >= 3) {
-            console.log('Treating as headerless CSV - first row contains data');
-            
-            // Create synthetic column names
-            const columnNames = firstRowValues.map((_, index) => `col_${index}`);
-            console.log('Synthetic columns:', columnNames);
-            
-            // Process all lines as data
-            const allLines = lines.filter(line => line.trim().length > 0);
-            
-            const result = allLines.map((line) => {
-                const values = splitRespectingQuotes(line);
-                const row = {};
-                columnNames.forEach((colName, index) => {
-                    row[colName] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
-                });
-                return row;
-            });
-            
-            console.log('Parsed result sample:', result[0]);
-            return result;
-        } else {
-            console.log('Standard CSV with headers');
-            const headers = firstRowValues;
-            const dataRows = lines.slice(1).filter(line => line.trim().length > 0);
-
-            return dataRows.map((line) => {
-                const values = splitRespectingQuotes(line);
-                const row = {};
-                headers.forEach((header, index) => {
-                    const key = header || `Column_${index}`;
-                    row[key] = (values[index] ?? '').replace(/^"|"$/g, '').trim();
-                });
-                return row;
-            });
         }
-    }
 
-        // Ensure final layout is: first column header 'bp', values like "-400bp/Current/+200bp" down the rows;
-        // top headers are category titles taken from the original first column when needed.
         function normalizeBankOrientation(data) {
             if (!Array.isArray(data) || data.length === 0) return data;
 
@@ -1828,7 +1672,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             console.log('Normalize Debug - Original headers:', headers);
             console.log('Normalize Debug - First row:', data[0]);
 
-            // Check if first column contains rate scenarios (already correct orientation)
             const sampleCount = Math.min(10, data.length);
             let bpMatches = 0;
             for (let i = 0; i < sampleCount; i++) {
@@ -1839,14 +1682,10 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
             if (firstColHasRateScenarios) {
                 console.log('Data is already in correct format');
-                // Do not rename headers; preserve the original first column header (e.g., 'Rate Change')
                 return data;
             }
 
-            // Check if FIRST ROW has rate scenarios across multiple columns
-            // In your case: Row 1 has -400bp, -300bp, -200bp, etc. going horizontally
             const firstRow = data[0];
-            // Exclude a potential label column like 'Column_0' from the scenario scan
             const firstRowValues = headers
                 .filter(h => h !== 'Column_0')
                 .map(header => String(firstRow[header] || '').trim());
@@ -1860,7 +1699,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 return transposeCSVData(data);
             }
 
-            // Fallback cases...
             const headersHaveRateScenarios = headers.some(h => rateShockPattern.test(h));
             if (headersHaveRateScenarios) {
                 console.log('Headers have rate scenarios, transposing');
@@ -1882,60 +1720,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             return data;
         }
 
-        function renameKeyAndMoveFirst(rows, oldKey, newKey) {
-            return rows.map(r => {
-                const out = {};
-                out[newKey] = r[oldKey];
-                Object.keys(r).forEach(k => { if (k !== oldKey) out[k] = r[k]; });
-                return out;
-            });
-        }
-
-        function moveKeyFirst(rows, key) {
-            return rows.map(r => {
-                const out = {};
-                out[key] = r[key];
-                Object.keys(r).forEach(k => { if (k !== key) out[k] = r[k]; });
-                return out;
-            });
-        }
-
-        function shouldTransposeData(data, analysisType) {
-            if (!data || data.length === 0) return false;
-            // Only auto-flip for Net Interest and Rate Risk analyses
-            const a = (analysisType || '').toLowerCase();
-            const flipEligible = a.includes('net-interest') || a.includes('rate-risk');
-            if (!flipEligible) return false;
-
-            const firstRow = data[0];
-            const headers = Object.keys(firstRow);
-
-            const rateShockPattern = /^[+-]?\d+\s*bp$/i;
-            const currentPattern = /^current$/i;
-
-            // Count how many headers (excluding first) look like bp columns or 'Current'
-            const bpLikeCount = headers.slice(1).reduce((acc, h) => {
-                return acc + (rateShockPattern.test(h) || currentPattern.test(h) ? 1 : 0);
-            }, 0);
-
-            // Check if first column already contains bp-like values (meaning it's already correct orientation)
-            const firstColKey = headers[0];
-            const sampleCount = Math.min(10, data.length);
-            let firstColBpMatches = 0;
-            for (let i = 0; i < sampleCount; i++) {
-                const v = (data[i][firstColKey] || '').toString().trim();
-                if (rateShockPattern.test(v) || currentPattern.test(v)) firstColBpMatches++;
-            }
-
-            // If first column is already bp-like for most sampled rows, do NOT transpose
-            if (firstColBpMatches >= Math.max(2, Math.floor(sampleCount * 0.6))) {
-                return false;
-            }
-
-            // Heuristic: if at least 2 bp-like headers exist and first column is NOT bp-like, transpose
-            return bpLikeCount >= 2;
-        }
-
         function transposeCSVData(originalData) {
             if (!originalData || originalData.length === 0) return originalData;
 
@@ -1944,11 +1728,9 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             console.log('Original first row:', originalData[0]);
             console.log('Original data rows:', originalData.length);
 
-            // Get the original structure
             const originalHeaders = Object.keys(originalData[0]);
             const lastColumnName = originalHeaders[originalHeaders.length - 1];
             
-            // Extract rate scenarios from FIRST ROW (excluding last column which has "Rate Change")
             const rateScenarios = [];
             for (let i = 0; i < originalHeaders.length - 1; i++) {
                 const headerName = originalHeaders[i];
@@ -1958,7 +1740,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 }
             }
             
-            // Extract metric names from LAST COLUMN (excluding first row)
             const metricNames = [];
             for (let rowIndex = 1; rowIndex < originalData.length; rowIndex++) {
                 const metricName = originalData[rowIndex][lastColumnName];
@@ -1967,19 +1748,14 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 }
             }
 
-            // Determine the desired first column header name (scenario header),
-            // using the value in the first row, last column when available (e.g., 'Rate Change').
             const scenarioHeaderCandidate = originalData[0][lastColumnName] && String(originalData[0][lastColumnName]).trim();
             const scenarioHeaderName = scenarioHeaderCandidate || lastColumnName || 'bp';
 
-            // Exclude the scenario header name from metric columns if it appears there
             const filteredMetricNames = metricNames.filter(m => m.toLowerCase() !== String(scenarioHeaderName).toLowerCase());
             
             console.log('Rate scenarios extracted:', rateScenarios);
             console.log('Metric names extracted:', filteredMetricNames);
             
-            // NOW DO THE ACTUAL TRANSPOSE:
-            // Create one row per rate scenario, with metrics as columns
             const transposedData = [];
             
             for (let scenarioIndex = 0; scenarioIndex < rateScenarios.length; scenarioIndex++) {
@@ -1987,13 +1763,9 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 const newRow = {};
                 newRow[scenarioHeaderName] = scenario;
                 
-                // For each metric, get its value for this scenario
                 for (let metricIndex = 0; metricIndex < filteredMetricNames.length; metricIndex++) {
                     const metricName = filteredMetricNames[metricIndex];
                     
-                    // Find the value in the original data:
-                    // - Row: metricIndex + 1 (skip the first row which has scenarios)
-                    // - Column: scenarioIndex (which scenario column)
                     const sourceRowIndex = metricIndex + 1;
                     const sourceColumnName = originalHeaders[scenarioIndex];
                     
@@ -2016,33 +1788,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             return transposedData;
         }
 
-        function createDetailedDataContext(data, analysisType) {
-            let context = `COMPLETE DATASET ANALYSIS (${data.length} rows):\n\n`;
-            
-            // Add metadata if available
-            if (data.metadata) {
-                context += `DATA TYPE: ${data.metadata.dataType}\n`;
-                context += `ANALYSIS: ${data.metadata.analysisType}\n`;
-                context += `TIME HORIZON: ${data.metadata.timeHorizon}\n`;
-                if (data.metadata.categories.length > 0) {
-                    context += `RISK CATEGORIES: ${data.metadata.categories.join(', ')}\n`;
-                }
-                context += `PREPROCESSING: ${data.metadata.processingNotes}\n\n`;
-            }
-            
-            context += `COLUMNS: ${Object.keys(data[0]).join(', ')}\n\n`;
-            
-            context += `COMPLETE DATASET:\n`;
-            data.forEach((row, index) => {
-                context += `Row ${index + 1}: ${JSON.stringify(row)}\n`;
-            });
-            
-            context += `\n- All ${data.length} rows of data are provided above - use the complete dataset for analysis\n- Calculate percentage changes and dollar amounts from the actual data`;
-            
-            return context;
-        }
-
-        // Minimal data block: just columns and rows, no extra instructions
         function createMinimalDataBlock(data) {
             if (!Array.isArray(data) || data.length === 0) return 'DATASET: (no rows)';
             let block = `DATASET (${data.length} rows)\nCOLUMNS: ${Object.keys(data[0]).join(', ')}\n`;
@@ -2052,37 +1797,10 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             return block;
         }
 
-        // Detect dataset type from columns to prevent cross-type analysis
-        function detectDataTypeFromColumns(data) {
-            if (!Array.isArray(data) || data.length === 0) return 'unknown';
-            const headers = Object.keys(data[0]).map(h => (h || '').toLowerCase());
-            const hasEve = headers.some(h => h.includes('eve') || h.includes('economic value')) || headers.includes('assets (ev)'.toLowerCase());
-            const hasNim = headers.some(h => h.includes('nim') || h.includes('net interest income'));
-            const hasKri = headers.some(h => h.includes('risk status') || h.includes('risk trend') || h.includes('risk outlook'));
-            if (hasKri) return 'kri';
-            if (hasEve) return 'eve';
-            if (hasNim) return 'nim';
-            return 'unknown';
-        }
-
-        function deriveTitleFromType(detectedType) {
-            switch (detectedType) {
-                case 'nim':
-                    return 'Net Interest Margin Analysis';
-                case 'eve':
-                    return 'Economic Value of Equity (EVE) Risk Analysis';
-                case 'kri':
-                    return 'Key Risk Indicators Analysis';
-                default:
-                    return 'Banking Analytics Summary';
-            }
-        }
-
-        // Keep all existing modal, chat, and UI functions unchanged...
-        // View data modal functions
+        // Modal functions
         currentCsvFile.addEventListener('click', () => showDataModal('csv'));
         currentPdfFile.addEventListener('click', () => showDataModal('pdf'));
-        // Prevent preview when clicking upload/remove icons or buttons
+        
         document.querySelectorAll('.file-input-wrapper label, #removePdfBtn, .change-file-btn, .remove-file-btn').forEach(el => {
             el.addEventListener('click', (e) => e.stopPropagation());
         });
@@ -2092,7 +1810,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
         });
 
         function showDataModal(fileType) {
-            // Ensure data preview uses the default width
             modalContent.classList.remove('wide');
             if (fileType === 'csv') {
                 if (!currentCsvData) {
@@ -2128,9 +1845,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
 
         function hideDataModal() {
             modalOverlay.style.display = 'none';
-            // Reset any width customization
             modalContent.classList.remove('wide');
-            // Clean up blob URLs
             const iframe = modalBody.querySelector('iframe');
             if (iframe && iframe.src.startsWith('blob:')) {
                 URL.revokeObjectURL(iframe.src);
@@ -2164,7 +1879,6 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 html += `<p style="margin-top: 10px; color: #666;">Showing first ${maxRows} of ${data.length} rows</p>`;
             }
             
-            // Add metadata display if available
             if (data.metadata) {
                 html += `<div style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                     <strong>Data Information:</strong><br>
@@ -2178,23 +1892,23 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
             return html;
         }
 
-        // Analyze table button
+        // Analyze button
         analyzeTableBtn.addEventListener('click', startAnalysis);
 
-      async function startAnalysis() {
-        if (!currentCsvData && !currentPdfData) {
-            showError('No data loaded to analyze');
-            return;
+        async function startAnalysis() {
+            if (!currentCsvData && !currentPdfData) {
+                showError('No data loaded to analyze');
+                return;
+            }
+
+            analyzeCenter.classList.add('hidden');
+            chatInterface.classList.add('active');
+
+            await sendMessage('Analyze', false);
+            messageInput.focus();
         }
 
-        analyzeCenter.classList.add('hidden');
-        chatInterface.classList.add('active');
-
-        // Use the current prompt editor content for all modes; dataset/context is appended inside sendMessage
-        await sendMessage('Analyze', false);
-        messageInput.focus();
-    }
-        // Keep all existing chat functions (addMessage, formatBotResponse, sendMessage, etc.)
+        // Chat functions
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -2387,80 +2101,45 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 const config = analysisConfig[activeAnalysis];
                 let fullPrompt = message;
                 
-                // CSV data is primary: ALWAYS include it when available
                 if (currentCsvData) {
                     try {
                         const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
                         console.log(`[SEND] Attaching CSV dataset (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount}) for analysis='${activeAnalysis}'`);
                     } catch (_) {}
-                    // Minimal modes: exact prompt from config + dataset only (always include dataset)
-                    if (activeAnalysis.includes('-minimal')) {
-                        const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].minimalPrompt || '');
-                        const minimalData = createMinimalDataBlock(currentCsvData);
-                        const userIntent = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
+                    
+                    const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].prompt || '');
+                    const minimalData = createMinimalDataBlock(currentCsvData);
+                    const userIntent = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
 
-                        // Add strict guardrails to force citing only dataset values
-                        const detectedType = detectDataTypeFromColumns(currentCsvData);
-                        const title = deriveTitleFromType(detectedType);
-                        let strictRules = `\n\nFORMAT & DATA RULES:\n- Begin with the header: ## ${title}.\n- Only cite numbers that appear verbatim in the DATASET.\n- When citing a figure, reference the scenario and column in natural prose (e.g., Net Interest Income at -400bp is 29,098).\n- If a metric is not present as a column, write "Not available".\n- Do not introduce concepts outside the dataset type. For NIM datasets, do NOT mention EVE/economic value. For EVE datasets, do NOT mention NIM/Net Interest unless a column exists.\n- Keep analysis tied to actual rows (e.g., -400bp, Current, +400bp).`;
-
-                        // Add dataset type hint to align the model
-                        if (detectedType !== 'unknown') {
-                            strictRules += `\nDATASET TYPE DETECTED: ${detectedType.toUpperCase()} (derived from column headers). Align analysis accordingly.`;
-                        }
-
-                        fullPrompt = `${minimalInstruction}${strictRules}${userIntent}\n\n${minimalData}`;
-                        // OVERRIDE: Respect exact minimal prompt with dataset only (no extra rules)
-                        {
-                            const _mi = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].minimalPrompt || '');
-                            const _md = createMinimalDataBlock(currentCsvData);
-                            const _ui = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
-                            fullPrompt = `${_mi}${_ui}\n\n${_md}`;
-                        }
-                    } else {
-                        // Regular modes: add a concise, structured instruction then attach the dataset block
-                        const detailedContext = createDetailedDataContext(currentCsvData, activeAnalysis);
-                        let instruction = (promptEditor.value && promptEditor.value.trim()) || '';
-                        if (!instruction) {
-                            if (activeAnalysis.includes('net-interest')) {
-                                instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across rate shocks (-400 to +400 bps), not just the figures.\n\n- Overall shape: describe earnings sensitivity and any asymmetry (losses in cuts vs gains in hikes).\n- Most adverse: name the scenario and list NIM change (bps) and NII change ($), then one sentence on the driver (e.g., asset yield drop vs liability floors, deposit cost lag).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note tapering or reversal if visible (e.g., deposit costs accelerate above +200 bps).\n- Drivers: explain asset-side (loans, investments) and liability-side (deposits, borrowings) behavior using patterns in the data (repricing timing, betas, floors, mix shifts).\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
-                            } else if (activeAnalysis.includes('rate-risk')) {
-                                instruction = `Using only the dataset below (and any uploaded report), write an executive narrative in natural paragraphs. Explain what happens, why, and how across shocks (-400 to +400 bps) based on the data.\n\n- Overall shape: describe interest rate sensitivity and whether outcomes are symmetric or skewed.\n- Most adverse: name the scenario and report the magnitude on the key metric(s) present (EVE %, $, or NIM/NII), then one sentence on the main cause (e.g., duration/convexity effects, liability floors).\n- Most favorable: same format, with a one-sentence cause.\n- Higher shocks: note any tapering or reversals; explain with liability repricing acceleration or asset sensitivity.\n- Drivers: explain asset categories and liability categories that matter most, grounded in repricing timing, duration/sensitivity, deposit betas, floors, and mix.\n\nKeep headings minimal (a single title and a closing “Summary”). Bold important numbers. If a metric isn’t present, state "Not available." End with a short bullet list titled “Assumptions to Review” (3–5 items) tied to observed patterns.`;
-                            } else {
-                                instruction = `Provide a concise executive narrative using only the dataset below. Include an Executive Summary, a section on extremes with magnitudes, primary drivers, and assumptions to review. Bold key figures. If metrics are missing, say "Not available."`;
-                            }
-                        }
-
-                        fullPrompt = `${message}\n\n${instruction}\n\n${detailedContext}`;
-                    }
+                    fullPrompt = `${minimalInstruction}${userIntent}\n\n${minimalData}`;
                 } else {
                     console.warn(`[SEND] No CSV dataset available to attach for analysis='${activeAnalysis}'. Using PDF/doc context only.`);
                 }
 
-                // PDF provides additional institutional context
-                // For minimal modes, do not add PDF context
-                if (currentPdfData && !activeAnalysis.includes('-minimal')) {
-                    fullPrompt += `\n\nADDITIONAL CONTEXT: A PDF report has been uploaded that provides broader institutional context and background for this analysis. Use this as supplementary context to better understand the institution's overall risk profile and strategic position.`;
-                }
-
-                // Create FormData for file uploads
                 const formData = new FormData();
                 formData.append('prompt', fullPrompt);
-                const effectiveAnalysisType = includeDocs ? `${activeAnalysis} minimal-docs` : activeAnalysis;
+                const effectiveAnalysisType = includeDocs ? `${activeAnalysis}-docs` : activeAnalysis;
                 formData.append('analysisType', effectiveAnalysisType);
                 formData.append('useDocuments', includeDocs);
                 formData.append('model', selectedModel);
 
-                // Add PDF if available (as supplementary context)
                 if (currentPdfData) {
                     formData.append('pdfFile', currentPdfData);
                     formData.append('hasPdf', 'true');
                 }
 
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                }, 240000);
+
                 const response = await fetch('/Chatbot/api/chat', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 const data = await response.json();
                 hideTyping();
@@ -2472,7 +2151,12 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 }
             } catch (error) {
                 hideTyping();
-                showError('Network error. Please check your connection.');
+                
+                if (error.name === 'AbortError') {
+                    showError('Request timed out. The analysis is taking longer than expected. Please try again or use a smaller dataset.');
+                } else {
+                    showError('Network error. Please check your connection.');
+                }
                 console.error('Error:', error);
             } finally {
                 messageInput.disabled = false;
@@ -2482,6 +2166,7 @@ Executive-style guidance (keep this brief and insight-led, not a table recap):
                 }
             }
         }
+
         sendButton.addEventListener('click', () => sendMessage());
         
         messageInput.addEventListener('keypress', (e) => {
