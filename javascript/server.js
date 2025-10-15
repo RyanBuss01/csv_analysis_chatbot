@@ -1,9 +1,9 @@
 /**
- * BankersGPS Analytics Chatbot Server - Enhanced with PDF Upload
+ * BankersGPS Analytics Chatbot Server - Enhanced with Document Upload
  * 
  * Express.js server that provides a web interface and API endpoints for the
  * BankersGPS banking analytics chatbot. Handles file serving, CSV processing,
- * PDF uploads, and OpenAI-powered chat functionality with support for reduced tabs.
+ * Document uploads (PDF/DOCX), and OpenAI-powered chat functionality with support for reduced tabs.
  * 
  * @author Ryan Bussert
  * @version 1.2.0
@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const Chatbot = require('./Chatbot');
+const mammoth = require('mammoth');
 require('dotenv').config();
 
 // Initialize Express application
@@ -23,22 +24,26 @@ const PORT = process.env.PORT || 3000;
 /**
  * Configure multer for file uploads
  * - Store files in memory as buffers
- * - Set file size limits for PDFs
+ * - Set file size limits for documents
  * - Filter file types for security
  */
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit for PDF files
+    fileSize: 50 * 1024 * 1024, // 50MB limit for uploaded document files
     files: 1 // Only one file at a time
   },
   fileFilter: (req, file, cb) => {
-    // Only allow PDF files for the PDF upload
+    // Only allow PDF or DOCX files for document upload
     if (file.fieldname === 'pdfFile') {
-      if (file.mimetype === 'application/pdf') {
+      const allowed = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      if (allowed.includes(file.mimetype)) {
         cb(null, true);
       } else {
-        cb(new Error('Only PDF files are allowed for PDF upload'), false);
+        cb(new Error('Only PDF or DOCX files are allowed for upload'), false);
       }
     } else {
       cb(null, true);
@@ -83,12 +88,12 @@ const handleMulterError = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ 
-        error: 'File too large. Maximum size is 50MB for PDF files.' 
+        error: 'File too large. Maximum size is 50MB for document files.' 
       });
     }
     if (error.code === 'LIMIT_FILE_COUNT') {
       return res.status(400).json({ 
-        error: 'Too many files. Only one PDF file allowed.' 
+        error: 'Too many files. Only one document allowed.' 
       });
     }
     return res.status(400).json({ 
@@ -96,9 +101,9 @@ const handleMulterError = (error, req, res, next) => {
     });
   }
   
-  if (error.message.includes('Only PDF files are allowed')) {
+  if (error.message.includes('Only PDF') || error.message.includes('DOCX')) {
     return res.status(400).json({ 
-      error: 'Invalid file type. Only PDF files are allowed for PDF upload.' 
+      error: 'Invalid file type. Only PDF or DOCX files are allowed for upload.' 
     });
   }
   
@@ -163,16 +168,16 @@ app.get('/assets/:filename', (req, res) => {
 });
 
 /**
- * Handle chat requests from the frontend with PDF upload support
+ * Handle chat requests from the frontend with document upload support
  * 
  * @route POST /Chatbot/api/chat
- * @description Processes chat messages through the OpenAI-powered chatbot with optional PDF upload
+ * @description Processes chat messages through the OpenAI-powered chatbot with optional document upload (PDF/DOCX)
  * @param {Object} req.body - Request body containing chat data
  * @param {string} req.body.prompt - User's question or message
  * @param {string} [req.body.analysisType] - Type of banking analysis ('rate-risk', 'net-interest', or reduced variants)
  * @param {boolean} [req.body.useDocuments=true] - Whether to include document context
- * @param {string} [req.body.hasPdf] - Flag indicating if PDF is uploaded
- * @param {File} [req.file] - Optional uploaded PDF file (via multer)
+ * @param {string} [req.body.hasPdf] - Flag indicating if a document is uploaded
+ * @param {File} [req.file] - Optional uploaded document file (via multer)
  * @returns {Object} JSON response with chatbot's reply or error message
  * 
  * Success Response:
@@ -197,16 +202,17 @@ app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async
     // Log the request for debugging
     console.log(`Chat request: analysisType=${analysisType}, useDocuments=${useDocsBoolean}, hasPdf=${hasPdf}, model=${model}`);
     
-    // Handle uploaded PDF
+    // Handle uploaded document
     let uploadedPdfBuffer = null;
     let pdfFileName = null;
     
     if (req.file && req.file.fieldname === 'pdfFile') {
       uploadedPdfBuffer = req.file.buffer;
       pdfFileName = req.file.originalname;
-      console.log(`PDF uploaded: ${pdfFileName} (${uploadedPdfBuffer.length} bytes)`);
+      const type = req.file.mimetype;
+      console.log(`File uploaded: ${pdfFileName} (${uploadedPdfBuffer.length} bytes) type=${type}`);
     } else if (hasPdf === 'true') {
-      console.log('PDF upload expected but no file received');
+      console.log('Document upload expected but no file received');
     }
     
     // Process the chat request
@@ -364,6 +370,34 @@ app.post('/api/test/pdf', upload.single('pdfFile'), handleMulterError, async (re
   }
 });
 
+/**
+ * DOCX preview endpoint (extracts HTML for client preview)
+ *
+ * @route POST /api/preview/docx
+ */
+app.post('/api/preview/docx', upload.single('pdfFile'), handleMulterError, async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No document uploaded' });
+    }
+
+    const isDocx = req.file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || (req.file.originalname || '').toLowerCase().endsWith('.docx');
+    if (!isDocx) {
+      return res.status(400).json({ error: 'File must be a DOCX for this preview endpoint' });
+    }
+
+    console.log(`DOCX preview requested: ${req.file.originalname} (${req.file.size} bytes)`);
+    const result = await mammoth.convertToHtml({ buffer: req.file.buffer });
+    const html = (result.value || '').trim();
+    const warnings = (result.messages || []).map(m => m.message || m).slice(0, 5);
+
+    res.json({ success: true, html, warnings });
+  } catch (error) {
+    console.error('Error generating DOCX preview:', error);
+    res.status(500).json({ error: 'DOCX preview failed', details: error.message });
+  }
+});
+
 // ===== ERROR HANDLING =====
 
 /**
@@ -415,7 +449,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📁 Documents folder: ${process.env.DOCUMENTS_FOLDER || './documents'}`);
   console.log(`📊 CSV assets folder: ./assets`);
-  console.log(`🔒 Max PDF upload size: 50MB`);
+  console.log(`🔒 Max document upload size: 50MB`);
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
   
   // Log available endpoints
@@ -423,7 +457,7 @@ app.listen(PORT, () => {
     console.log('\n📋 Available endpoints:');
     console.log('  GET  /                     - Main chatbot interface');
     console.log('  GET  /assets/:filename     - Static assets (CSV, PDF)');
-    console.log('  POST /Chatbot/api/chat     - Chat with PDF upload support');
+    console.log('  POST /Chatbot/api/chat     - Chat with document upload support');
     console.log('  GET  /health              - Health check');
     console.log('  GET  /api/documents/stats - Document statistics');
     console.log('  POST /api/documents/refresh - Refresh document cache');

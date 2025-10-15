@@ -64,20 +64,30 @@ class Chatbot {
         docContent = await this.getDocumentContentCached();
       }
       
-      // Process uploaded PDF if provided
+      // Process uploaded document if provided (PDF or DOCX)
       let uploadedPdfContent = '';
       if (uploadedPdfBuffer && pdfFileName) {
         try {
-          console.log(`Processing uploaded PDF: ${pdfFileName} (${uploadedPdfBuffer.length} bytes)`);
-          uploadedPdfContent = await this.extractPdfTextFromBuffer(uploadedPdfBuffer);
-          
-          if (uploadedPdfContent.trim()) {
-            console.log(`✓ Extracted ${uploadedPdfContent.length} characters from uploaded PDF`);
+          const ext = path.extname(pdfFileName).toLowerCase();
+          console.log(`Processing uploaded file: ${pdfFileName} (${uploadedPdfBuffer.length} bytes)`);
+
+          if (ext === '.pdf') {
+            console.log('Detected PDF upload; extracting text');
+            uploadedPdfContent = await this.extractPdfTextFromBuffer(uploadedPdfBuffer);
+          } else if (ext === '.docx') {
+            console.log('Detected DOCX upload; extracting text');
+            uploadedPdfContent = await this.extractDocxTextFromBuffer(uploadedPdfBuffer);
           } else {
-            console.warn('⚠ No text content extracted from uploaded PDF');
+            console.warn(`Unsupported uploaded file type: ${ext}`);
+          }
+
+          if (uploadedPdfContent && uploadedPdfContent.trim()) {
+            console.log(`✓ Extracted ${uploadedPdfContent.length} characters from uploaded file`);
+          } else {
+            console.warn('⚠ No text content extracted from uploaded file');
           }
         } catch (pdfError) {
-          console.error('Error processing uploaded PDF:', pdfError);
+          console.error('Error processing uploaded file:', pdfError);
         }
       }
       
@@ -131,10 +141,11 @@ class Chatbot {
     // For all analysis types, use single user message format
     let userContent = prompt;
 
-    // Add uploaded PDF content if available
+    // Add uploaded file content if available (minimal, non-instructional label)
     if (uploadedPdfContent && uploadedPdfContent.trim()) {
-      const normalizedPdf = this.normalizeDocumentContent(uploadedPdfContent);
-      userContent += `\n\n=== UPLOADED PDF CONTEXT ===\n${normalizedPdf}\n\n=== END PDF CONTEXT ===`;
+      const normalized = this.normalizeDocumentContent(uploadedPdfContent);
+      const fileTypeLabel = (pdfFileName && path.extname(pdfFileName).toLowerCase() === '.docx') ? 'DOCX' : 'PDF';
+      userContent += `\n\nUse this data from ${fileTypeLabel}:\n${normalized}`;
     }
 
     // Add documentation if requested and available
@@ -164,7 +175,7 @@ class Chatbot {
 
   /**
    * Extract text from PDF buffer
-   */
+  */
   async extractPdfTextFromBuffer(pdfBuffer) {
     try {
       const data = await pdfParse(pdfBuffer, {
@@ -175,6 +186,22 @@ class Chatbot {
       return this.cleanPdfText(data.text);
     } catch (error) {
       console.error('Error extracting PDF text from buffer:', error.message);
+      return '';
+    }
+  }
+
+  /**
+   * Extract text from DOCX buffer
+   */
+  async extractDocxTextFromBuffer(docxBuffer) {
+    try {
+      const result = await mammoth.extractRawText({ buffer: docxBuffer });
+      if (result.messages && result.messages.length > 0) {
+        console.warn('DOCX extraction warnings:', result.messages);
+      }
+      return (result.value || '').trim();
+    } catch (error) {
+      console.error('Error extracting DOCX text from buffer:', error.message);
       return '';
     }
   }

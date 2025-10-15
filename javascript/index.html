@@ -386,6 +386,20 @@
             justify-content: center;
         }
 
+        .modal-save-btn {
+            width: auto;
+            min-width: 110px;
+            height: 36px;
+            padding: 0 18px;
+        }
+
+        .modal-cancel-btn {
+            width: auto;
+            min-width: 110px;
+            height: 36px;
+            padding: 0 18px;
+        }
+
         .change-file-btn:hover {
             background: #667eea;
             color: white;
@@ -782,15 +796,23 @@
 
         .pdf-preview {
             width: 100%;
-            height: 500px;
+            height: 70vh;
             border: none;
+            background: #fff;
             border-radius: 8px;
-            background: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #666;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .docx-preview {
+            width: 100%;
+            height: 70vh;
+            overflow: auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 16px;
+            color: #333;
+            line-height: 1.5;
         }
 
         .json-view {
@@ -914,18 +936,18 @@
                         </div>
                     </div>
 
-                    <div class="current-file no-file-state" id="currentPdfFile" title="Click to preview PDF">
+                    <div class="current-file no-file-state" id="currentPdfFile" title="Click to preview document">
                         <div class="file-title-section">
                             <div class="file-icon">📄</div>
                             <div class="file-details">
-                                <h4 class="file-title" id="pdfFileName">No PDF loaded</h4>
+                                <h4 class="file-title" id="pdfFileName">No document loaded</h4>
                                 <div class="file-status" id="pdfStatus">Optional</div>
                             </div>
                         </div>
                         <div class="change-file-wrapper">
                             <div class="file-input-wrapper">
-                                <input type="file" id="pdfFileInput" class="file-input" accept=".pdf">
-                                <label for="pdfFileInput" class="change-file-btn" title="Change PDF">
+                                <input type="file" id="pdfFileInput" class="file-input" accept=".pdf,.docx">
+                                <label for="pdfFileInput" class="change-file-btn" title="Change file">
                                     <span>📄</span>
                                 </label>
                             </div>
@@ -1036,55 +1058,50 @@
                 csvFile: 'sample_rate_shock.csv',
                 pdfFile: null,
                 useDocuments: false,
-                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key risk metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+                prompt: `Using only the uploaded file and no external sources, write a clear, concise, executive-ready narrative that covers every rate shock scenario from -400 to +400. Surface the most important insights on how rate movements affect the key risk metrics, call out the most adverse and favorable scenarios, and explain the drivers you can see in the asset and liability categories. Flag any risk assumptions that merit follow-up.
 
-Note: Focus on Economic Value of Equity (EVE) changes — how the economic value of assets and liabilities changes with interest rates, not balance sheet dollar amounts. The format should be primarily narrative.
+CRITICAL DATA UNITS: All balance figures appear in thousands (000s); treat scenario labels such as "-400bp" as basis-point changes and percentage columns as already scaled. When citing dollars, restate them in full dollar terms for clarity.
 
-Executive-style guidance (keep this brief and insight-led, not a table recap):
-- Describe overall rate sensitivity and any asymmetry across shocks.
-- Name the most adverse and most favorable scenarios; quantify EVE change (%, $) and explain the main drivers.
-- Explain which asset and liability categories drive results (e.g., duration/convexity, repricing timing, rate floors, deposit betas) using patterns visible in the data.
-- Note any tapering or reversal at higher positive shocks as liability costs/floors pressure results.
-- Use minimal headings (a single title and a closing "Summary"). Bold key figures. If a metric isn't present, say "Not available." End with 3–5 bullets titled "Assumptions to Review" tied to observed patterns.`
+Note: Focus on Economic Value of Equity (EVE) sensitivity — how the economic value of assets and liabilities shifts as rates move, not simple balance totals. Discuss overall rate sensitivity and any asymmetry across shocks, explicitly name the most adverse and most favorable scenarios with both % and $ EVE changes, and explain which balance-sheet segments drive the pattern (duration/convexity, repricing timing, rate floors, deposit betas). Highlight if results taper or reverse at higher positive shocks as liability costs or floors bite. Keep the format primarily narrative with minimal headings, bold the critical figures, state "Not available" when data is missing, and close with a brief "Summary" paragraph followed by 3–5 bullets titled "Assumptions to Review" tied directly to observed patterns.
+
+Note: Focus on Rate Risk Management FROM THE CENTER POINT— how the balance sheet's economic value changes with interest rates`
             },
             'net-interest-margin': {
                 name: 'Net Interest Margin',
                 csvFile: 'sample_net_intrest.csv',
                 pdfFile: null,
                 useDocuments: false,
-                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
-
+                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience.  The format should be PRIMARILY narrative.
+ 
+Note:  The uploaded file is a Net Interest Income rate shock analysis on a static balance sheet with no volume changes on assets or liabilities. DO NOT reference risks associated with a static balance sheet since this is a regulatory compliant report.
+ 
+The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios FROM THE CENTER POINT. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+ 
 CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.
-
-Note: Focus on Net Interest Income and margin impacts — how earnings change with interest rates, including the spread between interest income and funding costs. The format should be primarily narrative.`
-            },
+ 
+Note: Focus on Net Interest Income and margin impacts FROM THE CENTER POINT— how earnings change with interest rates, including the spread between interest income and funding costs.`
+             },
             'forecast-kri': {
                 name: 'Forecast Key Risk Indicators',
                 csvFile: 'gps_kri_forecast.csv',
                 pdfFile: null,
                 useDocuments: true,
-                prompt: `You are analyzing Forecast KRI data for BankersGPS.
+                prompt: `Using only the uploaded file and no external sources, craft a concise, executive-level narrative that interprets forward-looking key risk indicators across the CAELS dimensions through the three-year forecast horizon. Highlight the directional shifts, inflection points, and any movement toward or away from the stated risk limits.
 
-Write a concise, executive narrative that focuses on forward-looking risk trends across CAELS over the 3-year forecast period. Use actual values from the dataset.
+CRITICAL DATA UNITS: "Low" and "High" columns define the acceptable tolerance band for each indicator. Historical (2023–2024) and Q2 2025 values are actuals, while 2025–2027 columns are system-generated forecasts. Treat blank cells as missing data and call them out when relevant.
 
-Format:
-- ## Risk Trend Analysis: Explain directional patterns and inflection points; bold key numbers.
-- ## Strategic Risk Implications: What the trends mean for management priorities.
-
-Keep it strategic and insight-led; avoid table restatement.`
+Note: Keep the response primarily narrative and insight-led. Use two short sections titled "Risk Trend Analysis" and "Strategic Risk Implications" to organize the story, but avoid restating the table. Bold the pivotal figures, reference the "Risk Trend" / "Risk Outlook" signals where they reinforce the data, and flag any stretch goals or emerging pressures management should prioritize.`
             },
             'competitive-kri': {
                 name: 'Competitive Key Risk Indicators',
                 csvFile: 'gps_kri_competitive.csv',
                 pdfFile: null,
                 useDocuments: true,
-                prompt: `You are analyzing Competitive KRI data for BankersGPS.
+                prompt: `Using only the uploaded file and no external sources, compose an executive-level narrative that compares BankersGPS performance to the peer benchmarks across the competitive KRI set. Call out where the institution leads, lags, or clusters with peers, and quantify the advantage or gap using the actual values provided.
 
-Write a peer-comparative executive narrative using actual values from the dataset.
+CRITICAL DATA UNITS: Each metric is paired with peer quartiles (P25, Median, P75) or percentile rankings. Treat percentage values as already scaled, restate dollar figures in full dollars for clarity, and flag data points marked as "Not available" if they limit the comparison.
 
-Format:
-- ## Competitive Risk Analysis: Summarize relative position vs peer medians and quartiles; bold key numbers.
-- ## Strategic Positioning: Identify competitive advantages, gaps, and actions.`
+Note: Keep the response narrative and insight-led. Organize it into two brief sections titled "Competitive Risk Analysis" and "Strategic Positioning," bold the pivotal numbers, emphasize deltas versus peer medians/quartiles, and outline immediate actions or watch items suggested by the data without restating the entire table.`
             }
         };
 
@@ -1158,7 +1175,7 @@ Format:
             
             const saveBtn = document.createElement('button');
             saveBtn.textContent = 'Save';
-            saveBtn.className = 'change-file-btn';
+            saveBtn.className = 'change-file-btn modal-save-btn';
             saveBtn.addEventListener('click', () => {
                 updatePromptPreview();
                 modalOverlay.style.display = 'none';
@@ -1166,7 +1183,7 @@ Format:
             
             const cancelBtn = document.createElement('button');
             cancelBtn.textContent = 'Cancel';
-            cancelBtn.className = 'remove-file-btn';
+            cancelBtn.className = 'remove-file-btn modal-cancel-btn';
             cancelBtn.addEventListener('click', () => closeModal.click());
             
             actions.appendChild(saveBtn);
@@ -1253,7 +1270,7 @@ Format:
 
             // Load PDF data
             const currentPdfName = pdfFileName.textContent;
-            if (currentPdfName && !currentPdfName.includes('sample_') && !currentPdfName.includes('No PDF')) {
+            if (currentPdfName && !currentPdfName.includes('sample_') && !currentPdfName.includes('No document')) {
                 console.log('User PDF already loaded, keeping current PDF');
                 return;
             }
@@ -1273,7 +1290,7 @@ Format:
                         console.log(`[PDF] Sample loaded: ${config.pdfFile} (size=${pdfBlob.size} bytes)`);
                     } else {
                         currentPdfData = null;
-                        pdfFileName.textContent = 'No PDF loaded';
+                        pdfFileName.textContent = 'PDF or DOCX';
                         pdfStatus.textContent = 'Optional';
                         currentPdfFile.classList.add('no-file-state');
                         currentPdfFile.style.borderColor = '#e1e5e9';
@@ -1283,14 +1300,14 @@ Format:
                 } catch (error) {
                     console.error('Error loading PDF data:', error);
                     currentPdfData = null;
-                    pdfFileName.textContent = 'No PDF loaded';
+                    pdfFileName.textContent = 'PDF or DOCX';
                     pdfStatus.textContent = 'Optional';
                     currentPdfFile.classList.add('no-file-state');
                     removePdfBtn.style.display = 'none';
                 }
             } else {
                 currentPdfData = null;
-                pdfFileName.textContent = 'No PDF loaded';
+                pdfFileName.textContent = 'PDF or DOCX';
                 pdfStatus.textContent = 'Optional';
                 currentPdfFile.classList.add('no-file-state');
                 removePdfBtn.style.display = 'none';
@@ -1444,12 +1461,12 @@ Format:
 
         function removePdf() {
             currentPdfData = null;
-            pdfFileName.textContent = 'No PDF loaded';
+            pdfFileName.textContent = 'PDF or DOCX';
             pdfStatus.textContent = 'Optional';
             currentPdfFile.classList.add('no-file-state');
             removePdfBtn.style.display = 'none';
             pdfFileInput.value = '';
-            showSuccess('PDF removed successfully');
+            showSuccess('Document removed successfully');
         }
         
         document.querySelectorAll('.change-file-wrapper').forEach(wrapper => {
@@ -1470,8 +1487,8 @@ Format:
                     return;
                 }
             } else if (fileType === 'pdf') {
-                if (fileExtension !== 'pdf') {
-                    showError('Please upload a PDF file');
+                if (!['pdf', 'docx'].includes(fileExtension)) {
+                    showError('Please upload a PDF or DOCX file');
                     return;
                 }
             }
@@ -1515,7 +1532,7 @@ Format:
                     removePdfBtn.style.display = 'flex';
                     
                     showSuccess(`${file.name} loaded successfully!`);
-                    console.log(`[PDF] User file loaded: ${file.name} (size=${file.size} bytes)`);
+                    console.log(`[DOC] User file loaded: ${file.name} (size=${file.size} bytes)`);
                 }
                 
             } catch (error) {
@@ -1826,17 +1843,41 @@ Format:
                 }
             } else if (fileType === 'pdf') {
                 if (!currentPdfData) {
-                    showError('No PDF loaded');
+                    showError('No document loaded');
                     return;
                 }
 
-                modalTitle.textContent = `${pdfFileName.textContent} - PDF Preview`;
+                modalTitle.textContent = `${pdfFileName.textContent} - Document Preview`;
                 
-                if (currentPdfData instanceof File || currentPdfData instanceof Blob) {
+                const isPdf = (currentPdfData.type === 'application/pdf' || (currentPdfData.name || '').toLowerCase().endsWith('.pdf'));
+                const isDocx = (currentPdfData.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || (currentPdfData.name || '').toLowerCase().endsWith('.docx'));
+
+                if (isPdf) {
                     const pdfUrl = URL.createObjectURL(currentPdfData);
                     modalBody.innerHTML = `<iframe src="${pdfUrl}" class="pdf-preview" title="PDF Preview"></iframe>`;
+                } else if (isDocx) {
+                    modalBody.innerHTML = `<div class="docx-preview">Generating preview…</div>`;
+                    (async () => {
+                        try {
+                            console.log('[PREVIEW] Uploading DOCX for preview:', currentPdfData.name, currentPdfData.type, currentPdfData.size);
+                            const fd = new FormData();
+                            fd.append('pdfFile', currentPdfData);
+                            const resp = await fetch('/api/preview/docx', { method: 'POST', body: fd });
+                            const data = await resp.json();
+                            if (resp.ok && data.success) {
+                                console.log('[PREVIEW] DOCX preview generated');
+                                modalBody.innerHTML = `<div class="docx-preview">${data.html || 'No content'}</div>`;
+                            } else {
+                                console.warn('[PREVIEW] DOCX preview failed', data);
+                                modalBody.innerHTML = `<div class="docx-preview">Could not render DOCX preview.</div>`;
+                            }
+                        } catch (e) {
+                            console.error('[PREVIEW] DOCX preview error', e);
+                            modalBody.innerHTML = `<div class="docx-preview">Error generating DOCX preview.</div>`;
+                        }
+                    })();
                 } else {
-                    modalBody.innerHTML = `<div class="pdf-preview">PDF preview not available for this file format</div>`;
+                    modalBody.innerHTML = `<div class="docx-preview">Preview not available for this file type</div>`;
                 }
             }
             
@@ -2124,6 +2165,7 @@ Format:
                 formData.append('model', selectedModel);
 
                 if (currentPdfData) {
+                    console.log('[SEND] Attaching document to request:', currentPdfData.name, currentPdfData.type, currentPdfData.size);
                     formData.append('pdfFile', currentPdfData);
                     formData.append('hasPdf', 'true');
                 }
