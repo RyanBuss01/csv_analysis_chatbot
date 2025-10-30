@@ -196,6 +196,17 @@ app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async
     const { prompt, analysisType, useDocuments = 'true', hasPdf } = req.body;
     const model = req.body.model || 'gpt-4.1-mini';
     
+    // Optional conversation history sent as JSON-encoded string in multipart form
+    let messages = null;
+    if (req.body.messages) {
+      try {
+        messages = JSON.parse(req.body.messages);
+        if (!Array.isArray(messages)) messages = null;
+      } catch (_) {
+        messages = null;
+      }
+    }
+    
     // Convert string 'true'/'false' to boolean
     const useDocsBoolean = useDocuments === 'true' || useDocuments === true;
     
@@ -222,7 +233,8 @@ app.post('/Chatbot/api/chat', upload.single('pdfFile'), handleMulterError, async
       useDocsBoolean,
       uploadedPdfBuffer,
       pdfFileName,
-      model
+      model,
+      messages
     );
     
     if (result.success) {

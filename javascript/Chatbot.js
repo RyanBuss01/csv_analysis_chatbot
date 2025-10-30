@@ -47,10 +47,11 @@ class Chatbot {
     useDocuments = true,
     uploadedPdfBuffer = null,
     pdfFileName = null,
-    modelName = 'gpt-4.1-mini'
+    modelName = 'gpt-4.1-mini',
+    messages = null
   ) {
     try {
-      if (!prompt || prompt.trim() === '') {
+      if ((!prompt || String(prompt).trim() === '') && (!messages || (Array.isArray(messages) && messages.length === 0))) {
         return {
           success: false,
           error: 'Prompt is required.',
@@ -97,7 +98,8 @@ class Chatbot {
         analysisType,
         uploadedPdfContent,
         pdfFileName,
-        modelName
+        modelName,
+        messages
       );
       
       this.logInteraction(prompt, response, analysisType, useDocuments, !!uploadedPdfContent);
@@ -136,29 +138,44 @@ class Chatbot {
     analysisType = null,
     uploadedPdfContent = '',
     pdfFileName = null,
-    modelName = 'gpt-4.1-mini'
+    modelName = 'gpt-4.1-mini',
+    messages = null
   ) {
-    // For all analysis types, use single user message format
-    let userContent = prompt;
+    // Build messages payload: prefer provided conversation if present
+    let payloadMessages = null;
+    if (Array.isArray(messages) && messages.length > 0) {
+      payloadMessages = messages.slice();
 
-    // Add uploaded file content if available (minimal, non-instructional label)
-    if (uploadedPdfContent && uploadedPdfContent.trim()) {
-      const normalized = this.normalizeDocumentContent(uploadedPdfContent);
-      const fileTypeLabel = (pdfFileName && path.extname(pdfFileName).toLowerCase() === '.docx') ? 'DOCX' : 'PDF';
-      userContent += `\n\nUse this data from ${fileTypeLabel}:\n${normalized}`;
-    }
+      // Optionally append uploaded document and docs context
+      if (uploadedPdfContent && uploadedPdfContent.trim()) {
+        const normalized = this.normalizeDocumentContent(uploadedPdfContent);
+        const fileTypeLabel = (pdfFileName && path.extname(pdfFileName).toLowerCase() === '.docx') ? 'DOCX' : 'PDF';
+        payloadMessages.push({ role: 'user', content: `Use this data from ${fileTypeLabel}:\n${normalized}` });
+      }
+      if (docContent && docContent.trim()) {
+        const normalizedDocs = this.normalizeDocumentContent(docContent);
+        payloadMessages.unshift({ role: 'system', content: `=== DOCUMENTATION CONTEXT ===\n${normalizedDocs}\n\n=== END DOCUMENTATION CONTEXT ===` });
+      }
+    } else {
+      // Fallback: single user message format
+      let userContent = prompt;
 
-    // Add documentation if requested and available
-    if (docContent && docContent.trim()) {
-      const normalizedDocs = this.normalizeDocumentContent(docContent);
-      userContent += `\n\n=== DOCUMENTATION CONTEXT ===\n${normalizedDocs}\n\n=== END DOCUMENTATION CONTEXT ===`;
+      if (uploadedPdfContent && uploadedPdfContent.trim()) {
+        const normalized = this.normalizeDocumentContent(uploadedPdfContent);
+        const fileTypeLabel = (pdfFileName && path.extname(pdfFileName).toLowerCase() === '.docx') ? 'DOCX' : 'PDF';
+        userContent += `\n\nUse this data from ${fileTypeLabel}:\n${normalized}`;
+      }
+      if (docContent && docContent.trim()) {
+        const normalizedDocs = this.normalizeDocumentContent(docContent);
+        userContent += `\n\n=== DOCUMENTATION CONTEXT ===\n${normalizedDocs}\n\n=== END DOCUMENTATION CONTEXT ===`;
+      }
+
+      payloadMessages = [{ role: 'user', content: userContent }];
     }
 
     const payload = {
       model: modelName || 'gpt-4.1-mini',
-      messages: [
-        { role: "user", content: userContent }
-      ],
+      messages: payloadMessages,
     };
 
     if (modelName !== 'gpt-5') {
@@ -462,8 +479,9 @@ class Chatbot {
     const timestamp = new Date().toISOString();
     const contextInfo = analysisType ? ` [${analysisType}]` : '';
     
+    const promptText = typeof prompt === 'string' ? prompt : '[conversation]';
     let dataIndicator = '';
-    if (prompt.includes('DATASET (')) {
+    if (promptText.includes('DATASET (')) {
       dataIndicator = ' [CSV_DATA]';
     }
     
@@ -472,8 +490,8 @@ class Chatbot {
     const cacheInfo = ` [CACHE_HITS:${this.cacheStats.hits}]`;
     
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[${timestamp}]${contextInfo}${dataIndicator}${docIndicator}${pdfIndicator}${cacheInfo} User: ${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}`);
-      console.log(`[${timestamp}] Response: ${response.length} chars`);
+      console.log(`[${timestamp}]${contextInfo}${dataIndicator}${docIndicator}${pdfIndicator}${cacheInfo} User: ${promptText.substring(0, 100)}${promptText.length > 100 ? '...' : ''}`);
+      console.log(`[${timestamp}] Response: ${response ? response.length : 0} chars`);
     }
   }
 

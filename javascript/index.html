@@ -1050,6 +1050,9 @@
         let activeAnalysis = 'net-interest-margin';
         let includeDocs = false;
         let selectedModel = 'gpt-4.1-mini';
+        // Conversation state: stores chat messages for this analysis session
+        let conversation = [];
+        let initialFullPrompt = null;
 
         // Simplified analysis configuration
         const analysisConfig = {
@@ -1071,15 +1074,16 @@ Note: Focus on Rate Risk Management FROM THE CENTER POINT— how the balance she
                 csvFile: 'sample_net_intrest.csv',
                 pdfFile: null,
                 useDocuments: false,
-                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience.  The format should be PRIMARILY narrative.
+                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The format should be PRIMARILY narrative with section headers and paragraph structure. Keep the discussion high-level and directional.
  
-Note:  The uploaded file is a Net Interest Income rate shock analysis on a static balance sheet with no volume changes on assets or liabilities. DO NOT reference risks associated with a static balance sheet since this is a regulatory compliant report.
+Begin immediately with findings—no introductory paragraph about what the analysis is or does.
  
-The narrative should identify key insights across all rate shock scenarios from -400 to +400, including the impact on key metrics and the magnitude of change at the most adverse and favorable scenarios FROM THE CENTER POINT. Include information on the asset and liability categories shown that are having the greatest impact on the results and possible risk assumptions to look into that may contribute to the results.
+The objective of this interest rate risk analysis is to give priority to identifying DECLINES in net interest income and margin and secondarily, to identifying increases in net interest income and margin. The narrative should identify key insights across all rate shock scenarios from -400 to +400. Describe the outcomes in general terms FROM THE CENTER POINT: whether net interest margin expands or contracts, whether the impact is material or modest, and which direction shows more favorable or adverse results from the center point.
  
-CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.
+Include information on the asset and liability categories shown that are having the greatest impact on the results and suggest POSSIBLE risk assumptions to look into that may contribute to the results.
+Note: The uploaded file is a Net Interest Income rate shock analysis on a static balance sheet with no volume changes on assets or liabilities. DO NOT reference risks associated with a static balance sheet since this is a regulatory compliant report. DO NOT comment on asymmetry of results.
  
-Note: Focus on Net Interest Income and margin impacts FROM THE CENTER POINT— how earnings change with interest rates, including the spread between interest income and funding costs.`
+CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.`
              },
             'forecast-kri': {
                 name: 'Forecast Key Risk Indicators',
@@ -1224,6 +1228,8 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
             messageInput.value = '';
             messageInput.disabled = false;
             sendButton.disabled = false;
+            conversation = [];
+            initialFullPrompt = null;
             
             document.querySelectorAll('.error-message, .success-message').forEach(msg => {
                 if (msg.parentNode) msg.remove();
@@ -2123,42 +2129,54 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
         }
 
         async function sendMessage(prompt = null, showUserMessage = true) {
-            const message = prompt || messageInput.value.trim();
-            if (!message) return;
+            const userText = prompt || messageInput.value.trim();
+            if (!userText) return;
 
             if (showUserMessage) {
-                addMessage(message, true);
+                addMessage(userText, true);
             }
-            
             if (!prompt) {
                 messageInput.value = '';
             }
-            
+
             messageInput.disabled = true;
             sendButton.disabled = true;
             showTyping();
 
             try {
                 const config = analysisConfig[activeAnalysis];
-                let fullPrompt = message;
-                
-                if (currentCsvData) {
-                    try {
-                        const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
-                        console.log(`[SEND] Attaching CSV dataset (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount}) for analysis='${activeAnalysis}'`);
-                    } catch (_) {}
-                    
-                    const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (analysisConfig[activeAnalysis].prompt || '');
-                    const minimalData = createMinimalDataBlock(currentCsvData);
-                    const userIntent = prompt && showUserMessage ? `\n\nUser Question: ${message}\n` : '';
+                let messages = [];
 
-                    fullPrompt = `${minimalInstruction}${userIntent}\n\n${minimalData}`;
+                // Build or extend conversation
+                if (conversation.length === 0) {
+                    if (currentCsvData) {
+                        try {
+                            const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
+                            console.log(`[SEND] Starting session with CSV (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount}) for analysis='${activeAnalysis}'`);
+                        } catch(_) {}
+                        const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (config.prompt || '');
+                        const minimalData = createMinimalDataBlock(currentCsvData);
+                        initialFullPrompt = `${minimalInstruction}\n\n${minimalData}`;
+                        messages.push({ role: 'user', content: initialFullPrompt });
+                        // If first turn is a real question (not Analyze), include it explicitly
+                        if (!prompt || (prompt && prompt.toLowerCase() !== 'analyze')) {
+                            messages.push({ role: 'user', content: userText });
+                        }
+                    } else {
+                        console.warn(`[SEND] No CSV dataset available to attach for analysis='${activeAnalysis}'. Starting without data.`);
+                        const minimalInstruction = (promptEditor.value && promptEditor.value.trim()) || (config.prompt || '');
+                        messages.push({ role: 'user', content: minimalInstruction });
+                        if (!prompt || (prompt && prompt.toLowerCase() !== 'analyze')) {
+                            messages.push({ role: 'user', content: userText });
+                        }
+                    }
                 } else {
-                    console.warn(`[SEND] No CSV dataset available to attach for analysis='${activeAnalysis}'. Using PDF/doc context only.`);
+                    messages = conversation.slice();
+                    messages.push({ role: 'user', content: userText });
                 }
 
                 const formData = new FormData();
-                formData.append('prompt', fullPrompt);
+                formData.append('messages', JSON.stringify(messages));
                 const effectiveAnalysisType = includeDocs ? `${activeAnalysis}-docs` : activeAnalysis;
                 formData.append('analysisType', effectiveAnalysisType);
                 formData.append('useDocuments', includeDocs);
@@ -2171,29 +2189,23 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
                 }
 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => {
-                    controller.abort();
-                }, 240000);
-
-                const response = await fetch('/Chatbot/api/chat', {
-                    method: 'POST',
-                    body: formData,
-                    signal: controller.signal
-                });
-
+                const timeoutId = setTimeout(() => controller.abort(), 240000);
+                const response = await fetch('/Chatbot/api/chat', { method: 'POST', body: formData, signal: controller.signal });
                 clearTimeout(timeoutId);
 
                 const data = await response.json();
                 hideTyping();
 
                 if (response.ok) {
+                    // Update conversation state
+                    conversation = messages.slice();
+                    conversation.push({ role: 'assistant', content: data.response });
                     addMessage(data.response);
                 } else {
                     showError(data.error || 'Something went wrong');
                 }
             } catch (error) {
                 hideTyping();
-                
                 if (error.name === 'AbortError') {
                     showError('Request timed out. The analysis is taking longer than expected. Please try again or use a smaller dataset.');
                 } else {
