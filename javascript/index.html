@@ -1074,16 +1074,40 @@ Note: Focus on Rate Risk Management FROM THE CENTER POINT— how the balance she
                 csvFile: 'sample_net_intrest.csv',
                 pdfFile: null,
                 useDocuments: false,
-                prompt: `Using only the uploaded file and no external sources, write a clear, concise and easy-to-read narrative geared towards an executive audience. The format should be PRIMARILY narrative with section headers and paragraph structure. Keep the discussion high-level and directional.
- 
-Begin immediately with findings—no introductory paragraph about what the analysis is or does.
- 
-The objective of this interest rate risk analysis is to give priority to identifying DECLINES in net interest income and margin and secondarily, to identifying increases in net interest income and margin. The narrative should identify key insights across all rate shock scenarios from -400 to +400. Describe the outcomes in general terms FROM THE CENTER POINT: whether net interest margin expands or contracts, whether the impact is material or modest, and which direction shows more favorable or adverse results from the center point.
- 
-Include information on the asset and liability categories shown that are having the greatest impact on the results and suggest POSSIBLE risk assumptions to look into that may contribute to the results.
-Note: The uploaded file is a Net Interest Income rate shock analysis on a static balance sheet with no volume changes on assets or liabilities. DO NOT reference risks associated with a static balance sheet since this is a regulatory compliant report. DO NOT comment on asymmetry of results.
- 
-CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.`
+                prompt: `The uploaded excel file is the result of a bank's net interest income rate shock analysis. The rate shock is a method for stress testing the net interest income under rate change levels that span 100 basis point increments up to +400 and down to -400 from current point. 
+                
+                    Using only the uploaded file and no external sources, write a concise, executive-level narrative summary of the bank's Net Interest Margin (NIM) rate shock analysis. The goal is to communicate high-level results, directional changes, and key drivers of performance to bank executive audience. 
+                    Outputs:
+                    The narrative should identify key insights across all rate shock scenarios from -400 to +400, describing the outcomes FROM THE CURRENT POINT. 
+
+                    Indicate in general terms whether net interest income expands or contracts and which direction shows more favorable or adverse results from the current point. Give primary attention to identifying declines in net interest income, and secondary attention to increases. Summarize the direction without providing granular numerical details or tables.
+
+                    Focus on key balance sheet categories influencing results. Suggest possible risk assumptions that may be driving these outcomes.
+
+                    Support your conclusions with some key data points that demonstrate the scale of change — for example, approximate dollar or percentage movements. Use rounded figures and descriptive phrasing (“about $20 million decline,” “around 10% increase”).
+
+                    Rules and constraints: 
+                    This analysis is based on a regulatory-compliant static balance sheet. DO NOT reference, imply, or suggest any balance growth, balance runoff, changes in loan or deposit volumes, or portfolio mix shifts. All results reflect rate-driven changes only.
+                    DO NOT reference risks associated with a static balance sheet. 
+                    DO NOT comment on asymmetry of results.
+
+                    Format:
+                    Maintain a professional, advisory tone suitable for an executive banking audience that combines narrative interpretation with selective use of figures.
+
+                    Use numbers to anchor conclusions, not to drive the discussion.
+                    Avoid technical jargon and tables; use short paragraphs and section headers for readability. 
+                    The summary should sound like a trusted advisor explaining performance trends, not an analyst describing model mechanics.
+
+                    Content strategy:
+                    Include these paragraph headers in every output: 
+                    Key Findings and Directional Overview
+                    Drivers of Net Interest Income Performance
+                    Asset-Related Risk Assumption Factors 
+                    Liability-Related Risk Assumption Factors 
+                    Summary
+                    How the output should be delivered: 
+                    The summary should be no more than 500 words, written as a high-level executive overview.
+                    CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.`
              },
             'forecast-kri': {
                 name: 'Forecast Key Risk Indicators',
