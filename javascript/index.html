@@ -899,8 +899,12 @@
                     <option value="competitive-kri">Competitive KRI</option>
                 </select>
                 <label class="docs-toggle" title="Append documentation context">
-                    <input type="checkbox" id="addDocsCheckbox" />
+                    <input type="checkbox" id="addDocsCheckbox" checked />
                     Add docs
+                </label>
+                <label class="docs-toggle" title="Multiply numeric values by 1000">
+                    <input type="checkbox" id="multiplierCheckbox" checked />
+                    Multiplier
                 </label>
             </div>
             <div class="model-selector">
@@ -1048,7 +1052,8 @@
         let currentPdfData = null;
         let currentDataType = 'csv';
         let activeAnalysis = 'net-interest-margin';
-        let includeDocs = false;
+        let includeDocs = true;
+        let useMultiplier = true;
         let selectedModel = 'gpt-4.1-mini';
         // Conversation state: stores chat messages for this analysis session
         let conversation = [];
@@ -1074,40 +1079,36 @@ Note: Focus on Rate Risk Management FROM THE CENTER POINT— how the balance she
                 csvFile: 'sample_net_intrest.csv',
                 pdfFile: null,
                 useDocuments: false,
-                prompt: `The uploaded excel file is the result of a bank's net interest income rate shock analysis. The rate shock is a method for stress testing the net interest income under rate change levels that span 100 basis point increments up to +400 and down to -400 from current point. 
-                
-                    Using only the uploaded file and no external sources, write a concise, executive-level narrative summary of the bank's Net Interest Margin (NIM) rate shock analysis. The goal is to communicate high-level results, directional changes, and key drivers of performance to bank executive audience. 
-                    Outputs:
-                    The narrative should identify key insights across all rate shock scenarios from -400 to +400, describing the outcomes FROM THE CURRENT POINT. 
+                prompt: `NIM Shock Narrative Prompt
+            The uploaded excel file is the result of a bank’s net interest income rate shock analysis. The rate shock is a method for stress testing the net interest income under rate change levels that span 100 basis point increments up to +400 and down to -400 from current point.
+            Using only the uploaded file and no external sources, write a concise, executive-level narrative summary of the bank’s Net Interest Margin (NIM) rate shock analysis. The goal is to communicate high-level results, directional changes, and key drivers of performance to bank executive audience.
+            Outputs:
+            The narrative should identify key insights across all rate shock scenarios from -400 to +400, describing the outcomes FROM THE CURRENT POINT.
+            Indicate in general terms whether net interest income expands or contracts and which direction shows more favorable or adverse results from the current point. Give primary attention to identifying declines in net interest income, and secondary attention to increases. Summarize the direction without providing granular numerical details or tables.
+            Focus on key balance sheet categories influencing results. Suggest possible risk assumptions that may be driving these outcomes.
+            Support your conclusions with some key data points that demonstrate the scale of change — for example, approximate dollar or percentage movements. Use rounded figures and descriptive phrasing (“about $20 million decline,” “around 10% increase”).
+            For Content Strategy paragraph header sections 3 and 4, Asset Assumptions Potentially Impacting NIM Results and Liability Assumptions Potentially Impacting NIM Results, create bullet points for ease of understanding.
+             Rules and constraints:
+            This analysis is based on a regulatory-compliant static balance sheet. DO NOT reference, imply, or suggest any balance growth, balance runoff, changes in loan or deposit volumes, or portfolio mix shifts. All results reflect rate-driven changes only.
+            DO NOT reference risks associated with a static balance sheet.
+            DO NOT comment on asymmetry of results.
 
-                    Indicate in general terms whether net interest income expands or contracts and which direction shows more favorable or adverse results from the current point. Give primary attention to identifying declines in net interest income, and secondary attention to increases. Summarize the direction without providing granular numerical details or tables.
+            Format:
+            Maintain a professional, advisory tone suitable for an executive banking audience that combines narrative interpretation with selective use of figures.
+            Use numbers to anchor conclusions, not to drive the discussion.
+            Avoid technical jargon and tables; use short paragraphs and section headers for readability.
+            The summary should sound like a trusted advisor explaining performance trends, not an analyst describing model mechanics.
 
-                    Focus on key balance sheet categories influencing results. Suggest possible risk assumptions that may be driving these outcomes.
-
-                    Support your conclusions with some key data points that demonstrate the scale of change — for example, approximate dollar or percentage movements. Use rounded figures and descriptive phrasing (“about $20 million decline,” “around 10% increase”).
-
-                    Rules and constraints: 
-                    This analysis is based on a regulatory-compliant static balance sheet. DO NOT reference, imply, or suggest any balance growth, balance runoff, changes in loan or deposit volumes, or portfolio mix shifts. All results reflect rate-driven changes only.
-                    DO NOT reference risks associated with a static balance sheet. 
-                    DO NOT comment on asymmetry of results.
-
-                    Format:
-                    Maintain a professional, advisory tone suitable for an executive banking audience that combines narrative interpretation with selective use of figures.
-
-                    Use numbers to anchor conclusions, not to drive the discussion.
-                    Avoid technical jargon and tables; use short paragraphs and section headers for readability. 
-                    The summary should sound like a trusted advisor explaining performance trends, not an analyst describing model mechanics.
-
-                    Content strategy:
-                    Include these paragraph headers in every output: 
-                    Key Findings and Directional Overview
-                    Drivers of Net Interest Income Performance
-                    Asset-Related Risk Assumption Factors 
-                    Liability-Related Risk Assumption Factors 
-                    Summary
-                    How the output should be delivered: 
-                    The summary should be no more than 500 words, written as a high-level executive overview.
-                    CRITICAL DATA UNITS: ALL dollar amounts in ALL columns are in thousands (000s) - apply this scaling to every numeric column except rate scenarios (like "-400bp") and percentage fields (marked with "%"). Example: 29098 in any dollar column = $29.1 million.`
+            Content strategy:
+            Include these paragraph headers in every output:
+            Key Findings and Directional Overview
+            Drivers of Net Interest Income Performance
+            Asset Assumptions Potentially Influencing NIM Results
+            Liability Assumptions Potentially Influencing NIM Results
+            Summary
+            How the output should be delivered:
+            The summary should be no more than 500 words, written as a high-level executive overview.
+`
              },
             'forecast-kri': {
                 name: 'Forecast Key Risk Indicators',
@@ -1151,6 +1152,13 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
         addDocsCheckbox.addEventListener('change', (e) => {
             includeDocs = e.target.checked;
             console.log(`[UI] Add docs toggled: ${includeDocs}`);
+        });
+
+        // Multiplier toggle handler
+        const multiplierCheckbox = document.getElementById('multiplierCheckbox');
+        multiplierCheckbox.addEventListener('change', (e) => {
+            useMultiplier = e.target.checked;
+            console.log(`[UI] Multiplier toggled: ${useMultiplier}`);
         });
 
         // Model dropdown handler
@@ -1468,7 +1476,7 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
 
         function extractRiskMetrics(data) {
             const metrics = new Set();
-            
+
             data.forEach(row => {
                 Object.keys(row).forEach(key => {
                     if (key !== 'Risk Status' && key !== 'Risk Trend' && key !== 'Risk Outlook') {
@@ -1476,8 +1484,82 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
                     }
                 });
             });
-            
+
             return Array.from(metrics).slice(0, 10);
+        }
+
+        /**
+         * Apply multiplier (x1000) to numeric values in CSV data
+         * Excludes: columns with specific names, values with decimals, values with letters
+         */
+        function applyMultiplier(data) {
+            if (!Array.isArray(data) || data.length === 0) return data;
+
+            // Columns to exclude from multiplication
+            const excludedColumns = [
+                'rate change',
+                'percent of risk',
+                'percent of avg. assets',
+                'percent of avg assets'
+            ];
+
+            console.log('[Multiplier] Applying x1000 multiplier to numeric values');
+
+            return data.map(row => {
+                const newRow = {};
+                Object.keys(row).forEach(key => {
+                    const value = row[key];
+                    const lowerKey = key.toLowerCase().trim();
+
+                    // Check if column should be excluded
+                    const isExcludedColumn = excludedColumns.some(col => lowerKey.includes(col));
+
+                    if (isExcludedColumn) {
+                        newRow[key] = value;
+                        return;
+                    }
+
+                    // Check if value is a pure integer (no decimals, no letters)
+                    const strValue = String(value).trim();
+
+                    // Skip if empty
+                    if (!strValue) {
+                        newRow[key] = value;
+                        return;
+                    }
+
+                    // Skip if contains letters (except for negative sign handling)
+                    if (/[a-zA-Z]/.test(strValue)) {
+                        newRow[key] = value;
+                        return;
+                    }
+
+                    // Skip if contains decimal point
+                    if (strValue.includes('.')) {
+                        newRow[key] = value;
+                        return;
+                    }
+
+                    // Skip if contains % sign
+                    if (strValue.includes('%')) {
+                        newRow[key] = value;
+                        return;
+                    }
+
+                    // Remove commas and check if it's a valid integer
+                    const cleanValue = strValue.replace(/,/g, '').replace(/^\((.+)\)$/, '-$1');
+                    const numValue = parseInt(cleanValue, 10);
+
+                    if (!isNaN(numValue)) {
+                        // Apply multiplier and format with commas
+                        const multiplied = numValue * 1000;
+                        newRow[key] = multiplied.toLocaleString('en-US');
+                    } else {
+                        newRow[key] = value;
+                    }
+                });
+                return newRow;
+            });
         }
 
         // File upload handling
@@ -1541,14 +1623,20 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
                             return;
                     }
 
+                    // Apply multiplier if checkbox is checked
+                    if (useMultiplier && Array.isArray(data)) {
+                        data = applyMultiplier(data);
+                    }
+
                     currentCsvData = data;
                     currentDataType = fileExtension;
                     csvFileName.textContent = file.name;
                     csvStatus.textContent = 'Active (User Data)';
                     currentCsvFile.classList.remove('no-file-state');
                     currentCsvFile.style.borderColor = '#28a745';
-                    
-                    showSuccess(`${file.name} loaded successfully! Analysis will use your institution's data.`);
+
+                    const multiplierMsg = useMultiplier ? ' (x1000 multiplier applied)' : '';
+                    showSuccess(`${file.name} loaded successfully!${multiplierMsg} Analysis will use your institution's data.`);
                     try {
                         const colCount = Array.isArray(currentCsvData) && currentCsvData[0] ? Object.keys(currentCsvData[0]).length : 0;
                         console.log(`[CSV] User file loaded: ${file.name} (rows=${Array.isArray(currentCsvData) ? currentCsvData.length : 0}, cols=${colCount})`);
@@ -2201,9 +2289,12 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
 
                 const formData = new FormData();
                 formData.append('messages', JSON.stringify(messages));
-                const effectiveAnalysisType = includeDocs ? `${activeAnalysis}-docs` : activeAnalysis;
+                // Only include docs for follow-up questions (when conversation has started), never for initial analysis
+                const isFollowUp = conversation.length > 0;
+                const shouldIncludeDocs = isFollowUp && includeDocs;
+                const effectiveAnalysisType = shouldIncludeDocs ? `${activeAnalysis}-docs` : activeAnalysis;
                 formData.append('analysisType', effectiveAnalysisType);
-                formData.append('useDocuments', includeDocs);
+                formData.append('useDocuments', shouldIncludeDocs);
                 formData.append('model', selectedModel);
 
                 if (currentPdfData) {
