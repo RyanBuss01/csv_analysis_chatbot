@@ -154,7 +154,21 @@ class Chatbot {
       }
       if (docContent && docContent.trim()) {
         const normalizedDocs = this.normalizeDocumentContent(docContent);
-        payloadMessages.unshift({ role: 'system', content: `=== DOCUMENTATION CONTEXT ===\n${normalizedDocs}\n\n=== END DOCUMENTATION CONTEXT ===` });
+        const systemInstructions = `You are a helpful assistant for BankersGPS, a banking analytics platform. Use the documentation context below to answer user questions.
+
+When answering:
+- If the question relates to topics covered in the documentation (banking, interest rates, risk management, BankersGPS features, assumptions, etc.), provide a helpful and thorough answer based on the documentation.
+- If the question is completely unrelated to banking, finance, or BankersGPS (e.g., questions about weather, sports, cooking, etc.), respond with exactly: "No result found. Try restating your question in more detail, or contact a Plansmith expert for additional help.
+
+Email: support@bankersgps.com
+Call: 800-323-3281"
+"
+
+=== DOCUMENTATION CONTEXT ===
+${normalizedDocs}
+
+=== END DOCUMENTATION CONTEXT ===`;
+        payloadMessages.unshift({ role: 'system', content: systemInstructions });
       }
     } else {
       // Fallback: single user message format

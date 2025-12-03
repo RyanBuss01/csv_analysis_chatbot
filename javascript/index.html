@@ -2227,6 +2227,25 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
             }, 5000);
         }
 
+        /**
+         * Append standard footer to follow-up question responses
+         * AI handles "no result" responses, this just adds contact info for successful answers
+         */
+        function appendFollowUpFooter(response) {
+            const lowerResponse = response.toLowerCase();
+
+            // Check if AI already returned the "no result" message
+            const isNoResult = lowerResponse.includes('no result found');
+
+            if (isNoResult) {
+                // AI already provided the no-result message, don't add additional footer
+                return response;
+            } else {
+                // Standard footer for successful answers
+                return response + '\n\n---\n\nIf you would like to discuss this topic further or have additional questions, please contact the Support Team.\n\n**Email:** support@bankersgps.com\n**Call:** 800-323-3281';
+            }
+        }
+
         function showSuccess(message) {
             const successDiv = document.createElement('div');
             successDiv.className = 'success-message';
@@ -2316,7 +2335,14 @@ Note: Keep the response narrative and insight-led. Organize it into two brief se
                     // Update conversation state
                     conversation = messages.slice();
                     conversation.push({ role: 'assistant', content: data.response });
-                    addMessage(data.response);
+
+                    // For follow-up questions, append standard footer
+                    let displayResponse = data.response;
+                    if (isFollowUp) {
+                        displayResponse = appendFollowUpFooter(data.response);
+                    }
+
+                    addMessage(displayResponse);
                 } else {
                     showError(data.error || 'Something went wrong');
                 }
