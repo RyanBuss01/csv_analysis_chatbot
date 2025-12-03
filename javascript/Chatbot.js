@@ -160,8 +160,8 @@ When answering:
 - If the question relates to topics covered in the documentation (banking, interest rates, risk management, BankersGPS features, assumptions, etc.), provide a helpful and thorough answer based on the documentation.
 - If the question is completely unrelated to banking, finance, or BankersGPS (e.g., questions about weather, sports, cooking, etc.), respond with exactly: "No result found. Try restating your question in more detail, or contact a Plansmith expert for additional help.
 
-Email: support@bankersgps.com
-Call: 800-323-3281"
+**Email:** support@bankersgps.com
+**Call:** 800-323-3281
 "
 
 === DOCUMENTATION CONTEXT ===
